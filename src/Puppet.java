@@ -19,14 +19,15 @@ abstract class Puppet
 	
 	ArrayList<Organ> anatomy;
 	ArrayList<Pleb> plebArchiver;
-	ArrayList<int[]> touchArchiver, actionList, spriteArchiver;
+	ArrayList<int[]> touchArchiver;//, actionList, spriteArchiver;
+	ArrayList<int[][]> hitboxArchiver;
 //	ArrayList<Force> forceArchiver; 
-	Organ bounds, grabBox;	//Name subject to change
+	Organ bounds, grabBox;	//Name subject to change, could use bounds as throwable hitbox
 	State currState;
 	int id, xCoord, yCoord, xHosh, yHosh, width, height, crHeight;
 	int maxHp, maxSp, maxMp, maxSpd;
 	int health, stamina, meter, speed;
-	int frameIndex;
+	double frameIndex;
 	double jForce, jump;
 	boolean isFacingRight, isPerformingAction;
 	int[] spriteParams;
@@ -42,8 +43,9 @@ abstract class Puppet
 		anatomy = new ArrayList<Organ>();
 		plebArchiver = new ArrayList<Pleb>();
 		touchArchiver = new ArrayList<int[]>();	//[type, id]
-		actionList = new ArrayList<int[]>();	//[action name, sprites in row, loops?]
-		spriteArchiver = new ArrayList<int[]>();	//[xMod,yMod,width,height,sWidth,sHeight]
+		hitboxArchiver = new ArrayList<int[][]>(); //[loops?], [[hitbox.x, hitbox.y, hitbox.w, hitbox.h, ...], ...
+	//	actionList = new ArrayList<int[]>();	//[action name, sprites in row, loops?]
+	//	spriteArchiver = new ArrayList<int[]>();	//[xMod,yMod,width,height,sWidth,sHeight]
 	//	forceArchiver = new ArrayList<Force>();
 		
 		currState = State.IDLE;
@@ -83,24 +85,37 @@ abstract class Puppet
 	{
 	/*	if(d)
 		{*/
-			g.setColor(Color.BLUE);
-			g.drawRect((int)(bounds.xHosh*w/1280),(int)(bounds.yHosh*h/720),(int)(bounds.width*w/1280),(int)(bounds.height*h/720));
-			
-			g.setColor(Color.MAGENTA);
-			if(isFacingRight)
-				g.drawLine((int)((bounds.xHosh+bounds.width-15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720),(int)((bounds.xHosh+bounds.width+15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720));
-			else
-				g.drawLine((int)((bounds.xHosh-15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720),(int)((bounds.xHosh+15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720));
-			
-	/*		g.setColor(Color.BLUE);
-			g.drawString(id+"",(int)((bounds.xHosh+bounds.width+2)*w/1280),(int)((bounds.yHosh+bounds.height)*h/720));
-			
-			for(Hitbox a: anatomy)
+			try
 			{
+				g.setColor(Color.BLUE);
+				g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50));
+				g.fillRect((int)(bounds.xHosh*w/1280),(int)(bounds.yHosh*h/720),(int)(bounds.width*w/1280),(int)(bounds.height*h/720));
+				g.setColor(Color.BLUE);
+				g.drawRect((int)(bounds.xHosh*w/1280),(int)(bounds.yHosh*h/720),(int)(bounds.width*w/1280),(int)(bounds.height*h/720));
+				
 				g.setColor(Color.PINK);
-				g.drawRect((int)(a.xHosh*w/1280),(int)(a.yHosh*h/720),(int)(a.width*w/1280),(int)(a.height*h/720));
+				if(isFacingRight)
+					g.drawLine((int)((bounds.xHosh+bounds.width-15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720),(int)((bounds.xHosh+bounds.width+15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720));
+				else
+					g.drawLine((int)((bounds.xHosh-15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720),(int)((bounds.xHosh+15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720));
+				
+				g.setColor(Color.BLUE);
+				g.drawString((int)frameIndex+"",(int)((bounds.xHosh+bounds.width+2)*w/1280),(int)((bounds.yHosh+bounds.height*3/4)*h/720));
+				
+				for(Hitbox a: anatomy)
+				{
+					g.setColor(Color.MAGENTA);
+					g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50));
+					g.fillRect((int)(a.xHosh*w/1280),(int)(a.yHosh*h/720),(int)(a.width*w/1280),(int)(a.height*h/720));
+					g.setColor(Color.MAGENTA);
+					g.drawRect((int)(a.xHosh*w/1280),(int)(a.yHosh*h/720),(int)(a.width*w/1280),(int)(a.height*h/720));
+				}
 			}
-		}*/
+			catch(java.lang.NullPointerException e)
+			{
+				draw(g,i,s,w,h,d);
+			}
+	//	}
 	}
 	
 	public void checkState()
@@ -199,9 +214,28 @@ abstract class Puppet
 		}*/
 	}
 	
+	public void getHitboxes()
+	{
+		int h = Roo.State.valueOf(currState.toString()).ordinal();
+		anatomy = new ArrayList<Organ>();
+		if(h < hitboxArchiver.size())	//dont really need in final, good for testing
+		{
+			if(frameIndex+1 < hitboxArchiver.get(h).length)
+			{
+				for(int i = 0; i < hitboxArchiver.get(h)[(int)frameIndex+1].length; i += 4)
+					anatomy.add(new Organ(hitboxArchiver.get(h)[(int)frameIndex+1][i]+bounds.xCoord,hitboxArchiver.get(h)[(int)frameIndex+1][i+1]+bounds.yCoord,hitboxArchiver.get(h)[(int)frameIndex+1][i+2],hitboxArchiver.get(h)[(int)frameIndex+1][i+3],speed));
+			}
+		}
+	}
+	
 	public void update()
 	{
-		frameIndex++;
+	//	frameIndex++;
+		int f = (int)frameIndex;
+		frameIndex += 0.34;
+		if(frameIndex-f > 1)
+			frameIndex = (int)frameIndex;
+		
 		bounds.yCoord = yCoord;
 		bounds.height = height;
 		bounds.update();

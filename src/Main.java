@@ -55,17 +55,24 @@ public class Main
 			xCoord = window.getLocation().x;
 			yCoord = window.getLocation().y;
 			
-			//RESET TEST
+			
+			int fpsLimit = 60;	//test
 			if(p1.buttonArchiver[8])
 			{
-				stage.player1.reset(1000-200-100,250);
-				stage.player2.reset(1000+200,250);
+				//RESET TEST
+		/*		logic.setFocusTo(1000,800);
+				stage.player1.reset(1000-200-100,750);
+				stage.player2.reset(1000+200,750);
 				while(p1.stickInputs.size() > 0)
 					p1.stickInputs.remove();
 				while(p2.stickInputs.size() > 0)
-					p2.stickInputs.remove();
+					p2.stickInputs.remove();*/
+					
+				//FRAME BY FRAME TEST
+				fpsLimit = 3;
 			}
 			//==
+			
 			
 			director.update();
 			gui.update(width,height,gamePaused);
@@ -79,7 +86,7 @@ public class Main
 			fps = 1000.0/(end-start);
 			try
 			{
-				while(fps > 60)
+				while(fps > fpsLimit)	//60)
 				{
 					Thread.sleep(1);
 					end = System.currentTimeMillis();

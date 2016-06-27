@@ -1766,17 +1766,15 @@ public class Logic
 		{
 			for(Floor f: stage.floors)
 				f.update(stage.floors);
-			
-			for(BlueFairy f: stage.fairies)
-			{
-				f.update(stage);	//f update part 1
-				cricket.findPath(f);
-				f.METHODNAMEHERE(stage);//f update part 2
-			}
+			for(Puppet p: stage.puppets)
+				p.getHitboxes();
 			
 			applyForces();
 			checkCollisions();
-	//		checkDamage();	//MIGHT BE UNNECESSARY
+			
+			for(Puppet p: stage.puppets)
+				p.getHitboxes();
+	//		checkDamage();	//MIGHT BE UNNECESSARY, might actually need to keep hitboxes aligned if forces push bounds in which case remove getHitboxes() prior to applyForces()
 			
 			stage.update();
 		//	stage.updateTrail();

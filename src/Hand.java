@@ -86,7 +86,7 @@ public class Hand implements KeyListener	//, MouseListener
 			
 			//INPUT CHECKS
 			if(stickArchiver[0])
-			{System.out.println("!! "+player.bounds.isGrounded+" "+player.isDashing);
+			{
 				if(player.bounds.isGrounded)
 				{
 					if(stickArchiver[1])
@@ -157,7 +157,7 @@ public class Hand implements KeyListener	//, MouseListener
 					addStickInput(6);
 			}
 			else if(stickArchiver[3])
-			{if(player.bounds.xCoord != 1200)System.out.println("!! "+player.bounds.xDir+" "+player.bounds.xDrag+"   "+player.bounds.xVel);
+			{
 				if(player.bounds.xDrag != -1 && player.bounds.isGrounded && !player.isCrouching && !player.isDashing)
 				{
 					if(player.bounds.xDir == 1 || (player.bounds.xDir == 0 && player.bounds.xVel > 0))
