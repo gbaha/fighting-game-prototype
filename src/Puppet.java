@@ -23,7 +23,7 @@ abstract class Puppet
 	ArrayList<int[][]> hitboxArchiver;
 //	ArrayList<Force> forceArchiver; 
 	Organ bounds, grabBox;	//Name subject to change, could use bounds as throwable hitbox
-	State currState;
+	State currState, prevState;
 	int id, xCoord, yCoord, xHosh, yHosh, width, height, crHeight;
 	int maxHp, maxSp, maxMp, maxSpd;
 	int health, stamina, meter, speed;
@@ -43,12 +43,13 @@ abstract class Puppet
 		anatomy = new ArrayList<Organ>();
 		plebArchiver = new ArrayList<Pleb>();
 		touchArchiver = new ArrayList<int[]>();	//[type, id]
-		hitboxArchiver = new ArrayList<int[][]>(); //[loops?], [[hitbox.x, hitbox.y, hitbox.w, hitbox.h, ...], ...
+		hitboxArchiver = new ArrayList<int[][]>(); //[sheet.y, sheet.xStart, sheet.xLoop, reversed?, frame delay], [[hitbox.x, hitbox.y, hitbox.w, hitbox.h, ...], ...
 	//	actionList = new ArrayList<int[]>();	//[action name, sprites in row, loops?]
 	//	spriteArchiver = new ArrayList<int[]>();	//[xMod,yMod,width,height,sWidth,sHeight]
 	//	forceArchiver = new ArrayList<Force>();
 		
 		currState = State.IDLE;
+		prevState = State.IDLE;
 		id = -1;
 		xCoord = x;
 		yCoord = y;
@@ -216,26 +217,11 @@ abstract class Puppet
 	
 	public void getHitboxes()
 	{
-		int h = Roo.State.valueOf(currState.toString()).ordinal();
-		anatomy = new ArrayList<Organ>();
-		if(h < hitboxArchiver.size())	//dont really need in final, good for testing
-		{
-			if(frameIndex+1 < hitboxArchiver.get(h).length)
-			{
-				for(int i = 0; i < hitboxArchiver.get(h)[(int)frameIndex+1].length; i += 4)
-					anatomy.add(new Organ(hitboxArchiver.get(h)[(int)frameIndex+1][i]+bounds.xCoord,hitboxArchiver.get(h)[(int)frameIndex+1][i+1]+bounds.yCoord,hitboxArchiver.get(h)[(int)frameIndex+1][i+2],hitboxArchiver.get(h)[(int)frameIndex+1][i+3],speed));
-			}
-		}
+		getHitboxes(State.valueOf(currState.toString()).ordinal());
 	}
 	
 	public void update()
 	{
-	//	frameIndex++;
-		int f = (int)frameIndex;
-		frameIndex += 0.34;
-		if(frameIndex-f > 1)
-			frameIndex = (int)frameIndex;
-		
 		bounds.yCoord = yCoord;
 		bounds.height = height;
 		bounds.update();
@@ -265,6 +251,37 @@ abstract class Puppet
 					p++;
 				}*/
 			}
+		}
+	}
+	
+	protected void getHitboxes(int h)
+	{
+		anatomy = new ArrayList<Organ>();
+		if(h < hitboxArchiver.size())
+		{
+			if(currState != prevState)
+			{
+				frameIndex = hitboxArchiver.get(h)[0][1];
+				prevState = currState;
+			}
+			
+			int i = (hitboxArchiver.get(h)[0][3] == 0)? (int)frameIndex+1:hitboxArchiver.get(h).length-(int)frameIndex-1;
+			if(h < hitboxArchiver.size())	//dont really need in final, good for testing
+			{
+				if((hitboxArchiver.get(h)[0][3] == 0 && i < hitboxArchiver.get(h).length) || (hitboxArchiver.get(h)[0][3] == 1 && i > 0))
+				{
+					for(int j = 0; j < hitboxArchiver.get(h)[i].length; j += 4)
+						anatomy.add(new Organ(hitboxArchiver.get(h)[i][j]+bounds.xCoord,hitboxArchiver.get(h)[i][j+1]+bounds.yCoord,hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+3],speed));
+				}
+			}
+			
+		//	frameIndex++;
+			int f = (int)frameIndex;
+			frameIndex += 1.0/(hitboxArchiver.get(h)[0][4]+1);
+			if(frameIndex-f > 1)
+				frameIndex = (int)frameIndex;
+			if(frameIndex >= hitboxArchiver.get(h).length-1)
+				frameIndex = hitboxArchiver.get(h)[0][2];
 		}
 	}
 }

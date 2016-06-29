@@ -58,6 +58,8 @@ public class Player extends Puppet
 	public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean d)
 	{
 		super.draw(g,i,s,w,h,d);
+		g.setColor(Color.BLUE);
+		g.drawString(currState+"",(int)((bounds.xHosh+bounds.width+2)*w/1280),(int)((bounds.yHosh)*h/720));
 	}
 	
 	public void checkState()
@@ -65,10 +67,8 @@ public class Player extends Puppet
 		switch(currState)
 		{
 			case IDLE:
-				idle();
-				break;
-				
 			case CROUCH:
+				idle();
 				break;
 				
 			case WALK_FORWARD:
@@ -100,6 +100,10 @@ public class Player extends Puppet
 	
 	public void idle()
 	{//System.out.println(currAction+" "+bounds.xDir);
+		currState = State.IDLE;
+		if(isCrouching)
+			currState = State.CROUCH;
+		
 		//TAKE DAMAGE ROUTE SUPERCEDES EVERYTHING
 		if(currAction != null)
 		{
@@ -122,6 +126,8 @@ public class Player extends Puppet
 	public void move()
 	{
 		bounds.move();
+		if(isCrouching)
+			bounds.xVel = 0;
 		if(currAction != null)
 			currState = State.PERFORM_ACTION;
 		if(bounds.xVel == 0)
