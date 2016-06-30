@@ -383,24 +383,26 @@ public class Hand implements KeyListener	//, MouseListener
 		if(player != null)
 		{
 			if(e.getKeyCode() == stickBindings[0])
-			{
 				stickArchiver[0] = false;
-			}
 			if(e.getKeyCode() == stickBindings[1])
 			{
 				stickArchiver[1] = false;
-				player.bounds.xDir = 0;
-				player.bounds.xDrag = 1;
+				if(player.bounds.xDir == 1)
+				{
+					player.bounds.xDir = 0;
+					player.bounds.xDrag = 1;
+				}
 			}
 			if(e.getKeyCode() == stickBindings[2])
-			{
 				stickArchiver[2] = false;
-			}			
 			if(e.getKeyCode() == stickBindings[3])
 			{
 				stickArchiver[3] = false;
-				player.bounds.xDir = 0;
-				player.bounds.xDrag = -1;
+				if(player.bounds.xDir == -1)
+				{
+					player.bounds.xDir = 0;
+					player.bounds.xDrag = -1;
+				}
 			}
 			
 			if(e.getKeyCode() == buttonBindings[0])

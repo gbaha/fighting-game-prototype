@@ -27,7 +27,7 @@ public class Main
 		yCoord = window.getLocation().y;
 		width = w;
 		height = h;
-		gamePaused = true;	//Change later
+		gamePaused = false;	//Change later
 		debugging = false;
 		
 		stage = new Stage();
@@ -69,7 +69,7 @@ public class Main
 					p2.stickInputs.remove();*/
 					
 				//FRAME BY FRAME TEST
-				fpsLimit = 3;
+				fpsLimit = 1;
 			}
 			//==
 			

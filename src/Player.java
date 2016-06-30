@@ -10,11 +10,11 @@ public class Player extends Puppet
 	Action currAction;
 	State currState;
 	int airDashLimit, aDash, fCounter;
-	boolean isCrouching, isDashing;	//ADD isLanding TO MAKE FORWARD/BACK JUMPS PIXEL PERFECT??
+	boolean isDashing;	//ADD isLanding TO MAKE FORWARD/BACK JUMPS PIXEL PERFECT??
 	
 	public enum State
 	{
-		IDLE, CROUCH, WALK_FORWARD, WALK_BACKWARD, PERFORM_ACTION
+		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, PERFORM_ACTION
 	}
 	
 	public Player(int x, int y, int w, int h, int c, /*int e,*/ int s, int a, boolean r)
@@ -63,11 +63,13 @@ public class Player extends Puppet
 	}
 	
 	public void checkState()
-	{//if(xCoord != 1200)System.out.println(bounds.xDir+" "+currState+" "+bounds.xCoord);
+	{
 		switch(currState)
 		{
 			case IDLE:
 			case CROUCH:
+			case STANDING:
+			case CROUCHING:
 				idle();
 				break;
 				
@@ -83,9 +85,8 @@ public class Player extends Puppet
 			//Take damage case
 		}
 		xCoord = bounds.xCoord;
-		if(!isCrouching)
+		if(!isCrouching && currState != State.STANDING)
 			yCoord = bounds.yCoord;
-		//if(xCoord != 1200)System.out.println(bounds.xDir+" "+currState);
 	}
 	
 	public void performAction()
@@ -99,11 +100,30 @@ public class Player extends Puppet
 	}
 	
 	public void idle()
-	{//System.out.println(currAction+" "+bounds.xDir);
-		currState = State.IDLE;
+	{
 		if(isCrouching)
-			currState = State.CROUCH;
-		
+		{
+			if(currState == State.IDLE)
+			{
+				currState = State.CROUCHING;
+				frameIndex = 0;
+				preFrames = 4;
+			}
+			else if(preFrames == 0)
+				currState = State.CROUCH;
+		}
+		else
+		{
+			if(currState == State.CROUCH)
+			{
+				currState = State.STANDING;
+				frameIndex = 0;
+				preFrames = 4;
+			}
+			else if(preFrames == 0)
+				currState = State.IDLE;
+		}
+			
 		//TAKE DAMAGE ROUTE SUPERCEDES EVERYTHING
 		if(currAction != null)
 		{
@@ -157,10 +177,15 @@ public class Player extends Puppet
 			bounds.xDrag = 0;
 		}
 		
-		if(isCrouching)
+		if(currState == State.CROUCH)
 		{
 			bounds.yCoord = yCoord+height-crHeight;
 			bounds.height = crHeight;
+		}
+		else
+		{
+			bounds.yCoord = yCoord;
+			bounds.height = height;
 		}
 		bounds.update();
 	}

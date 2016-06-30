@@ -8,15 +8,6 @@ import java.util.ArrayList;
 
 abstract class Puppet
 {
-	private static final int IDLE = 0;
-	private static final int FALL = 1;
-	private static final int JUMP = 2;
-	private static final int MOVE = 3;
-	private static final int DASH = 4;
-	private static final int FLINCH = 5;
-	private static final int DEATH_1 = 7;	//collapse
-	private static final int DEATH_2 = 8;	//knocked down
-	
 	ArrayList<Organ> anatomy;
 	ArrayList<Pleb> plebArchiver;
 	ArrayList<int[]> touchArchiver;//, actionList, spriteArchiver;
@@ -27,15 +18,15 @@ abstract class Puppet
 	int id, xCoord, yCoord, xHosh, yHosh, width, height, crHeight;
 	int maxHp, maxSp, maxMp, maxSpd;
 	int health, stamina, meter, speed;
-	double frameIndex;
-	double jForce, jump;
-	boolean isFacingRight, isPerformingAction;
+	int preFrames;
+	double frameIndex, jForce, jump;
+	boolean isFacingRight, isPerformingAction, isCrouching;
 	int[] spriteParams;
 	boolean[] isBlocking;
 	
 	public enum State
 	{
-		IDLE, WALK_FORWARD, WALK_BACKWARD, PERFORM_ACTION
+		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, PERFORM_ACTION
 	}
 	
 	public Puppet(int x, int y, int w, int h, int c, int hp, int sp, int mp, int s, int a, double j, boolean r, boolean f2)
@@ -75,6 +66,7 @@ abstract class Puppet
 		jump = jForce;
 		
 		frameIndex = 0;
+		preFrames = 0;
 		
 		bounds =  new Organ(x,y,w,h,speed);
 		bounds.isFloating = f2;
@@ -124,6 +116,9 @@ abstract class Puppet
 		switch(currState)
 		{
 			case IDLE:
+			case CROUCH:
+			case STANDING:
+			case CROUCHING:
 				idle();
 				break;
 				
@@ -144,15 +139,9 @@ abstract class Puppet
 		if(bounds.xVel > 0)
 		{
 			if(bounds.xDir > 0)
-			{
 				currState = State.WALK_FORWARD;
-				return;
-			}
 			else if(bounds.xDir < 0)
-			{
 				currState = State.WALK_BACKWARD;
-				return;
-			}
 		}	
 	}
 	
@@ -222,8 +211,16 @@ abstract class Puppet
 	
 	public void update()
 	{
-		bounds.yCoord = yCoord;
-		bounds.height = height;
+		if(currState == State.CROUCH)
+		{
+			bounds.yCoord = yCoord+height-crHeight;
+			bounds.height = crHeight;
+		}
+		else
+		{
+			bounds.yCoord = yCoord;
+			bounds.height = height;
+		}
 		bounds.update();
 	//	grabBox.update();
 		
@@ -265,22 +262,28 @@ abstract class Puppet
 				prevState = currState;
 			}
 			
-			int i = (hitboxArchiver.get(h)[0][3] == 0)? (int)frameIndex+1:hitboxArchiver.get(h).length-(int)frameIndex-1;
+		//	frameIndex = 0;	//TEST
+			
+			int i = ((hitboxArchiver.get(h)[0][3] == 0)? (int)frameIndex+1:hitboxArchiver.get(h).length-(int)frameIndex-1)-((frameIndex < hitboxArchiver.get(h)[0][2])? 0:hitboxArchiver.get(h)[0][1]);
 			if(h < hitboxArchiver.size())	//dont really need in final, good for testing
 			{
 				if((hitboxArchiver.get(h)[0][3] == 0 && i < hitboxArchiver.get(h).length) || (hitboxArchiver.get(h)[0][3] == 1 && i > 0))
 				{
 					for(int j = 0; j < hitboxArchiver.get(h)[i].length; j += 4)
-						anatomy.add(new Organ(hitboxArchiver.get(h)[i][j]+bounds.xCoord,hitboxArchiver.get(h)[i][j+1]+bounds.yCoord,hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+3],speed));
+						anatomy.add(new Organ((isFacingRight)? hitboxArchiver.get(h)[i][j]+bounds.xCoord:bounds.xCoord+bounds.width-hitboxArchiver.get(h)[i][j]-hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+1]+bounds.yCoord,hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+3],speed));
 				}
-			}
+			}if(xCoord == 700)System.out.println(frameIndex+"   "+(i-1));
 			
 		//	frameIndex++;
 			int f = (int)frameIndex;
 			frameIndex += 1.0/(hitboxArchiver.get(h)[0][4]+1);
-			if(frameIndex-f > 1)
+			if(frameIndex-f >= 1)
+			{
 				frameIndex = (int)frameIndex;
-			if(frameIndex >= hitboxArchiver.get(h).length-1)
+				if(preFrames > 0)
+					preFrames--;
+			}
+			if(frameIndex >= ((frameIndex < hitboxArchiver.get(h)[0][2])? hitboxArchiver.get(h)[0][1]:hitboxArchiver.get(h)[0][2])+hitboxArchiver.get(h).length-1)
 				frameIndex = hitboxArchiver.get(h)[0][2];
 		}
 	}

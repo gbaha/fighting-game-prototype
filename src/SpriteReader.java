@@ -28,13 +28,13 @@ public class SpriteReader// extends JPanel
 	}
 	
 	
-	public void read(Graphics2D g, ImageObserver i, int x1, int y1, int w, int h, int x2, int y2, int[] p, boolean r, Image s)
+	public void read(Graphics2D g, ImageObserver i, int x1, int y1, int w1, int w2, int h, int x2, int y2, int[] p, boolean r, Image s)
 	{
 		if(s.getWidth(i) > 0 && s.getHeight(i) > 0)
 		{
-			BufferedImage sprite = new BufferedImage((int)(w*width/1280),(int)(h*height/720),BufferedImage.TYPE_INT_ARGB);
+			BufferedImage sprite = new BufferedImage((int)(w2*width/1280),(int)(h*height/720),BufferedImage.TYPE_INT_ARGB);
 			Graphics2D sRead = sprite.createGraphics();	//sprites.get(sprites.size()-1).createGraphics();
-			sRead.drawImage(s,0,0,(int)(w*width/1280),(int)(h*height/720),x2*p[2],y2*p[3],(x2+1)*p[2],(y2+1)*p[3],i);
+			sRead.drawImage(s,0,0,(int)(w2*width/1280),(int)(h*height/720),x2*p[2],y2*p[3],(x2+1)*p[2],(y2+1)*p[3],i);
 			sRead.dispose();
 			
 		/*	double[] c = new double[]{127.5,127.5,127.5,255};
@@ -50,9 +50,9 @@ public class SpriteReader// extends JPanel
 					c = new double[]{45,45,45,135};
 			}
 			recolor(sprites.get(sprites.size()-1),c[0],c[1],c[2],c[3]);*/
-		//	g.setColor(Color.LIGHT_GRAY);
-		//	g.fillRect(r?(int)((x1-p[0])*width/1280):(int)((x1+w-p[0])*width/1280),(int)((y1-p[1])*height/720),(r)?(int)(w*width/1280):-(int)(w*width/1280),(int)(h*height/720));
-			g.drawImage(sprite,r?(int)((x1-p[0])*width/1280):(int)((x1+w-p[0])*width/1280),(int)((y1-p[1])*height/720),r?(int)(w*width/1280):-(int)(w*width/1280),(int)(h*height/720),i);
+		/*	g.setColor(Color.LIGHT_GRAY);
+			g.fillRect(r?(int)((x1-p[0])*width/1280):(int)((x1+w1+p[0])*width/1280),(int)((y1-p[1])*height/720),(r)?(int)(w2*width/1280):-(int)(w2*width/1280),(int)(h*height/720));*/
+			g.drawImage(sprite,r?(int)((x1-p[0])*width/1280):(int)((x1+w1+p[0])*width/1280),(int)((y1-p[1])*height/720),r?(int)(w2*width/1280):-(int)(w2*width/1280),(int)(h*height/720),i);
 		}
 	}
 	

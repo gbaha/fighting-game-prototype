@@ -111,7 +111,7 @@ public class Hoshua extends JPanel
 		if(canvas.player != null)
 			g.drawLine((int)((canvas.player.xHosh+canvas.player.width/2)*width/1280),(int)((canvas.player.yHosh+canvas.player.height/2)*height/720),(MouseInfo.getPointerInfo().getLocation().x-xCoord),(MouseInfo.getPointerInfo().getLocation().y-yCoord-25));*/
 		
-		repaint();
+	//	repaint();
 	}
 	
 	
@@ -124,5 +124,6 @@ public class Hoshua extends JPanel
 		fps = f;
 		gamePaused = p;
 		debugging = b;
+		repaint();
 	}
 }
