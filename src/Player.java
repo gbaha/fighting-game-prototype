@@ -131,12 +131,12 @@ public class Player extends Puppet
 			return;
 		}
 		//NORMAL ATTACK ROUTE (also read last stick input in case of command normal)
-		if(bounds.xDir > 0 || bounds.xDrag > 0)
+		if((isFacingRight && (bounds.xDir > 0 || bounds.xDrag > 0)) || (!isFacingRight && (bounds.xDir < 0  || bounds.xDrag < 0)))
 		{
 			currState = State.WALK_FORWARD;
 			return;
 		}
-		else if(bounds.xDir < 0 || bounds.xDrag < 0)
+		else if((isFacingRight && (bounds.xDir < 0 || bounds.xDrag < 0)) || (!isFacingRight && (bounds.xDir > 0  || bounds.xDrag > 0)))
 		{
 			currState = State.WALK_BACKWARD;
 			return;

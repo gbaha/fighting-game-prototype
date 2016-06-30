@@ -138,9 +138,9 @@ abstract class Puppet
 		//TAKE DAMAGE ROUTE SUPERCEDES EVERYTHING
 		if(bounds.xVel > 0)
 		{
-			if(bounds.xDir > 0)
+			if((isFacingRight && bounds.xDir > 0) || (!isFacingRight && bounds.xDir < 0))
 				currState = State.WALK_FORWARD;
-			else if(bounds.xDir < 0)
+			else if((isFacingRight && bounds.xDir < 0) || (!isFacingRight && bounds.xDir > 0))
 				currState = State.WALK_BACKWARD;
 		}	
 	}
@@ -272,7 +272,7 @@ abstract class Puppet
 					for(int j = 0; j < hitboxArchiver.get(h)[i].length; j += 4)
 						anatomy.add(new Organ((isFacingRight)? hitboxArchiver.get(h)[i][j]+bounds.xCoord:bounds.xCoord+bounds.width-hitboxArchiver.get(h)[i][j]-hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+1]+bounds.yCoord,hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+3],speed));
 				}
-			}if(xCoord == 700)System.out.println(frameIndex+"   "+(i-1));
+			}
 			
 		//	frameIndex++;
 			int f = (int)frameIndex;

@@ -8,7 +8,7 @@ public class Roo extends Player
 {
 	public Roo(int x, int y, boolean r)
 	{
-		super(x,y,100,250,150,/*100,*/5,1,r);
+		super(x,y,100,250,150,/*100,*/6,1,r);
 		spriteParams = new int[]{345,180,290,178};
 		hitboxArchiver.add(new int[][]{new int[]{0,0,0,0,5},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -36,6 +36,28 @@ public class Roo extends Player
 			new int[]{45,17,53,50,	-27,47,135,45,	-27,80,170,60,	-45,155,185,95},
 			new int[]{32,70,53,50,	-32,85,125,45,	-32,125,190,40,	-45,160,185,90},
 			new int[]{32,65,53,50,	-32,90,125,35,	-32,120,175,40,	-45,160,185,90}});
+		hitboxArchiver.add(new int[][]{new int[]{2,0,0,0,5},
+			new int[]{35,-32,53,50,	-32,0,155,55,	-32,55,125,90,	-82,145,200,105},
+			new int[]{35,-32,53,50,	-32,0,155,55,	-32,55,125,90,	-92,145,200,105},
+			new int[]{35,-42,53,50,	-32,-12,155,55,	-32,49,125,90,	-72,145,160,105},
+			new int[]{35,-42,53,50,	-32,-20,155,55,	-32,45,125,90,	-72,145,160,105},
+			new int[]{35,-47,53,50,	-32,-17,155,55,	-32,47,125,90,	-42,145,140,105},
+			new int[]{35,-47,53,50,	-32,-17,155,55,	-32,47,125,90,	-32,145,150,105},
+			new int[]{35,-50,53,50,	-32,-17,155,55,	-32,47,125,90,	-32,145,150,105},
+			new int[]{35,-50,53,50,	-32,-17,155,55,	-32,47,125,90,	-32,145,175,105},
+			new int[]{35,-45,53,50,	-32,-12,155,55,	-32,49,125,90,	-52,145,200,105},
+			new int[]{35,-37,53,50,	-32,0,155,55,	-32,55,125,90,	-52,145,200,105}});
+		hitboxArchiver.add(new int[][]{new int[]{3,0,0,0,5},
+			new int[]{35,-32,53,50,	-32,0,155,55,	-32,55,125,90,	-32,145,190,105},
+			new int[]{35,-32,53,50,	-32,0,155,55,	-32,55,125,90,	-32,145,200,105},
+			new int[]{35,-42,53,50,	-32,-17,155,55,	-32,47,125,90,	-32,145,180,105},
+			new int[]{35,-42,53,50,	-32,-20,155,55,	-32,45,125,90,	-32,145,160,105},
+			new int[]{35,-47,53,50,	-32,-17,155,55,	-32,47,125,90,	-32,145,150,105},
+			new int[]{35,-47,53,50,	-32,-17,155,55,	-32,47,125,90,	-32,145,135,105},
+			new int[]{35,-50,53,50,	-32,-17,155,55,	-32,47,125,90,	-32,145,135,105},
+			new int[]{35,-50,53,50,	-32,-20,155,55,	-32,45,125,90,	-62,145,185,105},
+			new int[]{35,-45,53,50,	-32,-17,155,55,	-32,47,125,90,	-62,145,185,105},
+			new int[]{35,-37,53,50,	-32,0,155,55,	-32,55,125,90,	-62,145,200,105}});
 	}
 	
 	public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean d)
@@ -44,11 +66,10 @@ public class Roo extends Player
 		{
 			try
 			{
-		//		frameIndex = 0; currState = State.STANDING; preFrames = 100;	//TEST
+	//			frameIndex = 0; currState = State.WALK_BACKWARD;	//TEST
 			
 				Image sheet = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/roo.png"));
 				int f = (hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal())[0][3] == 0)? (int)frameIndex:hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal()).length-(int)frameIndex-2;
-				if(xCoord == 700)System.out.println(frameIndex+"   "+f+"   "+Roo.State.valueOf(currState.toString()).ordinal());
 				s.read(g,i,xHosh,yHosh,width,800,490,f,hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal())[0][0],spriteParams,!isFacingRight,sheet);
 			}
 			catch(java.lang.IndexOutOfBoundsException e)
