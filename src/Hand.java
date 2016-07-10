@@ -98,7 +98,7 @@ public class Hand implements KeyListener	//, MouseListener
 				if(!player.isDashing)
 				{
 					if(player.bounds.isGrounded && !player.bounds.isFloating)
-						player.bounds.forceArchiver.add(new Force("yJump",2,45,1));
+						player.bounds.forceArchiver.add(new Force("yJump",2,player.jump,1));
 					else if(player.bounds.blocked[0] != player.bounds.yCoord+player.bounds.height/2 && player.bounds.forceArchiver.size() > 0)
 					{
 						boolean j = true;

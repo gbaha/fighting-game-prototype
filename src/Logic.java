@@ -129,11 +129,18 @@ public class Logic
 				}
 			}*/
 			
+			//p.isJumping = false;
+			p.jDirections = new int[]{0,0};
 			fLimit = p.bounds.forceArchiver.size();
 			for(int f = 0; f < fLimit; f++)
 			{
 				String t = p.bounds.forceArchiver.get(f).type;
 				int d = p.bounds.forceArchiver.get(f).direction;
+				
+				if((p.bounds.forceArchiver.get(f).type.equals("yJump") || p.bounds.forceArchiver.get(f).type.equals("headhug")) && p.bounds.forceArchiver.get(f).direction == 2)
+					p.jDirections[1] = 1;	//p.isJumping = true;
+				else if(p.bounds.forceArchiver.get(f).type.equals("xJump"))
+					p.jDirections[0] = (p.bounds.forceArchiver.get(f).direction == 1)? -1:1;
 				
 				if(f+1 < fLimit)
 				{

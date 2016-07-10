@@ -20,13 +20,13 @@ abstract class Puppet
 	int health, stamina, meter, speed;
 	int preFrames;
 	double frameIndex, jForce, jump;
-	boolean isFacingRight, isPerformingAction, isCrouching;
-	int[] spriteParams;
+	boolean isFacingRight, isPerformingAction, isCrouching;//, isJumping;
+	int[] jDirections, spriteParams;
 	boolean[] isBlocking;
 	
 	public enum State
 	{
-		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, PERFORM_ACTION
+		IDLE, WALK_FORWARD, WALK_BACKWARD, FALL, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD, PERFORM_ACTION
 	}
 	
 	public Puppet(int x, int y, int w, int h, int c, int hp, int sp, int mp, int s, int a, double j, boolean r, boolean f2)
@@ -51,6 +51,9 @@ abstract class Puppet
 		crHeight = c;
 		isFacingRight = r;
 		isPerformingAction = false;
+	//	isJumping = false;
+		
+		jDirections = new int[]{0,0};
 		isBlocking = new boolean[]{false,false};
 		
 		maxHp = hp;
@@ -116,9 +119,8 @@ abstract class Puppet
 		switch(currState)
 		{
 			case IDLE:
-			case CROUCH:
-			case STANDING:
-			case CROUCHING:
+			case FALL:
+			case LANDING:
 				idle();
 				break;
 				
@@ -136,12 +138,20 @@ abstract class Puppet
 	public void idle()
 	{
 		//TAKE DAMAGE ROUTE SUPERCEDES EVERYTHING
+		if(!bounds.isGrounded && jDirections[0] == 0 && jDirections[1] == 0) //!isJumping)
+			currState = State.FALL;
 		if(bounds.xVel > 0)
 		{
 			if((isFacingRight && bounds.xDir > 0) || (!isFacingRight && bounds.xDir < 0))
+			{
 				currState = State.WALK_FORWARD;
+				return;
+			}
 			else if((isFacingRight && bounds.xDir < 0) || (!isFacingRight && bounds.xDir > 0))
+			{
 				currState = State.WALK_BACKWARD;
+				return;
+			}
 		}	
 	}
 	
@@ -150,6 +160,8 @@ abstract class Puppet
 		bounds.move();
 		if(isPerformingAction)
 			currState = State.PERFORM_ACTION;
+		if(!bounds.isGrounded && jDirections[0] == 0 && jDirections[1] == 0) //!isJumping)
+			currState = State.FALL;
 		if(bounds.xVel == 0)
 			currState = State.IDLE;
 	}
@@ -211,16 +223,16 @@ abstract class Puppet
 	
 	public void update()
 	{
-		if(currState == State.CROUCH)
+/*		if(currState == State.CROUCH)
 		{
 			bounds.yCoord = yCoord+height-crHeight;
 			bounds.height = crHeight;
 		}
 		else
-		{
+		{*/
 			bounds.yCoord = yCoord;
 			bounds.height = height;
-		}
+//		}
 		bounds.update();
 	//	grabBox.update();
 		
@@ -256,34 +268,35 @@ abstract class Puppet
 		anatomy = new ArrayList<Organ>();
 		if(h < hitboxArchiver.size())
 		{
-			if(currState != prevState)
+			//MIGHT REMOVE AGAIN, COULD BE PLACED IN PUBLIC METHOD
+		/*	if(currState != prevState)
 			{
-				frameIndex = hitboxArchiver.get(h)[0][1];
+				frameIndex = hitboxArchiver.get(State.valueOf(currState.toString()).ordinal())[0][1];
 				prevState = currState;
-			}
+			}*/
+			//===
 			
 		//	frameIndex = 0;	//TEST
 			
-			int i = ((hitboxArchiver.get(h)[0][3] == 0)? (int)frameIndex+1:hitboxArchiver.get(h).length-(int)frameIndex-1)-((frameIndex < hitboxArchiver.get(h)[0][2])? 0:hitboxArchiver.get(h)[0][1]);
-			if(h < hitboxArchiver.size())	//dont really need in final, good for testing
-			{
-				if((hitboxArchiver.get(h)[0][3] == 0 && i < hitboxArchiver.get(h).length) || (hitboxArchiver.get(h)[0][3] == 1 && i > 0))
-				{
-					for(int j = 0; j < hitboxArchiver.get(h)[i].length; j += 4)
-						anatomy.add(new Organ((isFacingRight)? hitboxArchiver.get(h)[i][j]+bounds.xCoord:bounds.xCoord+bounds.width-hitboxArchiver.get(h)[i][j]-hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+1]+bounds.yCoord,hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+3],speed));
-				}
-			}
+			int i = (int)frameIndex+1;
+			if(hitboxArchiver.get(h)[0][3] == 0 && frameIndex >= hitboxArchiver.get(h)[0][2])
+				i -= hitboxArchiver.get(h)[0][1];
+			else if(hitboxArchiver.get(h)[0][3] == 1 && frameIndex <= hitboxArchiver.get(h)[0][2])
+				i += hitboxArchiver.get(h)[0][1];
+			for(int j = 0; j < hitboxArchiver.get(h)[i].length; j += 4)
+				anatomy.add(new Organ((isFacingRight)? hitboxArchiver.get(h)[i][j]+bounds.xCoord:bounds.xCoord+bounds.width-hitboxArchiver.get(h)[i][j]-hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+1]+bounds.yCoord,hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+3],speed));
 			
-		//	frameIndex++;
-			int f = (int)frameIndex;
-			frameIndex += 1.0/(hitboxArchiver.get(h)[0][4]+1);
-			if(frameIndex-f >= 1)
+			int f = (int)frameIndex+((hitboxArchiver.get(h)[0][3] == 1 && frameIndex != (int)frameIndex)? 1:0);
+			frameIndex += (hitboxArchiver.get(h)[0][3] == 0)? 1.0/(hitboxArchiver.get(h)[0][4]+1):-1.0/(hitboxArchiver.get(h)[0][4]+1);
+			if(Math.abs(frameIndex-f) >= 1)
 			{
 				frameIndex = (int)frameIndex;
+				i += (hitboxArchiver.get(h)[0][3] == 0)? 1:-1;
+				
 				if(preFrames > 0)
 					preFrames--;
 			}
-			if(frameIndex >= ((frameIndex < hitboxArchiver.get(h)[0][2])? hitboxArchiver.get(h)[0][1]:hitboxArchiver.get(h)[0][2])+hitboxArchiver.get(h).length-1)
+			if((hitboxArchiver.get(h)[0][3] == 0 && i >= hitboxArchiver.get(h).length) || (hitboxArchiver.get(h)[0][3] == 1 && i <= 0))
 				frameIndex = hitboxArchiver.get(h)[0][2];
 		}
 	}

@@ -8,20 +8,21 @@ public class Player extends Puppet
 	ArrayList<int[][]> movelist;	// [stick inputs, button inputs, input delay, move(int method?)]
 	Action[] actions;
 	Action currAction;
-	State currState;
+	State currState, prevState;
 	int airDashLimit, aDash, fCounter;
 	boolean isDashing;	//ADD isLanding TO MAKE FORWARD/BACK JUMPS PIXEL PERFECT??
 	
 	public enum State
 	{
-		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, PERFORM_ACTION
+		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD, PERFORM_ACTION
 	}
 	
-	public Player(int x, int y, int w, int h, int c, /*int e,*/ int s, int a, boolean r)
+	public Player(int x, int y, int w, int h, int c, /*int e,*/ int s, int a, int j, boolean r)
 	{
-		super(x,y,w,h,c,1000,600,5000,s,a,20,r,false);
+		super(x,y,w,h,c,1000,600,5000,s,a,j,r,false);
 		currAction = null;
 		currState = State.IDLE;
+		prevState = State.IDLE;
 		isDashing = false;
 		airDashLimit = a;
 		aDash = 0;
@@ -63,19 +64,30 @@ public class Player extends Puppet
 	}
 	
 	public void checkState()
-	{
+	{//if(xCoord == 700)System.out.println(jDirections[0]+" "+jDirections[1]+"   "+currState);
 		switch(currState)
 		{
 			case IDLE:
+			case FALL:
+			case LANDING:
+				idle();
+				break;
+				
 			case CROUCH:
 			case STANDING:
 			case CROUCHING:
-				idle();
+				crouch();
 				break;
 				
 			case WALK_FORWARD:
 			case WALK_BACKWARD:
 				move();
+				break;
+				
+			case JUMP_NEUTRAL:
+			case JUMP_FORWARD:
+			case JUMP_BACKWARD:
+				jump();
 				break;
 				
 			case PERFORM_ACTION:
@@ -87,6 +99,15 @@ public class Player extends Puppet
 		xCoord = bounds.xCoord;
 		if(!isCrouching && currState != State.STANDING)
 			yCoord = bounds.yCoord;
+		
+		if(State.valueOf(currState.toString()).ordinal() < hitboxArchiver.size())
+		{
+			if(currState != prevState)
+			{
+				frameIndex = hitboxArchiver.get(State.valueOf(currState.toString()).ordinal())[0][1];
+				prevState = currState;
+			}
+		}
 	}
 	
 	public void performAction()
@@ -101,36 +122,55 @@ public class Player extends Puppet
 	
 	public void idle()
 	{
-		if(isCrouching)
-		{
-			if(currState == State.IDLE)
-			{
-				currState = State.CROUCHING;
-				frameIndex = 0;
-				preFrames = 4;
-			}
-			else if(preFrames == 0)
-				currState = State.CROUCH;
-		}
-		else
-		{
-			if(currState == State.CROUCH)
-			{
-				currState = State.STANDING;
-				frameIndex = 0;
-				preFrames = 4;
-			}
-			else if(preFrames == 0)
-				currState = State.IDLE;
-		}
-			
 		//TAKE DAMAGE ROUTE SUPERCEDES EVERYTHING
 		if(currAction != null)
 		{
 			currState = State.PERFORM_ACTION;
 			return;
 		}
+		
 		//NORMAL ATTACK ROUTE (also read last stick input in case of command normal)
+		
+		if(jDirections[1] == 1)
+		{
+			switch(jDirections[0])
+			{
+				case 0:
+					currState = State.JUMP_NEUTRAL;
+					return;
+					
+				case 1:
+					currState = (isFacingRight)? State.JUMP_FORWARD:State.JUMP_BACKWARD;
+					return;
+					
+				case -1:
+					currState = (isFacingRight)? State.JUMP_BACKWARD:State.JUMP_FORWARD;
+					return;
+			}
+		}
+		
+		if((!bounds.isGrounded && jDirections[0] == 0 && jDirections[1] == 0) /*!isJumping)*/ || currState == State.FALL || currState == State.LANDING)
+		{
+			if(currState != State.LANDING)
+			{//System.out.println(preFrames+" "+frameIndex+"	"+currState);
+				currState = State.FALL;
+				if(bounds.isGrounded)
+				{
+					currState = State.LANDING;
+					preFrames = 3;
+				}
+			}
+			else if(preFrames == 0)
+				currState = State.IDLE;
+			return;
+		}
+		
+		if(isCrouching)
+		{
+			currState = State.CROUCHING;
+			return;
+		}
+		
 		if((isFacingRight && (bounds.xDir > 0 || bounds.xDrag > 0)) || (!isFacingRight && (bounds.xDir < 0  || bounds.xDrag < 0)))
 		{
 			currState = State.WALK_FORWARD;
@@ -150,8 +190,79 @@ public class Player extends Puppet
 			bounds.xVel = 0;
 		if(currAction != null)
 			currState = State.PERFORM_ACTION;
+		if(jDirections[1] == 1)
+		{
+			switch(jDirections[0])
+			{
+				case 0:
+					currState = State.JUMP_NEUTRAL;
+					return;
+					
+				case 1:
+					currState = (isFacingRight)? State.JUMP_FORWARD:State.JUMP_BACKWARD;
+					return;
+					
+				case -1:
+					currState = (isFacingRight)? State.JUMP_BACKWARD:State.JUMP_FORWARD;
+					return;
+			}
+		}
+		if(!bounds.isGrounded && jDirections[0] == 0 && jDirections[1] == 0) //!isJumping)
+			currState = State.FALL;
 		if(bounds.xVel == 0)
 			currState = State.IDLE;
+	}
+	
+	public void crouch()
+	{//System.out.println(preFrames+" "+frameIndex+"	"+currState);
+		if(isCrouching)
+		{
+			if(currState == State.IDLE)
+			{
+				currState = State.CROUCHING;
+				preFrames = 4;
+			}
+			else if(preFrames == 0)
+				currState = State.CROUCH;
+		}
+		else
+		{
+			if(currState == State.CROUCH)
+			{
+				currState = State.STANDING;
+				preFrames = 4;
+			}
+			else if(preFrames == 0)
+				currState = State.IDLE;
+		}
+	}
+	
+	public void jump()
+	{
+		if(jDirections[1] == 1)
+		{
+			switch(jDirections[0])
+			{
+				case 0:
+					currState = State.JUMP_NEUTRAL;
+					return;
+					
+				case 1:
+					currState = (isFacingRight)? State.JUMP_FORWARD:State.JUMP_BACKWARD;
+					return;
+					
+				case -1:
+					currState = (isFacingRight)? State.JUMP_BACKWARD:State.JUMP_FORWARD;
+					return;
+			}
+		}
+		if(jDirections[0] == 0 && jDirections[1] == 0)
+			currState = State.FALL;
+	}
+	
+	public void getHitboxes()
+	{
+		super.getHitboxes(State.valueOf(currState.toString()).ordinal());
 	}
 	
 	public void update()

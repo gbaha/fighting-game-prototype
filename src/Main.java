@@ -69,7 +69,7 @@ public class Main
 					p2.stickInputs.remove();*/
 					
 				//FRAME BY FRAME TEST
-				fpsLimit = 1;
+				fpsLimit = 3;
 			}
 			//==
 			
