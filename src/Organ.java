@@ -62,14 +62,14 @@ public class Organ extends Hitbox
 	
 	public void move()
 	{
-		if(Math.abs(xDir) > 0 && xDir != -xDrag && xVel < speed)
-			xVel++;
+		if(Math.abs(xDir) > 0/* && xDir != -xDrag && xVel < speed*/)
+			xVel = speed;	//xVel++;
 		if(Math.abs(xDrag) > 0 && xVel > 0)
-			xVel--;
-		if(Math.abs(yDir) > 0 && yDir != -yDrag && yVel < speed)
-			yVel++;
-		if(Math.abs(yDrag) > 0 && yVel > 0)
-			yVel--;
+			xVel = 0;	//xVel--;
+		if(Math.abs(yDir) > 0 /*&& yDir != -yDrag && yVel < speed*/)
+			yVel = speed;	//yVel++;
+		if(Math.abs(yDrag) > 0 /*&& yVel > 0*/)
+			yVel = 0;	//yVel--;
 		
 	/*	if((xDir > 0 && blocked[1]) || (xDir < 0 && blocked[3]))
 			xVel = 0;

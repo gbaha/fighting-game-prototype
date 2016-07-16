@@ -137,7 +137,7 @@ public class Logic
 				String t = p.bounds.forceArchiver.get(f).type;
 				int d = p.bounds.forceArchiver.get(f).direction;
 				
-				if((p.bounds.forceArchiver.get(f).type.equals("yJump") || p.bounds.forceArchiver.get(f).type.equals("headhug")) && p.bounds.forceArchiver.get(f).direction == 2)
+				if((p.bounds.forceArchiver.get(f).type.equals("yJump") || p.bounds.forceArchiver.get(f).type.equals("headhug")) && p.bounds.forceArchiver.get(f).magnitude >= gravity.magnitude)
 					p.jDirections[1] = 1;	//p.isJumping = true;
 				else if(p.bounds.forceArchiver.get(f).type.equals("xJump"))
 					p.jDirections[0] = (p.bounds.forceArchiver.get(f).direction == 1)? -1:1;

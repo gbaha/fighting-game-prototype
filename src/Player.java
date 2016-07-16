@@ -14,7 +14,7 @@ public class Player extends Puppet
 	
 	public enum State
 	{
-		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD, PERFORM_ACTION
+		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD//, PERFORM_ACTION
 	}
 	
 	public Player(int x, int y, int w, int h, int c, /*int e,*/ int s, int a, int j, boolean r)
@@ -68,7 +68,9 @@ public class Player extends Puppet
 		switch(currState)
 		{
 			case IDLE:
-			case FALL:
+			case FALL_NEUTRAL:
+			case FALL_FORWARD:
+			case FALL_BACKWARD:
 			case LANDING:
 				idle();
 				break;
@@ -90,9 +92,9 @@ public class Player extends Puppet
 				jump();
 				break;
 				
-			case PERFORM_ACTION:
+		/*	case PERFORM_ACTION:
 				performAction();
-				break;
+				break;*/
 				
 			//Take damage case
 		}
@@ -125,7 +127,8 @@ public class Player extends Puppet
 		//TAKE DAMAGE ROUTE SUPERCEDES EVERYTHING
 		if(currAction != null)
 		{
-			currState = State.PERFORM_ACTION;
+		//	currState = State.PERFORM_ACTION;
+			performAction();
 			return;
 		}
 		
@@ -149,11 +152,23 @@ public class Player extends Puppet
 			}
 		}
 		
-		if((!bounds.isGrounded && jDirections[0] == 0 && jDirections[1] == 0) /*!isJumping)*/ || currState == State.FALL || currState == State.LANDING)
+		if((!bounds.isGrounded && jDirections[0] == 0 && jDirections[1] == 0) /*!isJumping)*/ || currState == State.FALL_NEUTRAL || currState == State.FALL_FORWARD || currState == State.FALL_BACKWARD || currState == State.LANDING)
 		{
 			if(currState != State.LANDING)
 			{//System.out.println(preFrames+" "+frameIndex+"	"+currState);
-				currState = State.FALL;
+				switch(jDirections[0])
+				{
+					case 0:
+						currState = State.FALL_NEUTRAL;
+						break;
+					case 1:
+						currState = (isFacingRight)? State.FALL_FORWARD:State.FALL_BACKWARD;
+						break;
+					case -1:
+						currState = (isFacingRight)? State.FALL_BACKWARD:State.FALL_FORWARD;
+						break;
+				}
+				
 				if(bounds.isGrounded)
 				{
 					currState = State.LANDING;
@@ -168,6 +183,7 @@ public class Player extends Puppet
 		if(isCrouching)
 		{
 			currState = State.CROUCHING;
+			preFrames = 4;
 			return;
 		}
 		
@@ -189,7 +205,12 @@ public class Player extends Puppet
 		if(isCrouching)
 			bounds.xVel = 0;
 		if(currAction != null)
-			currState = State.PERFORM_ACTION;
+		{
+	//		currState = State.PERFORM_ACTION;
+			performAction();
+			return;
+		}
+		
 		if(jDirections[1] == 1)
 		{
 			switch(jDirections[0])
@@ -207,22 +228,39 @@ public class Player extends Puppet
 					return;
 			}
 		}
-		if(!bounds.isGrounded && jDirections[0] == 0 && jDirections[1] == 0) //!isJumping)
-			currState = State.FALL;
+		
+		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
+		{
+			switch(jDirections[0])
+			{
+				case 0:
+					currState = State.FALL_NEUTRAL;
+					return;
+				case 1:
+					currState = (isFacingRight)? State.FALL_FORWARD:State.FALL_BACKWARD;
+					return;
+				case -1:
+					currState = (isFacingRight)? State.FALL_BACKWARD:State.FALL_FORWARD;
+					return;
+			}
+		}
+		
 		if(bounds.xVel == 0)
 			currState = State.IDLE;
 	}
 	
 	public void crouch()
 	{//System.out.println(preFrames+" "+frameIndex+"	"+currState);
+		if(currAction != null)
+		{
+	//		currState = State.PERFORM_ACTION;
+			performAction();
+			return;
+		}
+		
 		if(isCrouching)
 		{
-			if(currState == State.IDLE)
-			{
-				currState = State.CROUCHING;
-				preFrames = 4;
-			}
-			else if(preFrames == 0)
+			if(preFrames == 0)
 				currState = State.CROUCH;
 		}
 		else
@@ -239,6 +277,13 @@ public class Player extends Puppet
 	
 	public void jump()
 	{
+		if(currAction != null)
+		{
+	//		currState = State.PERFORM_ACTION;
+			performAction();
+			return;
+		}
+		
 		if(jDirections[1] == 1)
 		{
 			switch(jDirections[0])
@@ -249,6 +294,7 @@ public class Player extends Puppet
 					
 				case 1:
 					currState = (isFacingRight)? State.JUMP_FORWARD:State.JUMP_BACKWARD;
+						frameIndex = 0;
 					return;
 					
 				case -1:
@@ -256,8 +302,22 @@ public class Player extends Puppet
 					return;
 			}
 		}
-		if(jDirections[0] == 0 && jDirections[1] == 0)
-			currState = State.FALL;
+		
+		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
+		{
+			switch(jDirections[0])
+			{
+				case 0:
+					currState = State.FALL_NEUTRAL;
+					return;
+				case 1:
+					currState = (isFacingRight)? State.FALL_FORWARD:State.FALL_BACKWARD;
+					return;
+				case -1:
+					currState = (isFacingRight)? State.FALL_BACKWARD:State.FALL_FORWARD;
+					return;
+			}
+		}
 	}
 	
 	public void getHitboxes()

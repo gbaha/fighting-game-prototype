@@ -26,7 +26,7 @@ abstract class Puppet
 	
 	public enum State
 	{
-		IDLE, WALK_FORWARD, WALK_BACKWARD, FALL, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD, PERFORM_ACTION
+		IDLE, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD//, PERFORM_ACTION
 	}
 	
 	public Puppet(int x, int y, int w, int h, int c, int hp, int sp, int mp, int s, int a, double j, boolean r, boolean f2)
@@ -119,7 +119,9 @@ abstract class Puppet
 		switch(currState)
 		{
 			case IDLE:
-			case FALL:
+			case FALL_NEUTRAL:
+			case FALL_FORWARD:
+			case FALL_BACKWARD:
 			case LANDING:
 				idle();
 				break;
@@ -135,11 +137,34 @@ abstract class Puppet
 		yCoord = bounds.yCoord;
 	}
 	
+/*	public void performAction()
+	{
+		currAction.perform(fCounter);
+		if(!isPerformingAction)
+		{
+			currAction = null;
+			currState = State.IDLE;
+		}
+	}*/
+	
 	public void idle()
 	{
 		//TAKE DAMAGE ROUTE SUPERCEDES EVERYTHING
-		if(!bounds.isGrounded && jDirections[0] == 0 && jDirections[1] == 0) //!isJumping)
-			currState = State.FALL;
+		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
+		{
+			switch(jDirections[0])
+			{
+				case 0:
+					currState = State.FALL_NEUTRAL;
+					return;
+				case 1:
+					currState = (isFacingRight)? State.FALL_FORWARD:State.FALL_BACKWARD;
+					return;
+				case -1:
+					currState = (isFacingRight)? State.FALL_BACKWARD:State.FALL_FORWARD;
+					return;
+			}
+		}
 		if(bounds.xVel > 0)
 		{
 			if((isFacingRight && bounds.xDir > 0) || (!isFacingRight && bounds.xDir < 0))
@@ -159,9 +184,26 @@ abstract class Puppet
 	{
 		bounds.move();
 		if(isPerformingAction)
-			currState = State.PERFORM_ACTION;
-		if(!bounds.isGrounded && jDirections[0] == 0 && jDirections[1] == 0) //!isJumping)
-			currState = State.FALL;
+		{
+	/*		currState = State.PERFORM_ACTION;
+			performAction();
+			return;*/
+		}
+		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
+		{
+			switch(jDirections[0])
+			{
+				case 0:
+					currState = State.FALL_NEUTRAL;
+					return;
+				case 1:
+					currState = (isFacingRight)? State.FALL_FORWARD:State.FALL_BACKWARD;
+					return;
+				case -1:
+					currState = (isFacingRight)? State.FALL_BACKWARD:State.FALL_FORWARD;
+					return;
+			}
+		}
 		if(bounds.xVel == 0)
 			currState = State.IDLE;
 	}
@@ -278,11 +320,14 @@ abstract class Puppet
 			
 		//	frameIndex = 0;	//TEST
 			
-			int i = (int)frameIndex+1;
-			if(hitboxArchiver.get(h)[0][3] == 0 && frameIndex >= hitboxArchiver.get(h)[0][2])
+			int i = (int)frameIndex+1-((hitboxArchiver.get(h)[0][3] == 0)? hitboxArchiver.get(h)[0][1]:0);
+		/*	if(hitboxArchiver.get(h)[0][3] == 0) //&& frameIndex >= hitboxArchiver.get(h)[0][2])
 				i -= hitboxArchiver.get(h)[0][1];
-			else if(hitboxArchiver.get(h)[0][3] == 1 && frameIndex <= hitboxArchiver.get(h)[0][2])
-				i += hitboxArchiver.get(h)[0][1];
+		/*	else if(hitboxArchiver.get(h)[0][3] == 1 && frameIndex <= hitboxArchiver.get(h)[0][2])
+				i += hitboxArchiver.get(h)[0][1];*/
+			
+			//System.out.println(h+"   "+i+" ("+(int)(frameIndex)+" "+hitboxArchiver.get(h)[0][1]+")   "+hitboxArchiver.get(h)[0][2]+" "+hitboxArchiver.get(h)[0][3]);
+			
 			for(int j = 0; j < hitboxArchiver.get(h)[i].length; j += 4)
 				anatomy.add(new Organ((isFacingRight)? hitboxArchiver.get(h)[i][j]+bounds.xCoord:bounds.xCoord+bounds.width-hitboxArchiver.get(h)[i][j]-hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+1]+bounds.yCoord,hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+3],speed));
 			
