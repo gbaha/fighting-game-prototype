@@ -14,7 +14,7 @@ public class Player extends Puppet
 	
 	public enum State
 	{
-		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD//, PERFORM_ACTION
+		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD, DASH_FORWARD, DASH_BACKWARD	//, PERFORM_ACTION
 	}
 	
 	public Player(int x, int y, int w, int h, int c, /*int e,*/ int s, int a, int j, boolean r)
@@ -26,6 +26,7 @@ public class Player extends Puppet
 		isDashing = false;
 		airDashLimit = a;
 		aDash = 0;
+		fCounter = 0;
 		meter = 1000;
 		
 		movelist = new ArrayList<int[][]>();	//PLACE MOVELIST ITEMS IN ORDER OF PRIORITY!!!!
@@ -64,7 +65,7 @@ public class Player extends Puppet
 	}
 	
 	public void checkState()
-	{//if(xCoord == 700)System.out.println(jDirections[0]+" "+jDirections[1]+"   "+currState);
+	{
 		switch(currState)
 		{
 			case IDLE:
@@ -92,9 +93,11 @@ public class Player extends Puppet
 				jump();
 				break;
 				
-		/*	case PERFORM_ACTION:
+	//		case PERFORM_ACTION:
+			case DASH_FORWARD:
+			case DASH_BACKWARD:
 				performAction();
-				break;*/
+				break;
 				
 			//Take damage case
 		}
@@ -115,10 +118,12 @@ public class Player extends Puppet
 	public void performAction()
 	{
 		currAction.perform(fCounter);
+		fCounter++;
 		if(!isPerformingAction)
 		{
 			currAction = null;
 			currState = State.IDLE;
+			fCounter = 0;
 		}
 	}
 	
@@ -155,7 +160,7 @@ public class Player extends Puppet
 		if((!bounds.isGrounded && jDirections[0] == 0 && jDirections[1] == 0) /*!isJumping)*/ || currState == State.FALL_NEUTRAL || currState == State.FALL_FORWARD || currState == State.FALL_BACKWARD || currState == State.LANDING)
 		{
 			if(currState != State.LANDING)
-			{//System.out.println(preFrames+" "+frameIndex+"	"+currState);
+			{
 				switch(jDirections[0])
 				{
 					case 0:
@@ -250,7 +255,7 @@ public class Player extends Puppet
 	}
 	
 	public void crouch()
-	{//System.out.println(preFrames+" "+frameIndex+"	"+currState);
+	{
 		if(currAction != null)
 		{
 	//		currState = State.PERFORM_ACTION;
@@ -364,9 +369,15 @@ public class Player extends Puppet
 	
 	private class FrontDash extends Action
 	{
+		double magnitude, decay;
+		int frames;
+		
 		public FrontDash()
 		{
 			super(Action.DASH,new boolean[]{false,false,false,false,false});
+			magnitude = 35;
+			decay = 2;
+			frames = (int)(magnitude/decay)+((magnitude/decay == (int)(magnitude/decay))? 0:1);
 		}
 		
 		public void perform(int f)
@@ -374,37 +385,49 @@ public class Player extends Puppet
 			int d = (isFacingRight)? 3:1;
 			isPerformingAction = true;
 			
-			if(!isCrouching && !isDashing && aDash < airDashLimit)
+			if(f >= frames)
 			{
-				bounds.forceArchiver.add(new Force("dash",d,35,2));
-				aDash++;
-				
-				if(!bounds.isGrounded)
+				isPerformingAction = false;
+				return;
+			}
+			else
+			{
+				if(!isCrouching && !isDashing && aDash < airDashLimit)
 				{
-					boolean j = false;
-					for(Force g: bounds.forceArchiver)
+					currState = State.DASH_FORWARD;
+					bounds.forceArchiver.add(new Force("dash",(isFacingRight)? 3:1,magnitude,decay));
+					aDash++;
+					
+					if(!bounds.isGrounded)
 					{
-						if(g.type.equals("xJump") && g.direction == (d+2)%4)
+						boolean j = false;
+						for(Force g: bounds.forceArchiver)
 						{
-							g.direction = d;
-							j = true;
+							if(g.type.equals("xJump") && g.direction == (d+2)%4)
+							{
+								g.direction = d;
+								j = true;
+							}
 						}
+						if(!j)
+							bounds.forceArchiver.add(new Force("xJump",d,6,0));
 					}
-					if(!j)
-						bounds.forceArchiver.add(new Force("xJump",d,6,0));
 				}
 			}
-			
-			if(!isDashing)
-				isPerformingAction = false;
 		}
 	}
 
 	public class BackDash extends Action
 	{
+		double magnitude, decay;
+		int frames;
+		
 		public BackDash()
 		{
 			super(Action.DASH,new boolean[]{false,false,false,false,false});
+			magnitude = 28;
+			decay = 2;
+			frames = (int)(magnitude/decay)+((magnitude/decay == (int)(magnitude/decay))? 0:1);
 		}
 		
 		public void perform(int f)
@@ -412,29 +435,35 @@ public class Player extends Puppet
 			int d = (isFacingRight)? 1:3;
 			isPerformingAction = true;
 			
-			if(!isCrouching && !isDashing && aDash < airDashLimit)
+			if(f >= frames)
 			{
-				bounds.forceArchiver.add(new Force("dash",d,28,2));
-				aDash++;
-				
-				if(!bounds.isGrounded)
+				isPerformingAction = false;
+				return;
+			}
+			else
+			{
+				if(!isCrouching && !isDashing && aDash < airDashLimit)
 				{
-					boolean j = false;
-					for(Force g: bounds.forceArchiver)
+					currState = State.DASH_BACKWARD;
+					bounds.forceArchiver.add(new Force("dash",d,magnitude,decay));
+					aDash++;
+					
+					if(!bounds.isGrounded)
 					{
-						if(g.type.equals("xJump") && g.direction == (d+2)%4)
+						boolean j = false;
+						for(Force g: bounds.forceArchiver)
 						{
-							g.direction = d;
-							j = true;
+							if(g.type.equals("xJump") && g.direction == (d+2)%4)
+							{
+								g.direction = d;
+								j = true;
+							}
 						}
+						if(!j)
+							bounds.forceArchiver.add(new Force("xJump",d,4,0));
 					}
-					if(!j)
-						bounds.forceArchiver.add(new Force("xJump",d,4,0));
 				}
 			}
-			
-			if(!isDashing)
-				isPerformingAction = false;
 		}
 	}
 }

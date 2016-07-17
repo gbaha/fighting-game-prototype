@@ -326,8 +326,6 @@ abstract class Puppet
 		/*	else if(hitboxArchiver.get(h)[0][3] == 1 && frameIndex <= hitboxArchiver.get(h)[0][2])
 				i += hitboxArchiver.get(h)[0][1];*/
 			
-			//System.out.println(h+"   "+i+" ("+(int)(frameIndex)+" "+hitboxArchiver.get(h)[0][1]+")   "+hitboxArchiver.get(h)[0][2]+" "+hitboxArchiver.get(h)[0][3]);
-			
 			for(int j = 0; j < hitboxArchiver.get(h)[i].length; j += 4)
 				anatomy.add(new Organ((isFacingRight)? hitboxArchiver.get(h)[i][j]+bounds.xCoord:bounds.xCoord+bounds.width-hitboxArchiver.get(h)[i][j]-hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+1]+bounds.yCoord,hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+3],speed));
 			
