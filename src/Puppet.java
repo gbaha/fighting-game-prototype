@@ -9,38 +9,57 @@ import java.util.ArrayList;
 abstract class Puppet
 {
 	ArrayList<Organ> anatomy;
-	ArrayList<Pleb> plebArchiver;
-	ArrayList<int[]> touchArchiver;//, actionList, spriteArchiver;
+	ArrayList<int[]> touchArchiver;	//, actionList, spriteArchiver;
 	ArrayList<int[][]> hitboxArchiver;
-//	ArrayList<Force> forceArchiver; 
+	ArrayList<Pleb> plebsIn, plebsOut;	//plebArchiver;
+	Action[] normals;
+	
+//	ArrayList<Force> forceArchiver;
 	Organ bounds, grabBox;	//Name subject to change, could use bounds as throwable hitbox
 	State currState, prevState;
+	Action currAction;
 	int id, xCoord, yCoord, xHosh, yHosh, width, height, crHeight;
 	int maxHp, maxSp, maxMp, maxSpd;
 	int health, stamina, meter, speed;
-	int preFrames;
-	double frameIndex, jForce, jump;
+	int preFrames, fCounter, hitStop, hitStun;
+	double fIndex, jForce, jump;
 	boolean isFacingRight, isPerformingAction, isCrouching;//, isJumping;
 	int[] jDirections, spriteParams;
 	boolean[] isBlocking;
 	
-	public enum State
+	public enum PuppetState implements State
 	{
-		IDLE, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD//, PERFORM_ACTION
+		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD,	//, PERFORM_ACTION
+		FLINCH_STANDING0, FLINCH_STANDING1, FLINCH_STANDING2, FLINCH_CROUCHING;
+		
+		public String getState()
+		{
+			return name();
+		}
+		
+		public int getPosition()
+		{
+			return ordinal();
+		}
 	}
 	
 	public Puppet(int x, int y, int w, int h, int c, int hp, int sp, int mp, int s, int a, double j, boolean r, boolean f2)
 	{
 		anatomy = new ArrayList<Organ>();
-		plebArchiver = new ArrayList<Pleb>();
+	//	plebArchiver = new ArrayList<Pleb>();
 		touchArchiver = new ArrayList<int[]>();	//[type, id]
 		hitboxArchiver = new ArrayList<int[][]>(); //[sheet.y, sheet.xStart, sheet.xLoop, reversed?, frame delay], [[hitbox.x, hitbox.y, hitbox.w, hitbox.h, ...], ...
 	//	actionList = new ArrayList<int[]>();	//[action name, sprites in row, loops?]
 	//	spriteArchiver = new ArrayList<int[]>();	//[xMod,yMod,width,height,sWidth,sHeight]
-	//	forceArchiver = new ArrayList<Force>();
+		plebsIn = new ArrayList<Pleb>();
+		plebsOut = new ArrayList<Pleb>();
 		
-		currState = State.IDLE;
-		prevState = State.IDLE;
+	//	forceArchiver = new ArrayList<Force>();
+		normals = new Action[]{new LightPunch(), new MediumPunch(), new HeavyPunch(), new LightKick(), new MediumKick(), new HeavyKick()};
+		
+		currState = PuppetState.IDLE;
+		prevState = PuppetState.IDLE;
+		currAction = null;
 		id = -1;
 		xCoord = x;
 		yCoord = y;
@@ -68,8 +87,11 @@ abstract class Puppet
 		speed = maxSpd;
 		jump = jForce;
 		
-		frameIndex = 0;
 		preFrames = 0;
+		fCounter = 0;
+		fIndex = 0;
+		hitStop = 0;
+		hitStun = 0;
 		
 		bounds =  new Organ(x,y,w,h,speed);
 		bounds.isFloating = f2;
@@ -95,15 +117,12 @@ abstract class Puppet
 				else
 					g.drawLine((int)((bounds.xHosh-15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720),(int)((bounds.xHosh+15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720));
 				
-				g.setColor(Color.BLUE);
-				g.drawString((int)frameIndex+"",(int)((bounds.xHosh+bounds.width+2)*w/1280),(int)((bounds.yHosh+bounds.height*3/4)*h/720));
-				
 				for(Hitbox a: anatomy)
 				{
-					g.setColor(Color.MAGENTA);
+					g.setColor(Color.GREEN);
 					g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50));
 					g.fillRect((int)(a.xHosh*w/1280),(int)(a.yHosh*h/720),(int)(a.width*w/1280),(int)(a.height*h/720));
-					g.setColor(Color.MAGENTA);
+					g.setColor(Color.GREEN);
 					g.drawRect((int)(a.xHosh*w/1280),(int)(a.yHosh*h/720),(int)(a.width*w/1280),(int)(a.height*h/720));
 				}
 			}
@@ -116,52 +135,70 @@ abstract class Puppet
 	
 	public void checkState()
 	{
-		switch(currState)
+		switch(currState.getState())
 		{
-			case IDLE:
-			case FALL_NEUTRAL:
-			case FALL_FORWARD:
-			case FALL_BACKWARD:
-			case LANDING:
+			case "IDLE":
+			case "FALL_NEUTRAL":
+			case "FALL_FORWARD":
+			case "FALL_BACKWARD":
+			case "LANDING":
 				idle();
 				break;
 				
-			case WALK_FORWARD:
-			case WALK_BACKWARD:
+			case "CROUCH":
+			case "STANDING":
+			case "CROUCHING":
+				crouch();
+				break;
+				
+			case "WALK_FORWARD":
+			case "WALK_BACKWARD":
 				move();
 				break;
 				
-			//Take damage case
+			case "FLINCH_STANDING0":
+			case "FLINCH_STANDING1":
+			case "FLINCH_STANDING2":
+			case "FLINCH_CROUCHING":
+				flinch();
 		}
 		xCoord = bounds.xCoord;
 		yCoord = bounds.yCoord;
 	}
 	
-/*	public void performAction()
+	public void setAction(Action a)
+	{
+		if(currAction == null)
+			currAction = a;
+		else if(currAction.isCancelable(currAction.type))
+			currAction = a;
+	}
+	
+	public void performAction()
 	{
 		currAction.perform(fCounter);
 		if(!isPerformingAction)
 		{
 			currAction = null;
-			currState = State.IDLE;
+			currState = PuppetState.IDLE;
+			fCounter = 0;
 		}
-	}*/
+	}
 	
 	public void idle()
 	{
-		//TAKE DAMAGE ROUTE SUPERCEDES EVERYTHING
 		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
 		{
 			switch(jDirections[0])
 			{
 				case 0:
-					currState = State.FALL_NEUTRAL;
+					currState = PuppetState.FALL_NEUTRAL;
 					return;
 				case 1:
-					currState = (isFacingRight)? State.FALL_FORWARD:State.FALL_BACKWARD;
+					currState = (isFacingRight)? PuppetState.FALL_FORWARD:PuppetState.FALL_BACKWARD;
 					return;
 				case -1:
-					currState = (isFacingRight)? State.FALL_BACKWARD:State.FALL_FORWARD;
+					currState = (isFacingRight)? PuppetState.FALL_BACKWARD:PuppetState.FALL_FORWARD;
 					return;
 			}
 		}
@@ -169,112 +206,134 @@ abstract class Puppet
 		{
 			if((isFacingRight && bounds.xDir > 0) || (!isFacingRight && bounds.xDir < 0))
 			{
-				currState = State.WALK_FORWARD;
+				currState = PuppetState.WALK_FORWARD;
 				return;
 			}
 			else if((isFacingRight && bounds.xDir < 0) || (!isFacingRight && bounds.xDir > 0))
 			{
-				currState = State.WALK_BACKWARD;
+				currState = PuppetState.WALK_BACKWARD;
 				return;
 			}
-		}	
+		}
+	}
+	
+	public void crouch()
+	{
+		if(isCrouching)
+		{
+			if(preFrames == 0)
+				currState = PuppetState.CROUCH;
+		}
+		else
+		{
+			if(currState == PuppetState.CROUCH)
+			{
+				currState = PuppetState.STANDING;
+				preFrames = 4;
+			}
+			else if(preFrames == 0)
+				currState = PuppetState.IDLE;
+		}
 	}
 	
 	public void move()
 	{
 		bounds.move();
-		if(isPerformingAction)
-		{
-	/*		currState = State.PERFORM_ACTION;
-			performAction();
-			return;*/
-		}
 		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
 		{
 			switch(jDirections[0])
 			{
 				case 0:
-					currState = State.FALL_NEUTRAL;
+					currState = PuppetState.FALL_NEUTRAL;
 					return;
 				case 1:
-					currState = (isFacingRight)? State.FALL_FORWARD:State.FALL_BACKWARD;
+					currState = (isFacingRight)? PuppetState.FALL_FORWARD:PuppetState.FALL_BACKWARD;
 					return;
 				case -1:
-					currState = (isFacingRight)? State.FALL_BACKWARD:State.FALL_FORWARD;
+					currState = (isFacingRight)? PuppetState.FALL_BACKWARD:PuppetState.FALL_FORWARD;
 					return;
 			}
 		}
 		if(bounds.xVel == 0)
-			currState = State.IDLE;
+			currState = PuppetState.IDLE;
 	}
 	
 	public void takeDamage(Pleb p)
 	{
+		health -= p.hDamage;
+	//	stamina -= p.sDamage;
 		if(health < 0)
 			health = 0;
 		if(stamina < 0)
 			stamina = 0;
+		for(Force f: p.appliedForces)
+			bounds.forceArchiver.add(f);
 		
-	/*	boolean isDamaged = true;
-		if(plebArchiver.isEmpty())
-			plebArchiver.add(p);
+		if(isCrouching)
+			currState = PuppetState.FLINCH_CROUCHING;
 		else
 		{
-			for(int a = 0; a < plebArchiver.size(); a++)
+			switch(p.direction)
 			{
-				if(plebArchiver.get(a) == p)
-				{
-					isDamaged = false;
-					if(plebArchiver.get(a).cooldown < plebArchiver.get(a).painThreshold)
-						plebArchiver.get(a).cooldown++;
-					else
-					{
-						plebArchiver.get(a).cooldown = 0;
-						plebArchiver.remove(a);
-						a++;
-					}
-				}
+				case 0:
+					currState = PuppetState.FLINCH_STANDING0;
+					break;
+				case 1:
+					currState = PuppetState.FLINCH_STANDING1;
+					break;
+				case 2:
+					currState = PuppetState.FLINCH_STANDING2;
+					break;
 			}
-			if(isDamaged && !p.faction.equals(faction))
-				plebArchiver.add(p);
 		}
-		if(isDamaged && !plebArchiver.isEmpty())
+		fIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+		
+		switch(p.strength)
 		{
-			if(health > 0)
-			{
-				for(Pleb a: plebArchiver)
-				{
-					if(a.isLethal)
-						health -= a.strength;
-					else
-						stamina -= a.strength;
-				
-					if(a.strength > 0)
-						a.strength -= a.maxStr*(1-a.lastingRate);
-				}
-			}
-			if(health < 0)
-				health = 0;
-		}*/
+			case 0:
+				hitStun = 10;
+				hitStop = 3;
+				break;
+			case 1:
+				hitStun = 10;
+				hitStop = 3;
+				break;
+			case 2:
+				hitStun = 10;
+				hitStop = 3;
+				break;
+			case 3:
+				hitStun = 10;
+				hitStop = 3;
+				break;
+		}
+	}
+	
+	public void flinch()
+	{
+		if(hitStun > 0)
+			hitStun--;
+		else
+			currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
 	}
 	
 	public void getHitboxes()
 	{
-		getHitboxes(State.valueOf(currState.toString()).ordinal());
+		getHitboxes(currState.getPosition());
 	}
 	
 	public void update()
 	{
-/*		if(currState == State.CROUCH)
+		if(currState == PuppetState.CROUCH)
 		{
 			bounds.yCoord = yCoord+height-crHeight;
 			bounds.height = crHeight;
 		}
 		else
-		{*/
+		{
 			bounds.yCoord = yCoord;
 			bounds.height = height;
-//		}
+		}
 		bounds.update();
 	//	grabBox.update();
 		
@@ -289,9 +348,9 @@ abstract class Puppet
 			o.yDrag = bounds.yDrag;
 		}
 		
-		if(!plebArchiver.isEmpty())
+		if(!plebsIn.isEmpty())
 		{
-			for(int p = 0; p < plebArchiver.size(); p++)
+			for(int p = 0; p < plebsIn.size(); p++)
 			{
 		/*		if(plebArchiver.get(p).cooldown < plebArchiver.get(p).painThreshold)
 					plebArchiver.get(p).cooldown++;
@@ -313,34 +372,103 @@ abstract class Puppet
 			//MIGHT REMOVE AGAIN, COULD BE PLACED IN PUBLIC METHOD
 		/*	if(currState != prevState)
 			{
-				frameIndex = hitboxArchiver.get(State.valueOf(currState.toString()).ordinal())[0][1];
+				fIndex = hitboxArchiver.get(PuppetState.valueOf(currState.toString()).ordinal())[0][1];
 				prevState = currState;
 			}*/
 			//===
 			
-		//	frameIndex = 0;	//TEST
+		//	fIndex = 0;	//TEST
 			
-			int i = (int)frameIndex+1-((hitboxArchiver.get(h)[0][3] == 0)? hitboxArchiver.get(h)[0][1]:0);
-		/*	if(hitboxArchiver.get(h)[0][3] == 0) //&& frameIndex >= hitboxArchiver.get(h)[0][2])
+			int i = (int)fIndex+1-((hitboxArchiver.get(h)[0][3] == 0)? hitboxArchiver.get(h)[0][1]:0);
+		/*	if(hitboxArchiver.get(h)[0][3] == 0) //&& fIndex >= hitboxArchiver.get(h)[0][2])
 				i -= hitboxArchiver.get(h)[0][1];
-		/*	else if(hitboxArchiver.get(h)[0][3] == 1 && frameIndex <= hitboxArchiver.get(h)[0][2])
+		/*	else if(hitboxArchiver.get(h)[0][3] == 1 && fIndex <= hitboxArchiver.get(h)[0][2])
 				i += hitboxArchiver.get(h)[0][1];*/
 			
 			for(int j = 0; j < hitboxArchiver.get(h)[i].length; j += 4)
 				anatomy.add(new Organ((isFacingRight)? hitboxArchiver.get(h)[i][j]+bounds.xCoord:bounds.xCoord+bounds.width-hitboxArchiver.get(h)[i][j]-hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+1]+bounds.yCoord,hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+3],speed));
 			
-			int f = (int)frameIndex+((hitboxArchiver.get(h)[0][3] == 1 && frameIndex != (int)frameIndex)? 1:0);
-			frameIndex += (hitboxArchiver.get(h)[0][3] == 0)? 1.0/(hitboxArchiver.get(h)[0][4]+1):-1.0/(hitboxArchiver.get(h)[0][4]+1);
-			if(Math.abs(frameIndex-f) >= 1)
+			int f = (int)fIndex+((hitboxArchiver.get(h)[0][3] == 1 && fIndex != (int)fIndex)? 1:0);
+			fIndex += (hitboxArchiver.get(h)[0][3] == 0)? 1.0/(hitboxArchiver.get(h)[0][4]+1):-1.0/(hitboxArchiver.get(h)[0][4]+1);
+			if(Math.abs(fIndex-f) >= 1)
 			{
-				frameIndex = (int)frameIndex;
+				fIndex = (int)fIndex;
 				i += (hitboxArchiver.get(h)[0][3] == 0)? 1:-1;
 				
 				if(preFrames > 0)
 					preFrames--;
 			}
 			if((hitboxArchiver.get(h)[0][3] == 0 && i >= hitboxArchiver.get(h).length) || (hitboxArchiver.get(h)[0][3] == 1 && i <= 0))
-				frameIndex = hitboxArchiver.get(h)[0][2];
+				fIndex = hitboxArchiver.get(h)[0][2];
 		}
+	}
+	
+	
+	public interface State
+	{
+		public String getState();
+		
+		public int getPosition();
+	}
+	
+	
+	public class LightPunch extends Action
+	{
+		public LightPunch()
+		{
+			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+		}
+		
+		public void perform(int f){}
+	}
+	
+	public class MediumPunch extends Action
+	{
+		public MediumPunch()
+		{
+			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+		}
+		
+		public void perform(int f){}
+	}
+	
+	public class HeavyPunch extends Action
+	{
+		public HeavyPunch()
+		{
+			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+		}
+		
+		public void perform(int f){}
+	}
+	
+	public class LightKick extends Action
+	{
+		public LightKick()
+		{
+			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+		}
+		
+		public void perform(int f){}
+	}
+	
+	public class MediumKick extends Action
+	{
+		public MediumKick()
+		{
+			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+		}
+		
+		public void perform(int f){}
+	}
+	
+	public class HeavyKick extends Action
+	{
+		public HeavyKick()
+		{
+			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+		}
+		
+		public void perform(int f){}
 	}
 }

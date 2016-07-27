@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MouseInfo; //TEST
 import java.awt.Toolkit;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -13,11 +14,11 @@ public class Hoshua extends JPanel
 	Stage canvas;
 	SpriteReader sReader;
 	Gui gui;
-	int xFocus, yFocus, xCoord, yCoord;
+	int xFocus, yFocus, xCoord, yCoord, fSkip, fCounter;
 	double width, height, fps;
 	boolean gamePaused, debugging;
 	
-	public Hoshua(Stage c, Gui g, int x, int y, double w, double h, double f, boolean p, boolean b)
+	public Hoshua(Stage c, Gui g, int x, int y, double w, double h, double f, int s, boolean p, boolean b)
 	{
 		super(true);
 		canvas = c;
@@ -29,7 +30,11 @@ public class Hoshua extends JPanel
 		yCoord = y;
 		width = w;
 		height = h;
+		
 		fps = f;
+		fSkip = s;
+		fCounter = 0;
+		
 		gamePaused = p;
 		debugging = b;
 	//	this.add(gui);
@@ -56,11 +61,54 @@ public class Hoshua extends JPanel
 					p.draw(g2,width,height,debugging);
 			}
 			
+			ArrayList<Puppet> puppets = new ArrayList<Puppet>();
+			ArrayList<Puppet> players = new ArrayList<Puppet>();
 			for(Puppet p: canvas.puppets)
 			{
-				if(p != null)
-					p.draw(g2,this,sReader,width,height,debugging);
+				if(p instanceof Player)
+					players.add(0,p);
+				else
+					puppets.add(0,p);
 			}
+			
+			int q = 0;
+			for(int p = 0; p < puppets.size(); p++)
+			{
+				switch(puppets.get(q).currState.getState())
+				{
+					case "IDLE":
+					case "CROUCH":
+					case "STANDING":
+					case "CROUCHING":
+						q++;
+						break;
+					default:
+						puppets.add(puppets.size(),puppets.get(q));
+						puppets.remove(q);
+						break;
+				}
+			}
+			for(int p = 0; p < players.size(); p++)
+			{
+				switch(players.get(q).currState.getState())
+				{
+					case "IDLE":
+					case "CROUCH":
+					case "STANDING":
+					case "CROUCHING":
+						q++;
+						break;
+					default:
+						players.add(players.size(),players.get(q));
+						players.remove(q);
+						break;
+				}
+			}
+			
+			for(Puppet p: puppets)
+					p.draw(g2,this,sReader,width,height,debugging);
+			for(Puppet p: players)
+				p.draw(g2,this,sReader,width,height,debugging);
 			
 			for(Pleb p: canvas.plebs)
 			{
@@ -124,6 +172,11 @@ public class Hoshua extends JPanel
 		fps = f;
 		gamePaused = p;
 		debugging = b;
-		repaint();
+		
+		fCounter++;
+		if(fCounter != fSkip)
+			repaint();
+		else
+			fCounter = 0;
 	}
 }

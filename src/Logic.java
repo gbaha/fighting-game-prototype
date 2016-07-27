@@ -1,4 +1,3 @@
-//import java.awt.Canvas;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
@@ -6,17 +5,18 @@ public class Logic
 {
 //	ArrayList<Hitbox> collisionPriority;
 	Stage stage;
-//	Curtains curtains;
 	Hand[] hands;
 	Cricket cricket;
 	Force gravity;
-	int xWindow, yWindow, /*winWidth, winHeight,*/ xFocus, yFocus;
+	int[] focusWidth;
+	int xWindow, yWindow, /*winWidth, winHeight,*/ xFocus, yFocus, hitStop;
 	boolean gamePaused;
+	
+	int[] recovery;	//TEST
 	
 	public Logic(Stage s, /*Curtains c,*/ Hand h1, Hand h2, int x, int y, boolean p/*, int w, int h2*/)
 	{
 		stage = s;
-	//	curtains = c;
 		hands = new Hand[]{h1,h2};
 		cricket = new Cricket(s);
 		gravity = new Force("gravity",0,15.68,0);
@@ -28,7 +28,11 @@ public class Logic
 		winHeight = h2;*/
 		xFocus = 0;
 		yFocus = 0;
+		focusWidth = new int[]{50,250};
+		hitStop = 0;
 		gamePaused = p;
+		
+		recovery = new int[]{-1,-1};	//TEST
 	}
 	
 	public void focus()
@@ -75,10 +79,10 @@ public class Logic
 			
 			for(int p = 0; p < players.length; p++)
 			{
-				if(players[p].xCoord < -xFocus && players[p].xCoord > stage.floors.get(0).xCoord)
-					xFocus = -players[p].xCoord;
-				if(players[p].xCoord+players[p].width > 1280-xFocus && players[p].xCoord+players[p].width < stage.floors.get(0).xCoord+stage.floors.get(0).width)
-					xFocus = 1280-(players[p].xCoord+players[p].width);
+				if(players[p].xCoord < focusWidth[0]-xFocus && players[p].xCoord > stage.floors.get(0).xCoord)
+					xFocus = focusWidth[0]-players[p].xCoord;
+				if(players[p].xCoord+players[p].width > 1280-xFocus-focusWidth[0] && players[p].xCoord+players[p].width < stage.floors.get(0).xCoord+stage.floors.get(0).width)
+					xFocus = 1280-(players[p].xCoord+players[p].width)-focusWidth[0];
 				
 				if(players[p].yCoord < -yFocus)
 				{
@@ -105,8 +109,8 @@ public class Logic
 	
 	public void resetFocus()
 	{
-	//	xFocus = 0;
-//		yFocus = 0;
+		xFocus = 0;
+		yFocus = 0;
 	}
 	
 	public void applyForces()
@@ -419,21 +423,25 @@ public class Logic
 						{
 							for(int x = h1.xCoord; x <= x1; x++)
 							{
-								if(x+h1.width >= 1280-xFocus && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280)
+								if(x+h1.width >= 1280-xFocus-focusWidth[0] && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280-focusWidth[0]*2)
 								{
-						/*			for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
-										h3.xVel = 0;
-						*/			stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
+									stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
 								
-									if(h1.blocked[1] > 1280-xFocus  || h1.xCoord+h1.width > 1280-xFocus || h1.blocked[1] == h1.xCoord+h1.width/2)
-										h1.xCoord = 1280-xFocus-h1.width;
+									if(h1.blocked[1] > 1280-xFocus-focusWidth[0]  || h1.xCoord+h1.width > 1280-xFocus-focusWidth[0] || h1.blocked[1] == h1.xCoord+h1.width/2)
+										h1.xCoord = 1280-xFocus-h1.width-focusWidth[0];
 									x = x1;
 								}
 								
-								if(h1.xCoord == 1280-xFocus-h1.width && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280)
+								if(h1.xCoord == 1280-xFocus-h1.width-focusWidth[0] && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280-focusWidth[0]*2)
 								{
-									h1.blocked[1] = 1280-xFocus;
+									h1.blocked[1] = 1280-xFocus-focusWidth[0];
 									xBlocked = true;
+								}
+								
+								if(x <= focusWidth[1]-xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280-focusWidth[1] && stage.floors.get(0).xCoord+stage.floors.get(0).width-x >= 1280)
+								{
+									xFocus = focusWidth[0]-x;
+									x = x1;
 								}
 							}
 						}
@@ -441,26 +449,25 @@ public class Logic
 						{
 							for(int x = h1.xCoord; x >= x1; x--)
 							{
-								if(x <= -xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280)
+								if(x <= focusWidth[0]-xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280-focusWidth[0]*2)
 								{
-									if(hitboxes.indexOf(h1) < stage.puppets.size())
-									{
-								/*		for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
-											h3.xVel = 0;
-								*/		stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
-									}
-									else
-										stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.xVel = 0;
+									stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
 									
-									if(h1.blocked[3] < -xFocus || h1.xCoord < -xFocus || h1.blocked[3] == h1.xCoord+h1.width/2)
-										h1.xCoord = -xFocus;
+									if(h1.blocked[3] < focusWidth[0]-xFocus || h1.xCoord < focusWidth[0]-xFocus || h1.blocked[3] == h1.xCoord+h1.width/2)
+										h1.xCoord = focusWidth[0]-xFocus;
 									x = x1;
 								}
 								
-								if(h1.xCoord == -xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280)
+								if(h1.xCoord == focusWidth[0]-xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280-focusWidth[0]*2)
 								{
-									h1.blocked[3] = -xFocus;
+									h1.blocked[3] = focusWidth[0]-xFocus;
 									xBlocked = true;
+								}
+								
+								if(x+h1.width >= 1280-xFocus-focusWidth[1] && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280-focusWidth[1] && x+h1.width-stage.floors.get(0).xCoord >= 1280)
+								{
+									xFocus = 1280-x-h1.width-focusWidth[0];
+									x = x1;
 								}
 							}
 						}
@@ -1180,9 +1187,9 @@ public class Logic
 			int z = -1;
 			for(Prop h: stage.props)
 			{
-				boolean isEnemy = !(p.faction == h.faction);
+	/*			boolean isEnemy = !(p.puppet.bounds == h);
 				if(isEnemy)
-				{
+				{*/
 					int x2 = h.bounds.xCoord;
 					int y2 = h.bounds.yCoord;	
 					if(h.bounds.xDir != 0)
@@ -1225,7 +1232,7 @@ public class Logic
 								z = stage.props.indexOf(h)+stage.puppets.size();
 						}
 					}
-					if(p.strength > 0 && p.xCoord != h.bounds.xCoord+h.bounds.width && p.xCoord+p.width != h.bounds.xCoord && ((p.xCoord >= h.bounds.xCoord && p.xCoord < h.bounds.xCoord+h.bounds.width) || (p.xCoord+p.width > h.bounds.xCoord && p.xCoord+p.width <= h.bounds.xCoord+h.bounds.width) || (p.xCoord <= h.bounds.xCoord && p.xCoord+p.width >= h.bounds.xCoord+h.bounds.width)))
+					if(p.hDamage > 0 && p.xCoord != h.bounds.xCoord+h.bounds.width && p.xCoord+p.width != h.bounds.xCoord && ((p.xCoord >= h.bounds.xCoord && p.xCoord < h.bounds.xCoord+h.bounds.width) || (p.xCoord+p.width > h.bounds.xCoord && p.xCoord+p.width <= h.bounds.xCoord+h.bounds.width) || (p.xCoord <= h.bounds.xCoord && p.xCoord+p.width >= h.bounds.xCoord+h.bounds.width)))
 					{
 						int y = p.yCoord;
 						if(p.yCoord > y1)
@@ -1256,12 +1263,12 @@ public class Logic
 								z = stage.props.indexOf(h)+stage.puppets.size();
 						}
 					}
-				}
+	//			}
 			}
 			
 			for(Puppet h: stage.puppets)
 			{
-				boolean isEnemy = true;//!(p.faction == h.faction);
+				boolean isEnemy = !(p.puppet == h);
 				if(isEnemy)
 				{
 					for(Organ o: h.anatomy)
@@ -1308,7 +1315,7 @@ public class Logic
 									z = stage.puppets.indexOf(h);
 							}
 						}
-						if(p.strength > 0 && p.xCoord != o.xCoord+o.width && p.xCoord+p.width != o.xCoord && ((p.xCoord >= o.xCoord && p.xCoord < o.xCoord+o.width) || (p.xCoord+p.width > o.xCoord && p.xCoord+p.width <= o.xCoord+o.width) || (p.xCoord <= o.xCoord && p.xCoord+p.width >= o.xCoord+o.width)))
+						if(p.hDamage > 0 && p.xCoord != o.xCoord+o.width && p.xCoord+p.width != o.xCoord && ((p.xCoord >= o.xCoord && p.xCoord < o.xCoord+o.width) || (p.xCoord+p.width > o.xCoord && p.xCoord+p.width <= o.xCoord+o.width) || (p.xCoord <= o.xCoord && p.xCoord+p.width >= o.xCoord+o.width)))
 						{
 							int y = p.yCoord;
 							if(p.yCoord > y1)
@@ -1349,7 +1356,7 @@ public class Logic
 					stage.puppets.get(z).takeDamage(p);
 				else
 					stage.props.get(z-stage.puppets.size()).takeDamage(p);
-				p.strength = 0;
+				p.hDamage = 0;
 			}
 			
 			boolean inBounds = false;
@@ -1364,7 +1371,7 @@ public class Logic
 				}
 			}
 			if(!inBounds)
-				p.strength = 0;
+				p.hDamage = 0;
 			
 			p.xCoord += (int)(forces[stage.plebs.indexOf(p)][3]-forces[stage.plebs.indexOf(p)][1]+0.5*((forces[stage.plebs.indexOf(p)][3] > forces[stage.plebs.indexOf(p)][1])? 1:-1));
 			p.yCoord += (int)(forces[stage.plebs.indexOf(p)][0]-forces[stage.plebs.indexOf(p)][2]+0.5*((forces[stage.plebs.indexOf(p)][0] > forces[stage.plebs.indexOf(p)][2])? 1:-1));
@@ -1716,43 +1723,22 @@ public class Logic
 	
 	public void checkDamage()
 	{
-		ArrayList<Hitbox> hitboxes = new ArrayList<Hitbox>();
-		for(Puppet p: stage.puppets)
-		{
-			for(Hitbox h: p.anatomy)
-				hitboxes.add(h);
-		}
-		for(Prop p: stage.props)
-		{
-			hitboxes.add(p.bounds);
-		}
-		
 		for(Pleb p1: stage.plebs)
 		{
-			for(Hitbox h: hitboxes)
+			for(Puppet p2: stage.puppets)
 			{
-				if((p1.xCoord >= h.xCoord && p1.xCoord < h.xCoord+h.width) || (p1.xCoord+p1.width > h.xCoord && p1.xCoord+p1.width <= h.xCoord+h.width))
+				for(Hitbox h: p2.anatomy)
 				{
-					if((p1.yCoord >= h.yCoord && p1.yCoord < h.yCoord+h.height) || (p1.yCoord+p1.height > h.yCoord && p1.yCoord+p1.height <= h.yCoord+h.height))
+					if((p1.xCoord >= h.xCoord && p1.xCoord < h.xCoord+h.width) || (p1.xCoord+p1.width > h.xCoord && p1.xCoord+p1.width <= h.xCoord+h.width))
 					{
-						if(p1.strength < 0)
-							p1.strength = 0;
-							
-						for(Puppet p2: stage.puppets)
+						if((p1.yCoord >= h.yCoord && p1.yCoord < h.yCoord+h.height) || (p1.yCoord+p1.height > h.yCoord && p1.yCoord+p1.height <= h.yCoord+h.height))
 						{
-		/*					if(!p1.faction.equals(stage.puppets.get(stage.puppets.indexOf(p2)).faction) && p2.anatomy.indexOf(h) != -1)
+							if(p1.puppet != p2)
 							{
-						//		if(p2.anatomy.get(p2.anatomy.indexOf(h)).vulnerableTo[p1.type])
-								stage.puppets.get(stage.puppets.indexOf(p2)).takeDamage(p1);
-							}
-							*/
-						}
-						for(Prop p2: stage.props)
-						{
-							if(!p1.faction.equals(stage.props.get(stage.props.indexOf(p2)).faction)	/* && p2.anatomy.indexOf(h) != -1*/)
-							{
-						//		if(p2.anatomy.get(p2.anatomy.indexOf(h)).vulnerableTo[p1.type])
-								stage.props.get(stage.props.indexOf(p2)).takeDamage(p1);
+								p2.takeDamage(p1);
+								p1.duration = 0;
+								
+								recovery = new int[]{0,0};	//TEST
 							}
 						}
 					}
@@ -1771,17 +1757,43 @@ public class Logic
 		
 		if(!gamePaused)
 		{
+			//TEST
+			if(recovery[0] >= 0)
+			{
+				if(stage.player1.currState != Puppet.PuppetState.IDLE)
+					recovery[0]++;
+				if(stage.player2.currState != Puppet.PuppetState.IDLE)
+					recovery[1]++;
+				if(stage.player1.currState == Puppet.PuppetState.IDLE && stage.player2.currState == Puppet.PuppetState.IDLE)
+				{
+					System.out.println((recovery[1]-recovery[0])+"   "+recovery[0]+" "+recovery[1]);
+					recovery = new int[]{-1,-1};
+				}
+			}
+			
 			for(Floor f: stage.floors)
 				f.update(stage.floors);
 			for(Puppet p: stage.puppets)
+			{
 				p.getHitboxes();
+				for(int i = 0; i < p.plebsOut.size(); i++)
+				{
+					stage.plebs.add(p.plebsOut.get(0));
+					p.plebsOut.remove(0);
+				}
+			}
 			
 			applyForces();
 			checkCollisions();
+			checkDamage();	//MIGHT BE UNNECESSARY, might actually need to keep hitboxes aligned if forces push bounds in which case remove getHitboxes() prior to applyForces()
 			
 			for(Puppet p: stage.puppets)
+			{
 				p.getHitboxes();
-	//		checkDamage();	//MIGHT BE UNNECESSARY, might actually need to keep hitboxes aligned if forces push bounds in which case remove getHitboxes() prior to applyForces()
+				if(p.hitStop > hitStop)
+					hitStop = p.hitStop;
+				p.hitStop = 0;
+			}
 			
 			stage.update();
 		//	stage.updateTrail();
@@ -1822,7 +1834,7 @@ public class Logic
 				stage.plebs.get(p).move();
 				stage.plebs.get(p).update();
 				
-				if(stage.plebs.get(p).strength == 0)
+				if(stage.plebs.get(p).duration <= 0)
 				{
 					stage.plebs.remove(p);
 					pLimit = stage.plebs.size();
@@ -1839,10 +1851,13 @@ public class Logic
 					stage.player1.isFacingRight = (stage.player1.xCoord+stage.player1.width/2 <= stage.player2.xCoord+stage.player2.width/2)? true:false;
 					stage.player2.isFacingRight = (stage.player2.xCoord+stage.player2.width/2 <= stage.player1.xCoord+stage.player1.width/2)? true:false;
 				}
-				resetFocus();
+		//		resetFocus();
 				setFocus();
 			}
 			focus();
+			
+			if(hitStop > 0)
+				hitStop--;
 		}
 		
 		boolean p = false;

@@ -6,10 +6,26 @@ import java.awt.image.ImageObserver;
 
 public class Roo extends Player
 {
+	public enum RooState implements State
+	{
+		PlayerState;
+		
+		public String getState()
+		{
+			return name();
+		}
+		
+		public int getPosition()
+		{
+			return ordinal();
+		}
+	}
+	
 	public Roo(int x, int y, boolean r)
 	{
 		super(x,y,100,250,150,/*100,*/6,1,40,r);
 		spriteParams = new int[]{345,180,290,178};
+		
 		//IDLE
 		hitboxArchiver.add(new int[][]{new int[]{0,0,0,0,5},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -112,35 +128,71 @@ public class Roo extends Player
 		//JUMP BACKWARD
 		hitboxArchiver.add(new int[][]{new int[]{5,8,8,0,3},
 			new int[]{22,-60,53,50,	-55,-25,135,70,	-5,45,140,70,	45,115,75,130}});
+		//STANDING FLINCH(MID)
+		hitboxArchiver.add(new int[][]{new int[]{6,0,4,0,2},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//STANDING FLINCH(LOW)
+		hitboxArchiver.add(new int[][]{new int[]{7,0,5,0,2},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//STANDING FLINCH(HIGH)
+		hitboxArchiver.add(new int[][]{new int[]{8,0,3,0,2},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//CROUCHING FLINCH
+			hitboxArchiver.add(new int[][]{new int[]{9,0,3,0,2},
+				new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//DASH FORWARD
-		hitboxArchiver.add(new int[][]{new int[]{6,0,5,0,3},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+			hitboxArchiver.add(new int[][]{new int[]{10,0,5,0,4},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//DASH BACKWARD
-		hitboxArchiver.add(new int[][]{new int[]{7,0,5,0,3},
+			hitboxArchiver.add(new int[][]{new int[]{11,0,5,0,4},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+				new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//STANDING LP
+		hitboxArchiver.add(new int[][]{new int[]{12,0,4,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95, 125,0,120,45},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95, 125,0,120,45},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		
+		normals = new Action[]{new LightPunch(this), new MediumPunch(this), new HeavyPunch(this), new LightKick(this), new MediumKick(this), new HeavyKick(this)};
 	}
 	
 	public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean d)
 	{
-		if(Roo.State.valueOf(currState.toString()).ordinal() < hitboxArchiver.size())
+		if(currState.getPosition() < hitboxArchiver.size())
 		{
 			try
 			{
-	//			frameIndex = 0; currState = State.JUMP_FORWARD;	//TEST
+	//			fIndex = 0; currState = State.JUMP_FORWARD;	//TEST
 			
 				Image sheet = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/roo.png"));
-				int f = /*(hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal())[0][3] == 0)?*/ (int)frameIndex;	//:hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal()).length-(int)frameIndex-2;
-				s.read(g,i,xHosh,yHosh,width,800,490,f,hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal())[0][0],spriteParams,!isFacingRight,sheet);
+				int f = /*(hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal())[0][3] == 0)?*/ (int)fIndex;	//:hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal()).length-(int)fIndex-2;
+				s.read(g,i,xHosh,yHosh,width,800,490,f,hitboxArchiver.get(currState.getPosition())[0][0],spriteParams,!isFacingRight,sheet);
 			}
 			catch(java.lang.IndexOutOfBoundsException e)
 			{
@@ -150,8 +202,116 @@ public class Roo extends Player
 		super.draw(g,i,s,w,h,d);
 	}
 	
-/*	public void getHitboxes()
+	
+	public class LightPunch extends Action
 	{
-		super.getHitboxes(Roo.State.valueOf(currState.toString()).ordinal());
-	}*/
+		Roo roo;
+		
+		public LightPunch(Roo r)
+		{
+			super(Action.NORMAL,9,new boolean[]{false,false,false,false,false});
+			roo = r;
+		}
+		
+		public void perform(int f)
+		{
+			isPerformingAction = true;
+			if(f >= frames)
+			{
+				isPerformingAction = false;
+				return;
+			}
+			else
+			{
+				switch(f)
+				{
+					case 0:
+						currState = (!bounds.isGrounded)? PlayerState.JUMPING_LP:((isCrouching)? PlayerState.CROUCHING_LP:PlayerState.STANDING_LP);
+						break;
+						
+					case 2:
+						if(!bounds.isGrounded){}
+						else if(isCrouching){}
+						else
+							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+25,140,20,3,0,0,1,10,0,true));
+						break;
+				}
+			}
+		}
+	}
+	
+	public class MediumPunch extends Action
+	{
+		Roo roo;
+		
+		public MediumPunch(Roo r)
+		{
+			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			roo = r;
+		}
+		
+		public void perform(int f)
+		{
+		}
+	}
+	
+	public class HeavyPunch extends Action
+	{
+		Roo roo;
+		
+		public HeavyPunch(Roo r)
+		{
+			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			roo = r;
+		}
+		
+		public void perform(int f)
+		{
+		}
+	}
+	
+	public class LightKick extends Action
+	{
+		Roo roo;
+		
+		public LightKick(Roo r)
+		{
+			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			roo = r;
+		}
+		
+		public void perform(int f)
+		{
+		}
+	}
+	
+	public class MediumKick extends Action
+	{
+		Roo roo;
+		
+		public MediumKick(Roo r)
+		{
+			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			roo = r;
+		}
+		
+		public void perform(int f)
+		{
+		}
+	}
+	
+	public class HeavyKick extends Action
+	{
+		Roo roo;
+		
+		public HeavyKick(Roo r)
+		{
+			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			roo = r;
+		}
+		
+		public void perform(int f)
+		{
+		}
+	}
 }

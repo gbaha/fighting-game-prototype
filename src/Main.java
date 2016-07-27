@@ -43,7 +43,7 @@ public class Main
 			p2.player = stage.player2;
 		
 		logic = new Logic(stage,p1,p2,xCoord,yCoord,gamePaused/*,w,h*/);
-		jas = new Hoshua(stage,gui,xCoord,yCoord+window.getInsets().top,w,h,fps,gamePaused,debugging);
+		jas = new Hoshua(stage,gui,xCoord,yCoord+window.getInsets().top,w,h,fps,6,gamePaused,debugging);
 	}
 	
 	public void run()
@@ -69,14 +69,17 @@ public class Main
 					p2.stickInputs.remove();*/
 					
 				//FRAME BY FRAME TEST
-				fpsLimit = 3;
+				fpsLimit = 1;
 			}
 			//==
 			
-			
 			director.update();
 			gui.update(width,height,gamePaused);
-			logic.update(xCoord,yCoord,gamePaused/*,width,height*/);
+			
+			if(logic.hitStop == 0)
+				logic.update(xCoord,yCoord,gamePaused/*,width,height*/);
+			else
+				logic.hitStop--;
 			gamePaused = logic.gamePaused;
 			
 			geebs.defyLogic();

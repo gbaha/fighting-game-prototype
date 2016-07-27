@@ -1,17 +1,18 @@
 abstract class Action
 {
 	public static final int NORMAL = 0;
-	public static final int SPECIAL = 0;
-	public static final int SUPER = 0;
-	public static final int DASH = 0;
-	public static final int JUMP = 0;
+	public static final int SPECIAL = 1;
+	public static final int SUPER = 2;
+	public static final int DASH = 3;
+	public static final int JUMP = 4;
 	
-	int type;
+	int type, frames;
 	boolean isNormalCancelable, isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable;
 	
-	public Action(int t, boolean[] c)
+	public Action(int t, int f, boolean[] c)
 	{
 		type = t;
+		frames = f;
 		isNormalCancelable = c[0];
 		isSpecialCancelable = c[1];
 		isSuperCancelable =	c[2];

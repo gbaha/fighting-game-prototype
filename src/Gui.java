@@ -334,7 +334,7 @@ public class Gui extends JPanel
 				}*/
 			}
 			catch(java.lang.NullPointerException e)
-			{System.out.println("???");
+			{
 				drawInputs(g,h1,w,h2,d);
 			}
 			

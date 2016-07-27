@@ -12,7 +12,7 @@ public class Hand implements KeyListener	//, MouseListener
 	double winWidth, winHeight;
 	double xMouse, yMouse;
 	
-	int fTimer;
+	int currButton, fTimer;
 	boolean gamePaused, debugging;
 	
 	public Hand()
@@ -31,6 +31,7 @@ public class Hand implements KeyListener	//, MouseListener
 		winWidth = 0;
 		winHeight = 0;
 		
+		currButton = -1;
 		fTimer = 0;
 /*		dtapArchiver = -1;
 		dtapCheck = new long[2];
@@ -55,6 +56,7 @@ public class Hand implements KeyListener	//, MouseListener
 		winWidth = w;
 		winHeight = h;
 		
+		currButton = -1;
 		fTimer = 0;
 /*		dtapArchiver = -1;
 		dtapCheck = new long[2];
@@ -82,7 +84,9 @@ public class Hand implements KeyListener	//, MouseListener
 				}
 			}
 			player.bounds.isFloating = player.isDashing; // || other isFloating checks;
-			fTimer++;
+			currButton = -1;
+			if(fTimer < 1000)
+				fTimer++;
 			
 			//INPUT CHECKS
 			if(stickArchiver[0])
@@ -184,6 +188,7 @@ public class Hand implements KeyListener	//, MouseListener
 				if(buttonArchiver[b])
 				{
 					buttonHeld[b] = true;
+			//		currButton = b;
 					addButtonInput(b);
 				}
 			}
@@ -264,10 +269,12 @@ public class Hand implements KeyListener	//, MouseListener
 			if(c)
 			{//System.out.println(">> "+player.movelist.indexOf(m));
 				if(player.currAction == null)
-					player.currAction = player.actions[player.movelist.indexOf(m)];
+					player.setAction(player.actions[player.movelist.indexOf(m)]);
 				else if(player.currAction.isCancelable(player.actions[player.movelist.indexOf(m)].type))
-					player.currAction = player.actions[player.movelist.indexOf(m)];
+					player.setAction(player.actions[player.movelist.indexOf(m)]);
 			}
+			else if(currButton != -1)
+				player.setAction(player.normals[currButton]);
 		}
 	}
 	
@@ -330,45 +337,22 @@ public class Hand implements KeyListener	//, MouseListener
 		{
 		/*	if(e.getKeyCode() == KeyEvent.VK_P)
 				debugging = !debugging;*/
+		
+			for(int s = 0; s < 4; s++)
+			{
+				if(e.getKeyCode() == stickBindings[s])
+					stickArchiver[s] = true;
+			}
 			
-			if(e.getKeyCode() == stickBindings[0])
-				stickArchiver[0] = true;
-			if(e.getKeyCode() == stickBindings[1])
-				stickArchiver[1] = true;
-			if(e.getKeyCode() == stickBindings[2])
-				stickArchiver[2] = true;
-			if(e.getKeyCode() == stickBindings[3])
-				stickArchiver[3] = true;
-			
-			if(e.getKeyCode() == buttonBindings[0])
+			for(int b = 0; b < 6; b++)
 			{
-				buttonArchiver[0] = true;
-				addButtonInput(0);
-			}
-			if(e.getKeyCode() == buttonBindings[1])
-			{
-				buttonArchiver[1] = true;
-				addButtonInput(1);
-			}
-			if(e.getKeyCode() == buttonBindings[2])
-			{
-				buttonArchiver[2] = true;
-				addButtonInput(2);
-			}
-			if(e.getKeyCode() == buttonBindings[3])
-			{	
-				buttonArchiver[3] = true;
-				addButtonInput(3);
-			}
-			if(e.getKeyCode() == buttonBindings[4])
-			{
-				buttonArchiver[4] = true;
-				addButtonInput(4);
-			}
-			if(e.getKeyCode() == buttonBindings[5])
-			{
-				buttonArchiver[5] = true;
-				addButtonInput(5);
+				if(e.getKeyCode() == buttonBindings[b])
+				{
+					buttonArchiver[b] = true;
+					if(b == 0)	//TEST
+					currButton = b;
+					addButtonInput(b);
+				}
 			}
 			
 			if(e.getKeyCode() == buttonBindings[8])

@@ -44,7 +44,7 @@ public class Stage
 		//TEST
 		floors.add(new Floor("",0,0,2000,1000));
 		player1 = new Roo(1000-200-100,750,true);
-		player2 = new Bunny(1000+200,750,false);
+		player2 = new Roo(1000+200,750,false);
 		puppets.add(player1);
 		puppets.add(player2);
 		
@@ -67,7 +67,7 @@ public class Stage
 	{
 		ArrayList<double[]> mapMesh = getMapMesh();
 	//	g.setColor(new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255)));
-		g.setColor(Color.GREEN);
+		g.setColor(Color.PINK);
 		int x1 = 0;
 		int y1 = 0;
 		int x2 = 0;

@@ -93,8 +93,7 @@ public class Prop
 		if(!isSturdy)
 		{
 			hit = 2;
-	//		if(p.isLethal)
-				health -= p.strength;
+			health -= p.hDamage;
 		}
 		if(health < 0)
 			health = 0;

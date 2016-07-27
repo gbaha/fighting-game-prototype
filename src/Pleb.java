@@ -4,29 +4,57 @@ import java.util.ArrayList;
 
 public class Pleb extends Hitbox
 {
-	ArrayList<Force> forceArchiver;
+	ArrayList<Force> forceArchiver, appliedForces;
 	Puppet puppet;
-	String faction, type;
-	int direction, speed, /*cooldown,*/ xDist, yDist;
-	double strength, maxStr, decayRate, piercingRate;
-//	boolean isLethal;
+//	String faction, type;
+	int duration, direction, strength, hDamage, sDamage, xKnockback, yKnockback, /*direction, speed,*/ xDist, yDist;
+//	double decayRate, piercingRate;
+	boolean isAttached;
 	
-	public Pleb(Puppet p, String f, String t, int x, int y, int w, int h, int d1, int s1, double s2, double d2/*, double p, boolean l*/)
+	public Pleb(Puppet p, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, boolean a)
 	{
 		super(x,y,w,h);
 		puppet = p;
-		faction = f;
-		type = t;
-		direction = d1;
-		speed = s1;
-		maxStr = s2;
-		strength = maxStr;
-		decayRate = d2;
-	//	piercingRate = p;
-	//	isLethal = l;
+		duration = d1;
+		direction = d2;	//[0 = mid, 1 = low, 2 = high]
+		strength = s;
+		hDamage = hd;
+		sDamage = sd;
+		xKnockback = kx;
+		yKnockback = ky;
+		isAttached = a;
 		
 		forceArchiver = new ArrayList<Force>();
-		if(speed > 0)
+		appliedForces = new ArrayList<Force>();
+		
+		if(puppet != null)
+		{
+			xDist = xCoord-puppet.xCoord;
+			yDist = yCoord-puppet.yCoord;
+		}
+	}
+	
+	//MIGHT REMOVE LATER
+	public Pleb(Puppet p, /*String f, String t,*/ int x, int y, int w, int h, int d1, int d2, int s, int hd, int kx, int ky, boolean a)	//, int d2, int s, double d3, double p)
+	{
+		super(x,y,w,h);
+		puppet = p;
+//		faction = f;
+//		type = t;
+		duration = d1;
+		direction = d2;
+		strength = s;
+		hDamage = hd;
+		sDamage = (int)(hDamage/4.0+0.5);
+		xKnockback = kx;
+		yKnockback = ky;
+		isAttached = a;
+//		direction = d2;
+//		speed = s;
+//		decayRate = d3;
+//		piercingRate = p;
+		
+/*		if(speed > 0)
 		{
 			if(direction > 0 && direction < 180)
 				forceArchiver.add(new Force("",3,(int)(speed*Math.sin(Math.toRadians(direction))+0.5),0));
@@ -36,12 +64,21 @@ public class Pleb extends Hitbox
 				forceArchiver.add(new Force("",2,(int)(speed*Math.cos(Math.toRadians(direction))+0.5),0));
 			else if(direction > 90 && direction < 270)
 				forceArchiver.add(new Force("",0,-(int)(speed*Math.cos(Math.toRadians(direction))+0.5),0));
-		}
+		}*/
 		
+		forceArchiver = new ArrayList<Force>();
+		appliedForces = new ArrayList<Force>();
 		if(puppet != null)
 		{
+			if(xKnockback != 0)
+				appliedForces.add(new Force("knockback",((xKnockback > 0 && puppet.isFacingRight) || (xKnockback < 0 && !puppet.isFacingRight))? 3:1,Math.abs(xKnockback),(Math.abs(xKnockback)/5 > 0)? Math.abs(xKnockback)/5:1));
+			if(yKnockback != 0)
+				appliedForces.add(new Force("knockback",(yKnockback > 0)? 0:2,Math.abs(yKnockback),(Math.abs(yKnockback)/5 > 0)? Math.abs(yKnockback)/5:1));
+			
 			xDist = xCoord-puppet.xCoord;
 			yDist = yCoord-puppet.yCoord;
+			if(!puppet.isFacingRight)
+				xCoord = puppet.xCoord+puppet.width-xDist-width;
 		}
 	}
 	
@@ -50,10 +87,25 @@ public class Pleb extends Hitbox
 	{
 		//TEST
 		g.setColor(Color.RED);
+		g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50));
+		g.fillRect((int)(xHosh*w/1280),(int)(yHosh*h/720),(int)(width*w/1280),(int)(height*h/720));
+		g.setColor(Color.RED);
 		g.drawRect((int)(xHosh*w/1280),(int)(yHosh*h/720),(int)(width*w/1280),(int)(height*h/720));
+		switch(direction)
+		{
+			case 0:
+				g.drawString("MID",(int)(xHosh*w/1280),(int)(yHosh*h/720));
+				break;
+			case 1:
+				g.drawString("LOW",(int)(xHosh*w/1280),(int)(yHosh*h/720));
+				break;
+			case 2:
+				g.drawString("HIGH",(int)(xHosh*w/1280),(int)(yHosh*h/720));
+				break;
+		}
 		
-		double sNum = Math.round(strength*100.0)/100.0;
-		g.drawString(sNum+"",(int)((xHosh+width)*w/1280),(int)(yHosh*h/720));
+	/*	double sNum = Math.round(strength*100.0)/100.0;
+		g.drawString(sNum+"",(int)((xHosh+width)*w/1280),(int)(yHosh*h/720));*/
 		//END OF RINE
 		//-----------RINE ENDS HERE
 	}
@@ -113,14 +165,14 @@ public class Pleb extends Hitbox
 	public void update()
 	{
 		super.update(xVel,yVel,xDir,yDir,xDrag,yDrag,speed);
-		if(strength > 0)
-			strength -= maxStr*decayRate;
-		else
-			strength = 0;
+		duration--;
 		
-		if(puppet != null && speed == -1)
+		if(puppet != null && isAttached)
 		{
-			xCoord = puppet.xCoord+xDist;
+			if(puppet.isFacingRight)
+				xCoord = puppet.xCoord+xDist;
+			else
+				xCoord = puppet.xCoord+puppet.width-xDist-width;
 			yCoord = puppet.yCoord+yDist;
 		}
 	}
