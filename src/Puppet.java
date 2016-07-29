@@ -258,7 +258,7 @@ abstract class Puppet
 			currState = PuppetState.IDLE;
 	}
 	
-	public void takeDamage(Pleb p)
+	public void takeDamage(Pleb p, Hitbox[] c)
 	{
 		health -= p.hDamage;
 	//	stamina -= p.sDamage;
@@ -266,8 +266,6 @@ abstract class Puppet
 			health = 0;
 		if(stamina < 0)
 			stamina = 0;
-		for(Force f: p.appliedForces)
-			bounds.forceArchiver.add(f);
 		
 		if(isCrouching)
 			currState = PuppetState.FLINCH_CROUCHING;
@@ -292,7 +290,7 @@ abstract class Puppet
 		{
 			case 0:
 				hitStun = 10;
-				hitStop = 3;
+				hitStop = 5;
 				break;
 			case 1:
 				hitStun = 10;
@@ -306,6 +304,17 @@ abstract class Puppet
 				hitStun = 10;
 				hitStop = 3;
 				break;
+		}
+		
+		for(Force f: p.appliedForces)
+		{
+			if(f.type.equals("xKnockback") && ((f.direction == 1 && bounds == c[0]) || (f.direction == 3 && bounds == c[1])))
+			{
+				f.direction = (f.direction+2)%4;
+				p.puppet.bounds.forceArchiver.add(f);
+			}
+			else
+				bounds.forceArchiver.add(f);
 		}
 	}
 	

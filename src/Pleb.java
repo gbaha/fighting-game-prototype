@@ -71,9 +71,9 @@ public class Pleb extends Hitbox
 		if(puppet != null)
 		{
 			if(xKnockback != 0)
-				appliedForces.add(new Force("knockback",((xKnockback > 0 && puppet.isFacingRight) || (xKnockback < 0 && !puppet.isFacingRight))? 3:1,Math.abs(xKnockback),(Math.abs(xKnockback)/5 > 0)? Math.abs(xKnockback)/5:1));
+				appliedForces.add(new Force("xKnockback",((xKnockback > 0 && puppet.isFacingRight) || (xKnockback < 0 && !puppet.isFacingRight))? 3:1,Math.abs(xKnockback),(Math.abs(xKnockback)/5 > 0)? Math.abs(xKnockback)/5:1));
 			if(yKnockback != 0)
-				appliedForces.add(new Force("knockback",(yKnockback > 0)? 0:2,Math.abs(yKnockback),(Math.abs(yKnockback)/5 > 0)? Math.abs(yKnockback)/5:1));
+				appliedForces.add(new Force("yKnockback",(yKnockback > 0)? 0:2,Math.abs(yKnockback),(Math.abs(yKnockback)/5 > 0)? Math.abs(yKnockback)/5:1));
 			
 			xDist = xCoord-puppet.xCoord;
 			yDist = yCoord-puppet.yCoord;

@@ -233,7 +233,7 @@ public class Roo extends Player
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
-							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+25,140,20,3,0,0,1,10,0,true));
+							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+25,140,20,3,0,0,1,12,0,true));
 						break;
 				}
 			}

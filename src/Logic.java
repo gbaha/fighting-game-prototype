@@ -12,7 +12,7 @@ public class Logic
 	int xWindow, yWindow, /*winWidth, winHeight,*/ xFocus, yFocus, hitStop;
 	boolean gamePaused;
 	
-	int[] recovery;	//TEST
+	int[][] recovery;	//TEST
 	
 	public Logic(Stage s, /*Curtains c,*/ Hand h1, Hand h2, int x, int y, boolean p/*, int w, int h2*/)
 	{
@@ -32,7 +32,7 @@ public class Logic
 		hitStop = 0;
 		gamePaused = p;
 		
-		recovery = new int[]{-1,-1};	//TEST
+		recovery = new int[][]{new int[]{-1,-1}, new int[]{-1,-1}};	//TEST
 	}
 	
 	public void focus()
@@ -1179,7 +1179,7 @@ public class Logic
 			}
 		}
 		
-		for(Pleb p: stage.plebs)
+/*		for(Pleb p: stage.plebs)
 		{
 			int x1 = p.xCoord+(int)(forces[stage.plebs.indexOf(p)][3]-forces[stage.plebs.indexOf(p)][1]+0.5*((forces[stage.plebs.indexOf(p)][3] > forces[stage.plebs.indexOf(p)][1])? 1:-1));
 			int y1 = p.yCoord+(int)(forces[stage.plebs.indexOf(p)][0]-forces[stage.plebs.indexOf(p)][2]+0.5*((forces[stage.plebs.indexOf(p)][0] > forces[stage.plebs.indexOf(p)][2])? 1:-1));
@@ -1187,9 +1187,9 @@ public class Logic
 			int z = -1;
 			for(Prop h: stage.props)
 			{
-	/*			boolean isEnemy = !(p.puppet.bounds == h);
+				boolean isEnemy = !(p.puppet.bounds == h);
 				if(isEnemy)
-				{*/
+				{
 					int x2 = h.bounds.xCoord;
 					int y2 = h.bounds.yCoord;	
 					if(h.bounds.xDir != 0)
@@ -1353,10 +1353,11 @@ public class Logic
 			if(z != -1)
 			{
 				if(z < stage.puppets.size())
-					stage.puppets.get(z).takeDamage(p);
+					stage.puppets.get(z).takeDamage(p,stage.floors.get(0).cornered);
 				else
 					stage.props.get(z-stage.puppets.size()).takeDamage(p);
 				p.hDamage = 0;
+			}
 			}
 			
 			boolean inBounds = false;
@@ -1375,7 +1376,7 @@ public class Logic
 			
 			p.xCoord += (int)(forces[stage.plebs.indexOf(p)][3]-forces[stage.plebs.indexOf(p)][1]+0.5*((forces[stage.plebs.indexOf(p)][3] > forces[stage.plebs.indexOf(p)][1])? 1:-1));
 			p.yCoord += (int)(forces[stage.plebs.indexOf(p)][0]-forces[stage.plebs.indexOf(p)][2]+0.5*((forces[stage.plebs.indexOf(p)][0] > forces[stage.plebs.indexOf(p)][2])? 1:-1));
-		}
+		}*/
 	}
 	
 	public void applyNewtonsThird(int x, int y, Organ j, ArrayList<Organ> h)
@@ -1735,10 +1736,10 @@ public class Logic
 						{
 							if(p1.puppet != p2)
 							{
-								p2.takeDamage(p1);
+								p2.takeDamage(p1,stage.floors.get(0).cornered);
 								p1.duration = 0;
 								
-								recovery = new int[]{0,0};	//TEST
+								recovery = new int[][]{new int[]{0,p1.puppet.currState.getPosition()}, new int[]{0,p2.currState.getPosition()}};	//TEST
 							}
 						}
 					}
@@ -1758,16 +1759,20 @@ public class Logic
 		if(!gamePaused)
 		{
 			//TEST
-			if(recovery[0] >= 0)
+			if(recovery[0][0] >= 0)
 			{
-				if(stage.player1.currState != Puppet.PuppetState.IDLE)
-					recovery[0]++;
-				if(stage.player2.currState != Puppet.PuppetState.IDLE)
-					recovery[1]++;
-				if(stage.player1.currState == Puppet.PuppetState.IDLE && stage.player2.currState == Puppet.PuppetState.IDLE)
+				if(stage.player1.currState.getPosition() == recovery[0][1])
+					recovery[0][0]++;
+				else
+					recovery[0][1] = -1;
+				if(stage.player2.currState.getPosition() == recovery[1][1])
+					recovery[1][0]++;
+				else
+					recovery[1][1] = -1;
+				if(recovery[0][1] == -1 && recovery[1][1] == -1)
 				{
-					System.out.println((recovery[1]-recovery[0])+"   "+recovery[0]+" "+recovery[1]);
-					recovery = new int[]{-1,-1};
+					System.out.println((recovery[1][0]-recovery[0][0])+"   "+recovery[0][0]+" "+recovery[1][0]);
+					recovery = new int[][]{new int[]{-1,-1}, new int[]{-1,-1}};;
 				}
 			}
 			
