@@ -46,7 +46,7 @@ public class Hoshua extends JPanel
 		super.paintComponent(g);
 		
 		for(Floor f: canvas.floors)
-			f.draw(g,width,height,debugging);	
+			f.draw(g,this,width,height,debugging);	
 		
 		xFocus = (int)(canvas.xFocus*width/1280);
 		yFocus = (int)(canvas.yFocus*height/720);

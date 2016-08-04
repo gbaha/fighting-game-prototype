@@ -1,5 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Toolkit;
+import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 
 public class Floor
@@ -28,8 +30,12 @@ public class Floor
 		height = h;
 	}
 	
-	public void draw(Graphics g, double w, double h, boolean d)
+	public void draw(Graphics g, ImageObserver i, double w, double h, boolean d)
 	{
+		g.drawImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/fetusofgrah.jpg")),(int)((xHosh-50)*w/1280),(int)((yHosh+400)*h/720),(int)((width+100)*w/1280),(int)(height*h/720),i);
+		g.setColor(new Color(255,255,255,35));
+		g.fillRect((int)((xHosh-50)*w/1280),(int)((yHosh+400)*h/720),(int)((width+100)*w/1280),(int)(height*h/720));
+		
 		g.setColor(Color.LIGHT_GRAY);
 		for(int y = 0; y < height; y += 200)
 		{

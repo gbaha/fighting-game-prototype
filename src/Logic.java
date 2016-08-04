@@ -1736,10 +1736,35 @@ public class Logic
 						{
 							if(p1.puppet != p2)
 							{
-								p2.takeDamage(p1,stage.floors.get(0).cornered);
-								p1.duration = 0;
-								
-								recovery = new int[][]{new int[]{0,p1.puppet.currState.getPosition()}, new int[]{0,p2.currState.getPosition()}};	//TEST
+								if(p1.direction == -1)
+								{
+									if(p2.currAction == null)
+										p2.canBlock = true;
+								}
+								else
+								{
+								/*	switch(p1.direction)
+									{
+										case 0:
+											if(!p2.isBlocking[0] && !p2.isBlocking[1])
+												p2.takeDamage(p1,stage.floors.get(0).cornered);
+											break;
+											
+										case 1:
+											if(!p2.isBlocking[1])
+												p2.takeDamage(p1,stage.floors.get(0).cornered);
+											break;
+											
+										case 2:
+											if(!p2.isBlocking[0])
+												p2.takeDamage(p1,stage.floors.get(0).cornered);
+											break;
+									}*/
+									
+									p2.takeDamage(p1,stage.floors.get(0).cornered);
+									p1.duration = 0;
+									recovery = new int[][]{new int[]{0,p1.puppet.currState.getPosition()}, new int[]{0,p2.currState.getPosition()}};	//TEST
+								}
 							}
 						}
 					}
@@ -1786,6 +1811,7 @@ public class Logic
 					stage.plebs.add(p.plebsOut.get(0));
 					p.plebsOut.remove(0);
 				}
+				p.canBlock = false;
 			}
 			
 			applyForces();

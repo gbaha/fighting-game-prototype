@@ -29,6 +29,37 @@ public class Pleb extends Hitbox
 		
 		if(puppet != null)
 		{
+			if(xKnockback != 0)
+				appliedForces.add(new Force("xKnockback",((xKnockback > 0 && puppet.isFacingRight) || (xKnockback < 0 && !puppet.isFacingRight))? 3:1,Math.abs(xKnockback),(Math.abs(xKnockback)/5 > 0)? Math.abs(xKnockback)/5:1));
+			if(yKnockback != 0)
+				appliedForces.add(new Force("yKnockback",(yKnockback > 0)? 0:2,Math.abs(yKnockback),(Math.abs(yKnockback)/5 > 0)? Math.abs(yKnockback)/5:1));
+			
+			xDist = xCoord-puppet.xCoord;
+			yDist = yCoord-puppet.yCoord;
+			if(!puppet.isFacingRight)
+				xCoord = puppet.xCoord+puppet.width-xDist-width;
+		}
+	}
+	
+	//FOR GUARD TRIGGER
+	public Pleb(Puppet p, int x, int y, int w, int h, int d, boolean a)
+	{
+		super(x,y,w,h);
+		puppet = p;
+		duration = d;
+		direction = -1;
+		strength = 0;
+		hDamage = 0;
+		sDamage = 0;
+		xKnockback = 0;
+		yKnockback = 0;
+		isAttached = a;
+		
+		forceArchiver = new ArrayList<Force>();
+		appliedForces = new ArrayList<Force>();
+		
+		if(puppet != null)
+		{
 			xDist = xCoord-puppet.xCoord;
 			yDist = yCoord-puppet.yCoord;
 		}
@@ -86,10 +117,10 @@ public class Pleb extends Hitbox
 	public void draw(Graphics g, double w, double h)
 	{
 		//TEST
-		g.setColor(Color.RED);
+		g.setColor((direction != -1)? Color.RED:Color.YELLOW);
 		g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50));
 		g.fillRect((int)(xHosh*w/1280),(int)(yHosh*h/720),(int)(width*w/1280),(int)(height*h/720));
-		g.setColor(Color.RED);
+		g.setColor((direction != -1)? Color.RED:Color.YELLOW);
 		g.drawRect((int)(xHosh*w/1280),(int)(yHosh*h/720),(int)(width*w/1280),(int)(height*h/720));
 		switch(direction)
 		{

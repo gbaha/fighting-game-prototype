@@ -23,14 +23,14 @@ abstract class Puppet
 	int health, stamina, meter, speed;
 	int preFrames, fCounter, hitStop, hitStun;
 	double fIndex, jForce, jump;
-	boolean isFacingRight, isPerformingAction, isCrouching;//, isJumping;
+	boolean isFacingRight, isPerformingAction, isCrouching, canBlock;//, isJumping;
 	int[] jDirections, spriteParams;
 	boolean[] isBlocking;
 	
 	public enum PuppetState implements State
 	{
-		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD,	//, PERFORM_ACTION
-		FLINCH_STANDING0, FLINCH_STANDING1, FLINCH_STANDING2, FLINCH_CROUCHING;
+		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD, 	//, PERFORM_ACTION
+		GUARD_STANDING, FLINCH_STANDING0, FLINCH_STANDING1, FLINCH_STANDING2, FLINCH_CROUCHING;
 		
 		public String getState()
 		{
@@ -70,6 +70,7 @@ abstract class Puppet
 		crHeight = c;
 		isFacingRight = r;
 		isPerformingAction = false;
+		canBlock = false;
 	//	isJumping = false;
 		
 		jDirections = new int[]{0,0};
@@ -155,12 +156,17 @@ abstract class Puppet
 			case "WALK_BACKWARD":
 				move();
 				break;
-				
+			
+			case "GUARD_STANDING":
+				guard();
+				break;
+			
 			case "FLINCH_STANDING0":
 			case "FLINCH_STANDING1":
 			case "FLINCH_STANDING2":
 			case "FLINCH_CROUCHING":
 				flinch();
+				break;
 		}
 		xCoord = bounds.xCoord;
 		yCoord = bounds.yCoord;
@@ -187,6 +193,11 @@ abstract class Puppet
 	
 	public void idle()
 	{
+		if(isBlocking[0] || isBlocking[1])
+		{
+			currState = PuppetState.GUARD_STANDING;
+			return;
+		}
 		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
 		{
 			switch(jDirections[0])
@@ -219,6 +230,11 @@ abstract class Puppet
 	
 	public void crouch()
 	{
+		if(isBlocking[0] || isBlocking[1])
+		{
+			currState = PuppetState.GUARD_STANDING;
+			return;
+		}
 		if(isCrouching)
 		{
 			if(preFrames == 0)
@@ -239,6 +255,11 @@ abstract class Puppet
 	public void move()
 	{
 		bounds.move();
+		if(isBlocking[0] || isBlocking[1])
+		{
+			currState = PuppetState.GUARD_STANDING;
+			return;
+		}
 		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
 		{
 			switch(jDirections[0])
@@ -260,50 +281,95 @@ abstract class Puppet
 	
 	public void takeDamage(Pleb p, Hitbox[] c)
 	{
-		health -= p.hDamage;
-	//	stamina -= p.sDamage;
-		if(health < 0)
-			health = 0;
-		if(stamina < 0)
-			stamina = 0;
-		
-		if(isCrouching)
-			currState = PuppetState.FLINCH_CROUCHING;
-		else
+		boolean hitSuccessful = false;
+		switch(p.direction)
 		{
-			switch(p.direction)
+			case 0:
+				if(!isBlocking[0] && !isBlocking[1])
+					hitSuccessful = true;
+				break;
+				
+			case 1:
+				if(!isBlocking[1])
+					hitSuccessful = true;
+				break;
+				
+			case 2:
+				if(!isBlocking[0])
+					hitSuccessful = true;
+				break;
+		}
+		
+		if(hitSuccessful)
+		{
+			health -= p.hDamage;
+			if(health < 0)
+				health = 0;
+			
+			if(isCrouching)
+				currState = PuppetState.FLINCH_CROUCHING;
+			else
+			{
+				switch(p.direction)
+				{
+					case 0:
+						currState = PuppetState.FLINCH_STANDING0;
+						break;
+					case 1:
+						currState = PuppetState.FLINCH_STANDING1;
+						break;
+					case 2:
+						currState = PuppetState.FLINCH_STANDING2;
+						break;
+				}
+			}
+			fIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+			
+			switch(p.strength)
 			{
 				case 0:
-					currState = PuppetState.FLINCH_STANDING0;
+					hitStun = 10;
+					hitStop = 5;
 					break;
 				case 1:
-					currState = PuppetState.FLINCH_STANDING1;
+					hitStun = 10;
+					hitStop = 5;
 					break;
 				case 2:
-					currState = PuppetState.FLINCH_STANDING2;
+					hitStun = 10;
+					hitStop = 5;
+					break;
+				case 3:
+					hitStun = 10;
+					hitStop = 5;
 					break;
 			}
 		}
-		fIndex = hitboxArchiver.get(currState.getPosition())[0][1];
-		
-		switch(p.strength)
+		else
 		{
-			case 0:
-				hitStun = 10;
-				hitStop = 5;
-				break;
-			case 1:
-				hitStun = 10;
-				hitStop = 3;
-				break;
-			case 2:
-				hitStun = 10;
-				hitStop = 3;
-				break;
-			case 3:
-				hitStun = 10;
-				hitStop = 3;
-				break;
+			stamina -= p.sDamage;
+			if(stamina < 0)
+				stamina = 0;
+			
+			switch(p.strength)
+			{
+				case 0:
+					hitStun = 10;
+					hitStop = 5;
+					break;
+				case 1:
+					hitStun = 10;
+					hitStop = 5;
+					break;
+				case 2:
+					hitStun = 10;
+					hitStop = 5;
+					break;
+				case 3:
+					hitStun = 10;
+					hitStop = 5;
+					break;
+			}
 		}
 		
 		for(Force f: p.appliedForces)
@@ -323,6 +389,14 @@ abstract class Puppet
 		if(hitStun > 0)
 			hitStun--;
 		else
+			currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
+	}
+	
+	public void guard()
+	{
+		if(hitStun > 0)
+			hitStun--;
+		else if(!isBlocking[0] && !isBlocking[1] && hitStun == 0)
 			currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
 	}
 	

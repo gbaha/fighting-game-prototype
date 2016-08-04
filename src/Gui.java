@@ -52,11 +52,11 @@ public class Gui extends JPanel
 	{
 		//HEALTH
 		g.setColor(Color.LIGHT_GRAY);
-		g.fillRect((int)((35*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
-		g.fillRect((int)((1245*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((-500*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.fillRect((int)((535*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((-500*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.fillRect((int)((745*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
 		g.setColor(Color.GREEN);
-		g.fillRect((int)((35*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((500*((double)p1.health/p1.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5));
-		g.fillRect((int)((1245*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((-500*((double)p2.health/p2.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.fillRect((int)((535*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((-500*((double)p1.health/p1.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.fillRect((int)((745*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((500*((double)p2.health/p2.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5));
 		
 		//STAMINA
 		for(int s = 0; s < 6; s++)
@@ -69,12 +69,12 @@ public class Gui extends JPanel
 			if(p1.stamina >= (s+1)*100)
 				g.fillRect((int)(((535-s*45)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)((-40*w/1280)+0.5),(int)((20*h/720)+0.5));
 			else if(p1.stamina > s*100)
-				g.fillRect((int)(((535-s*45)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)(((s*100.0-p1.stamina)/40*w/1280)+0.5),(int)((20*h/720)+0.5));
-		
+				g.fillRect((int)(((535-s*45)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)((-40*((p1.stamina-s*100.0)/100)*w/1280)+0.5),(int)((20*h/720)+0.5));
+			
 			if(p2.stamina >= (s+1)*100)
 				g.fillRect((int)(((745+s*45)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)((40*w/1280)+0.5),(int)((20*h/720)+0.5));
 			else if(p2.stamina > s*100)
-				g.fillRect((int)(((745+s*45)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)(((p2.stamina-s*100.0)/40*w/1280)+0.5),(int)((20*h/720)+0.5));
+				g.fillRect((int)(((745+s*45)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)((40*((p2.stamina-s*100.0)/100)*w/1280)+0.5),(int)((20*h/720)+0.5));
 		}
 		
 		//METER

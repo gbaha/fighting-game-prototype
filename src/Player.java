@@ -12,7 +12,9 @@ public class Player extends Puppet
 	
 	public enum PlayerState implements State
 	{
-		PuppetState, DASH_FORWARD, DASH_BACKWARD, STANDING_LP, CROUCHING_LP, JUMPING_LP, STANDING_MP, CROUCHING_MP, JUMPING_MP, STANDING_HP, CROUCHING_HP, JUMPING_HP, STANDING_LK, CROUCHING_LK, JUMPING_LK, STANDING_MK, CROUCHING_MK, JUMPING_MK, STANDING_HK, CROUCHING_HK, JUMPING_HK;	//, PERFORM_ACTION
+		PuppetState, DASH_FORWARD, DASH_BACKWARD, 
+		STANDING_LP, CROUCHING_LP, JUMPING_LP, STANDING_MP, CROUCHING_MP, JUMPING_MP, STANDING_HP, CROUCHING_HP, JUMPING_HP, 
+		STANDING_LK, CROUCHING_LK, JUMPING_LK, STANDING_MK, CROUCHING_MK, JUMPING_MK, STANDING_HK, CROUCHING_HK, JUMPING_HK;	//, PERFORM_ACTION
 	
 		public String getState()
 		{
@@ -95,6 +97,10 @@ public class Player extends Puppet
 				move();
 				break;
 				
+			case "GUARD_STANDING":
+				guard();
+				break;
+				
 			case "FLINCH_STANDING0":
 			case "FLINCH_STANDING1":
 			case "FLINCH_STANDING2":
@@ -146,6 +152,12 @@ public class Player extends Puppet
 		{
 		//	currState = PuppetState.PERFORM_ACTION;
 			performAction();
+			return;
+		}
+		
+		if(isBlocking[0] || isBlocking[1])
+		{
+			currState = PuppetState.GUARD_STANDING;
 			return;
 		}
 		
@@ -237,6 +249,12 @@ public class Player extends Puppet
 			return;
 		}
 		
+		if(isBlocking[0] || isBlocking[1])
+		{
+			currState = PuppetState.GUARD_STANDING;
+			return;
+		}
+		
 		if(jDirections[1] == 1)
 		{
 			switch(jDirections[0])
@@ -282,6 +300,12 @@ public class Player extends Puppet
 		{
 	//		currState = PuppetState.PERFORM_ACTION;
 			performAction();
+			return;
+		}
+		
+		if(isBlocking[0] || isBlocking[1])
+		{
+			currState = PuppetState.GUARD_STANDING;
 			return;
 		}
 		
