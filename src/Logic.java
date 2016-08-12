@@ -414,7 +414,7 @@ public class Logic
 					}
 				}
 				
-				if(stage.player1 != null && stage.player2 != null)
+				if(stage.player1 != null && stage.player2 != null && stage.player1.health > 0 && stage.player2.health > 0)
 				{
 					if(h1 == stage.player1.bounds || h1 == stage.player2.bounds)
 					{
@@ -1736,34 +1736,37 @@ public class Logic
 						{
 							if(p1.puppet != p2)
 							{
-								if(p1.direction == -1)
+								if(p1.duration > 0)
 								{
-									if(p2.currAction == null)
-										p2.canBlock = true;
-								}
-								else
-								{
-								/*	switch(p1.direction)
+									if(p1.direction == -1)
 									{
-										case 0:
-											if(!p2.isBlocking[0] && !p2.isBlocking[1])
-												p2.takeDamage(p1,stage.floors.get(0).cornered);
-											break;
-											
-										case 1:
-											if(!p2.isBlocking[1])
-												p2.takeDamage(p1,stage.floors.get(0).cornered);
-											break;
-											
-										case 2:
-											if(!p2.isBlocking[0])
-												p2.takeDamage(p1,stage.floors.get(0).cornered);
-											break;
-									}*/
-									
-									p2.takeDamage(p1,stage.floors.get(0).cornered);
-									p1.duration = 0;
-									recovery = new int[][]{new int[]{0,p1.puppet.currState.getPosition()}, new int[]{0,p2.currState.getPosition()}};	//TEST
+										if(p2.currAction == null)
+											p2.canBlock = true;
+									}
+									else
+									{
+									/*	switch(p1.direction)
+										{
+											case 0:
+												if(!p2.isBlocking[0] && !p2.isBlocking[1])
+													p2.takeDamage(p1,stage.floors.get(0).cornered);
+												break;
+												
+											case 1:
+												if(!p2.isBlocking[1])
+													p2.takeDamage(p1,stage.floors.get(0).cornered);
+												break;
+												
+											case 2:
+												if(!p2.isBlocking[0])
+													p2.takeDamage(p1,stage.floors.get(0).cornered);
+												break;
+										}*/
+										
+										p2.takeDamage(p1,stage.floors.get(0).cornered);
+										p1.duration = 0;
+										recovery = new int[][]{new int[]{0,p1.puppet.currState.getPosition()}, new int[]{0,p2.currState.getPosition()}};	//TEST
+									}
 								}
 							}
 						}
@@ -1821,9 +1824,11 @@ public class Logic
 			for(Puppet p: stage.puppets)
 			{
 				p.getHitboxes();
-				if(p.hitStop > hitStop)
+				if(p.hitStop > hitStop && p.fIndex == 1)
+				{
 					hitStop = p.hitStop;
-				p.hitStop = 0;
+					p.hitStop = 0;
+				}
 			}
 			
 			stage.update();

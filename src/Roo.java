@@ -181,6 +181,33 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95, 125,0,120,45},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//STANDING MP
+		hitboxArchiver.add(new int[][]{new int[]{16,0,8,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//STANDING MP
+				hitboxArchiver.add(new int[][]{new int[]{17,0,13,0,2},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+					new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		
 		normals = new Action[]{new LightPunch(this), new MediumPunch(this), new HeavyPunch(this), new LightKick(this), new MediumKick(this), new HeavyKick(this)};
 	}
@@ -212,7 +239,7 @@ public class Roo extends Player
 		
 		public LightPunch(Roo r)
 		{
-			super(Action.NORMAL,9,new boolean[]{false,false,false,false,false});
+			super(Action.NORMAL,1,10,new int[]{0,1,4},new boolean[]{false,false,false,false},new int[]{3,10});
 			roo = r;
 		}
 		
@@ -233,14 +260,14 @@ public class Roo extends Player
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
-							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord-15,180,60,5,true));
+							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+10,180,35,5,true));
 						break;
 						
 					case 2:
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
-							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+25,140,20,3,0,0,5,1,12,0,true));
+							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+25,140,20,3,0,0,15,1,12,0,true));
 						break;
 				}
 			}
@@ -253,12 +280,37 @@ public class Roo extends Player
 		
 		public MediumPunch(Roo r)
 		{
-			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			super(Action.NORMAL,1,18,new int[]{2,5},new boolean[]{false,false,false,false},new int[]{4,18});
 			roo = r;
 		}
 		
 		public void perform(int f)
 		{
+			isPerformingAction = true;
+			if(f >= frames)
+			{
+				isPerformingAction = false;
+				return;
+			}
+			else
+			{
+				switch(f)
+				{
+					case 0:
+						currState = (!bounds.isGrounded)? PlayerState.JUMPING_MP:((isCrouching)? PlayerState.CROUCHING_MP:PlayerState.STANDING_MP);
+						if(!bounds.isGrounded){}
+						else if(isCrouching){}
+						else
+							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+10,180,35,8,true));
+						break;
+					case 4:
+						if(!bounds.isGrounded){}
+						else if(isCrouching){}
+						else
+							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+25,140,20,4,0,1,30,1,12,0,true));
+						break;
+				}
+			}
 		}
 	}
 	
@@ -268,12 +320,37 @@ public class Roo extends Player
 		
 		public HeavyPunch(Roo r)
 		{
-			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			super(Action.NORMAL,1,28,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
 			roo = r;
 		}
 		
 		public void perform(int f)
 		{
+			isPerformingAction = true;
+			if(f >= frames)
+			{
+				isPerformingAction = false;
+				return;
+			}
+			else
+			{
+				switch(f)
+				{
+					case 0:
+						currState = (!bounds.isGrounded)? PlayerState.JUMPING_HP:((isCrouching)? PlayerState.CROUCHING_HP:PlayerState.STANDING_HP);
+						if(!bounds.isGrounded){}
+						else if(isCrouching){}
+						else
+							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+10,180,35,10,true));
+						break;
+					case 6:
+						if(!bounds.isGrounded){}
+						else if(isCrouching){}
+						else
+							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+25,140,20,4,0,2,45,1,12,0,true));
+						break;
+				}
+			}
 		}
 	}
 	
@@ -283,7 +360,7 @@ public class Roo extends Player
 		
 		public LightKick(Roo r)
 		{
-			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
 			roo = r;
 		}
 		
@@ -298,7 +375,7 @@ public class Roo extends Player
 		
 		public MediumKick(Roo r)
 		{
-			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
 			roo = r;
 		}
 		
@@ -313,7 +390,7 @@ public class Roo extends Player
 		
 		public HeavyKick(Roo r)
 		{
-			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
 			roo = r;
 		}
 		

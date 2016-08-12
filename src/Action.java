@@ -6,26 +6,45 @@ abstract class Action
 	public static final int DASH = 3;
 	public static final int JUMP = 4;
 	
-	int type, frames;
-	boolean isNormalCancelable, isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable;
+	int[] buttonPath, cancelWindow;
+	int button, type, cancelType, frames;
+	boolean isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable;
 	
-	public Action(int t, int f, boolean[] c)
+	public Action(int t, int ct, int f, int[] b, boolean[] c, int[] cw)
 	{
+		button = -1;
 		type = t;
+		cancelType = ct;	// 0 = on whiff, 1 = on block, 2 = on hit
 		frames = f;
-		isNormalCancelable = c[0];
-		isSpecialCancelable = c[1];
-		isSuperCancelable =	c[2];
-		isDashCancelable =	c[3];
-		isJumpCancelable =	c[4];
+		isSpecialCancelable = c[0];
+		isSuperCancelable =	c[1];
+		isDashCancelable =	c[2];
+		isJumpCancelable =	c[3];
+		
+		buttonPath = b;
+		cancelWindow = cw;
 	}
 	
 	
-	public boolean isCancelable(int t)	//Change to accept chain and stamina cancels later
+	public boolean isCancelable(int c, int f, int t, int b)	//Change to stamina cancels later
 	{
-		boolean[] c = new boolean[]{isNormalCancelable, isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable};
-		if(c[t])
-			return true;
+		if(cancelType <= c & f >= cancelWindow[0] && f < cancelWindow[1])
+		{
+			if(t == 0)
+			{
+				for(int p: buttonPath)
+				{
+					if(p == b)
+						return true;
+				}
+			}
+			else
+			{
+				boolean[] cancel = new boolean[]{isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable};
+				if(cancel[t-1])
+					return true;
+			}
+		}
 		return false;
 	}
 	

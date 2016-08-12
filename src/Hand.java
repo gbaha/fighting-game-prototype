@@ -285,6 +285,8 @@ public class Hand implements KeyListener	//, MouseListener
 				
 				if(!c)
 					i = 0;
+				else
+					order.removeFirst();
 				i--;
 			}
 			
@@ -292,11 +294,19 @@ public class Hand implements KeyListener	//, MouseListener
 			{//System.out.println(">> "+player.movelist.indexOf(m));
 				if(player.currAction == null)
 					player.setAction(player.actions[player.movelist.indexOf(m)]);
-				else if(player.currAction.isCancelable(player.actions[player.movelist.indexOf(m)].type))
+				else if(player.currAction.isCancelable(player.hitInfo[0],player.fCounter,player.actions[player.movelist.indexOf(m)].type,currButton))
+				{
 					player.setAction(player.actions[player.movelist.indexOf(m)]);
+					player.fCounter = 0;
+					player.fIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
+				}
+				player.actions[player.movelist.indexOf(m)].button = currButton;
 			}
 			else if(currButton != -1)
+			{
 				player.setAction(player.normals[currButton]);
+				player.currAction.button = currButton;
+			}
 		}
 	}
 	
@@ -371,7 +381,6 @@ public class Hand implements KeyListener	//, MouseListener
 				if(e.getKeyCode() == buttonBindings[b])
 				{
 					buttonArchiver[b] = true;
-					if(b == 0)	//TEST
 					currButton = b;
 					addButtonInput(b);
 				}

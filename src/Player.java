@@ -13,8 +13,9 @@ public class Player extends Puppet
 	public enum PlayerState implements State
 	{
 		PuppetState, DASH_FORWARD, DASH_BACKWARD, 
-		STANDING_LP, CROUCHING_LP, JUMPING_LP, STANDING_MP, CROUCHING_MP, JUMPING_MP, STANDING_HP, CROUCHING_HP, JUMPING_HP, 
-		STANDING_LK, CROUCHING_LK, JUMPING_LK, STANDING_MK, CROUCHING_MK, JUMPING_MK, STANDING_HK, CROUCHING_HK, JUMPING_HK;	//, PERFORM_ACTION
+		STANDING_LP, STANDING_MP, STANDING_HP, STANDING_LK, STANDING_MK, STANDING_HK, 
+		CROUCHING_LP, CROUCHING_MP, CROUCHING_HP, CROUCHING_LK, CROUCHING_MK, CROUCHING_HK, 
+		JUMPING_LP, JUMPING_MP, JUMPING_HP, JUMPING_LK, JUMPING_MK, JUMPING_HK;	//, PERFORM_ACTION
 	
 		public String getState()
 		{
@@ -72,41 +73,18 @@ public class Player extends Puppet
 		g.drawString(currState+"",(int)((bounds.xHosh+bounds.width+2)*w/1280),(int)((bounds.yHosh)*h/720));
 		g.drawString((int)fIndex+"",(int)((bounds.xHosh+bounds.width+2)*w/1280),(int)((bounds.yHosh+bounds.height*3/4)*h/720));
 		g.drawString(fCounter+"",(int)((bounds.xHosh+bounds.width+2)*w/1280),(int)((bounds.yHosh+bounds.height*5/6)*h/720));
+		g.setColor(Color.RED);
+		g.drawString(hitInfo[0]+"",(int)(bounds.xHosh*w/1280),(int)((bounds.yHosh+bounds.height+20)*h/720));
+		g.drawString(hitInfo[2]+"",(int)((bounds.xHosh+15)*w/1280),(int)((bounds.yHosh+bounds.height+20)*h/720));
+		g.setColor(Color.YELLOW);
+		g.drawString(hitInfo[1]+"",(int)((bounds.xHosh+50)*w/1280),(int)((bounds.yHosh+bounds.height+20)*h/720));
+		
 	}
 	
 	public void checkState()
 	{
 		switch(currState.getState())
 		{
-			case "IDLE":
-			case "FALL_NEUTRAL":
-			case "FALL_FORWARD":
-			case "FALL_BACKWARD":
-			case "LANDING":
-				idle();
-				break;
-				
-			case "CROUCH":
-			case "STANDING":
-			case "CROUCHING":
-				crouch();
-				break;
-				
-			case "WALK_FORWARD":
-			case "WALK_BACKWARD":
-				move();
-				break;
-				
-			case "GUARD_STANDING":
-				guard();
-				break;
-				
-			case "FLINCH_STANDING0":
-			case "FLINCH_STANDING1":
-			case "FLINCH_STANDING2":
-			case "FLINCH_CROUCHING":
-				flinch();
-				
 			case "JUMP_NEUTRAL":
 			case "JUMP_FORWARD":
 			case "JUMP_BACKWARD":
@@ -118,20 +96,34 @@ public class Player extends Puppet
 			case "STANDING_LP":
 			case "CROUCHING_LP":
 			case "JUMPING_LP":
+			case "STANDING_MP":
+			case "CROUCHING_MP":
+			case "JUMPING_MP":
+			case "STANDING_HP":
+			case "CROUCHING_HP":
+			case "JUMPING_HP":
 				performAction();
 				break;
 		}
-		xCoord = bounds.xCoord;
-		if(!isCrouching && currState != PuppetState.STANDING)
-			yCoord = bounds.yCoord;
-		
-		if(currState.getPosition() < hitboxArchiver.size())
+		super.checkState();
+	}
+	
+	public void setAction(Action a)
+	{
+		if(currAction == null)
 		{
-			if(currState != prevState)
+			if((a != actions[0] && a != actions[2]) || aDash < airDashLimit)
 			{
-				fIndex = hitboxArchiver.get(currState.getPosition())[0][1];
-				prevState = currState;
+				currAction = a;
+				a.button = -1;
 			}
+		}
+		else if(currAction.isCancelable(hitInfo[0],fCounter,currAction.type,currAction.button))
+		{
+			currAction = a;
+			a.button = -1;
+			fCounter = 0;
+			fIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 		}
 	}
 	
@@ -383,8 +375,6 @@ public class Player extends Puppet
 			bounds.height = height;
 		}
 		bounds.update();
-		if(isPerformingAction)
-			fCounter++;
 	}
 	
 	
@@ -394,26 +384,25 @@ public class Player extends Puppet
 		
 		public FrontDash()
 		{
-			super(Action.DASH,1,new boolean[]{false,false,false,false,false});
+			super(Action.DASH,2,1,new int[]{0,1,2,3,4,5},new boolean[]{true,true,false,false},new int[]{1,8});
 			magnitude = 35;
 			decay = 2;
-			frames = (int)(magnitude/decay)+((magnitude/decay == (int)(magnitude/decay))? 0:1);
+			frames = (int)(magnitude/decay)+((magnitude/decay == (int)(magnitude/decay))? 0:1)+1;
 		}
 		
 		public void perform(int f)
 		{
-			int d = (isFacingRight)? 3:1;
 			isPerformingAction = true;
-			
 			if(f >= frames)
 			{
 				isPerformingAction = false;
 				return;
 			}
-			else
+			else if(f == 0)
 			{
 				if(!isCrouching && !isDashing && aDash < airDashLimit)
 				{
+					int d = (isFacingRight)? 3:1;
 					currState = PlayerState.DASH_FORWARD;
 					bounds.forceArchiver.add(new Force("dash",(isFacingRight)? 3:1,magnitude,decay));
 					aDash++;
@@ -433,6 +422,8 @@ public class Player extends Puppet
 							bounds.forceArchiver.add(new Force("xJump",d,6,0));
 					}
 				}
+				else
+					isPerformingAction = false;
 			}
 		}
 	}
@@ -443,26 +434,25 @@ public class Player extends Puppet
 		
 		public BackDash()
 		{
-			super(Action.DASH,1,new boolean[]{false,false,false,false,false});
+			super(Action.DASH,2,1,new int[]{0,1,2,3,4,5},new boolean[]{true,true,false,false},new int[]{1,8});
 			magnitude = 28;
 			decay = 2;
-			frames = (int)(magnitude/decay)+((magnitude/decay == (int)(magnitude/decay))? 0:1);
+			frames = (int)(magnitude/decay)+((magnitude/decay == (int)(magnitude/decay))? 0:1)+1;
 		}
 		
 		public void perform(int f)
 		{
-			int d = (isFacingRight)? 1:3;
 			isPerformingAction = true;
-			
 			if(f >= frames)
 			{
 				isPerformingAction = false;
 				return;
 			}
-			else
+			else if(f == 0)
 			{
 				if(!isCrouching && !isDashing && aDash < airDashLimit)
 				{
+					int d = (isFacingRight)? 1:3;
 					currState = PlayerState.DASH_BACKWARD;
 					bounds.forceArchiver.add(new Force("dash",d,magnitude,decay));
 					aDash++;

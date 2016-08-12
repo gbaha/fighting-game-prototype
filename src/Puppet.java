@@ -24,7 +24,7 @@ abstract class Puppet
 	int preFrames, fCounter, hitStop, hitStun;
 	double fIndex, jForce, jump;
 	boolean isFacingRight, isPerformingAction, isCrouching, canBlock;//, isJumping;
-	int[] jDirections, spriteParams;
+	int[] hitInfo, jDirections, spriteParams;
 	boolean[] isBlocking;
 	
 	public enum PuppetState implements State
@@ -73,6 +73,7 @@ abstract class Puppet
 		canBlock = false;
 	//	isJumping = false;
 		
+		hitInfo = new int[]{0,0,0};	//[type, counter, hitstun]
 		jDirections = new int[]{0,0};
 		isBlocking = new boolean[]{false,false};
 		
@@ -168,21 +169,43 @@ abstract class Puppet
 				flinch();
 				break;
 		}
+		
 		xCoord = bounds.xCoord;
-		yCoord = bounds.yCoord;
+		if(!isCrouching && currState != PuppetState.STANDING)
+			yCoord = bounds.yCoord;
+		
+		if(currState.getPosition() < hitboxArchiver.size())
+		{
+			if(currState != prevState)
+			{
+				fIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+				prevState = currState;
+			}
+		}
 	}
 	
 	public void setAction(Action a)
 	{
 		if(currAction == null)
+		{
 			currAction = a;
-		else if(currAction.isCancelable(currAction.type))
+			a.button = -1;
+		}
+		else if(currAction.isCancelable(hitInfo[0],fCounter,currAction.type,currAction.button))
+		{
 			currAction = a;
+			a.button = -1;
+			fCounter = 0;
+			fIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+		}
 	}
 	
 	public void performAction()
 	{
 		currAction.perform(fCounter);
+		bounds.xDir = 0;
+		bounds.xDrag = 0;
+		
 		if(!isPerformingAction)
 		{
 			currAction = null;
@@ -207,7 +230,7 @@ abstract class Puppet
 					return;
 				case 1:
 					currState = (isFacingRight)? PuppetState.FALL_FORWARD:PuppetState.FALL_BACKWARD;
-					return;
+			 		return;
 				case -1:
 					currState = (isFacingRight)? PuppetState.FALL_BACKWARD:PuppetState.FALL_FORWARD;
 					return;
@@ -332,18 +355,22 @@ abstract class Puppet
 					hitStop = 5;
 					break;
 				case 1:
-					hitStun = 10;
-					hitStop = 5;
+					hitStun = 15;
+					hitStop = 7;
 					break;
 				case 2:
-					hitStun = 10;
-					hitStop = 5;
+					hitStun = 20;
+					hitStop = 9;
 					break;
 				case 3:
 					hitStun = 10;
 					hitStop = 5;
 					break;
 			}
+			
+			p.puppet.hitInfo[0] = 1;
+			p.puppet.hitInfo[2] = hitStun;
+			p.puppet.hitInfo[1]++;
 		}
 		else
 		{
@@ -359,17 +386,21 @@ abstract class Puppet
 					break;
 				case 1:
 					hitStun = 10;
-					hitStop = 5;
+					hitStop = 7;
 					break;
 				case 2:
 					hitStun = 10;
-					hitStop = 5;
+					hitStop = 9;
 					break;
 				case 3:
 					hitStun = 10;
 					hitStop = 5;
 					break;
 			}
+			
+			p.puppet.hitInfo[0] = 2;
+			p.puppet.hitInfo[2] = hitStun;
+			p.puppet.hitInfo[1]++;
 		}
 		
 		for(Force f: p.appliedForces)
@@ -445,6 +476,17 @@ abstract class Puppet
 				}*/
 			}
 		}
+		
+		if(hitInfo[2] > 0)
+			hitInfo[2]--;
+		else
+		{
+			hitInfo[0] = 0;
+			hitInfo[1] = 0;
+		}
+		
+		if(isPerformingAction)
+			fCounter++;
 	}
 	
 	protected void getHitboxes(int h)
@@ -499,7 +541,7 @@ abstract class Puppet
 	{
 		public LightPunch()
 		{
-			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
 		}
 		
 		public void perform(int f){}
@@ -509,7 +551,7 @@ abstract class Puppet
 	{
 		public MediumPunch()
 		{
-			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
 		}
 		
 		public void perform(int f){}
@@ -519,7 +561,7 @@ abstract class Puppet
 	{
 		public HeavyPunch()
 		{
-			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
 		}
 		
 		public void perform(int f){}
@@ -529,7 +571,7 @@ abstract class Puppet
 	{
 		public LightKick()
 		{
-			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
 		}
 		
 		public void perform(int f){}
@@ -539,7 +581,7 @@ abstract class Puppet
 	{
 		public MediumKick()
 		{
-			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
 		}
 		
 		public void perform(int f){}
@@ -549,7 +591,7 @@ abstract class Puppet
 	{
 		public HeavyKick()
 		{
-			super(Action.NORMAL,1,new boolean[]{false,false,false,false,false});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
 		}
 		
 		public void perform(int f){}
