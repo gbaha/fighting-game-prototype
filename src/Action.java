@@ -16,6 +16,7 @@ abstract class Action
 		type = t;
 		cancelType = ct;	// 0 = on whiff, 1 = on block, 2 = on hit
 		frames = f;
+		
 		isSpecialCancelable = c[0];
 		isSuperCancelable =	c[1];
 		isDashCancelable =	c[2];
@@ -28,7 +29,7 @@ abstract class Action
 	
 	public boolean isCancelable(int c, int f, int t, int b)	//Change to stamina cancels later
 	{
-		if(cancelType <= c & f >= cancelWindow[0] && f < cancelWindow[1])
+		if(cancelType <= c && f >= cancelWindow[0] && f < cancelWindow[1])
 		{
 			if(t == 0)
 			{

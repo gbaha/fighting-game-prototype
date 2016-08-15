@@ -21,10 +21,10 @@ abstract class Puppet
 	int id, xCoord, yCoord, xHosh, yHosh, width, height, crHeight;
 	int maxHp, maxSp, maxMp, maxSpd;
 	int health, stamina, meter, speed;
-	int preFrames, fCounter, hitStop, hitStun;
+	int preFrames, fCounter, hitStun, hitStop;
 	double fIndex, jForce, jump;
 	boolean isFacingRight, isPerformingAction, isCrouching, canBlock;//, isJumping;
-	int[] hitInfo, jDirections, spriteParams;
+	int[] hitInfo, flinchPoints, jDirections, spriteParams;
 	boolean[] isBlocking;
 	
 	public enum PuppetState implements State
@@ -74,6 +74,7 @@ abstract class Puppet
 	//	isJumping = false;
 		
 		hitInfo = new int[]{0,0,0};	//[type, counter, hitstun]
+		flinchPoints = new int[]{0,0,0,0};
 		jDirections = new int[]{0,0};
 		isBlocking = new boolean[]{false,false};
 		
@@ -92,8 +93,8 @@ abstract class Puppet
 		preFrames = 0;
 		fCounter = 0;
 		fIndex = 0;
-		hitStop = 0;
 		hitStun = 0;
+		hitStop = 0;
 		
 		bounds =  new Organ(x,y,w,h,speed);
 		bounds.isFloating = f2;
@@ -305,6 +306,7 @@ abstract class Puppet
 	public void takeDamage(Pleb p, Hitbox[] c)
 	{
 		boolean hitSuccessful = false;
+		bounds.forceArchiver = new ArrayList<Force>();
 		switch(p.direction)
 		{
 			case 0:
@@ -356,15 +358,15 @@ abstract class Puppet
 					break;
 				case 1:
 					hitStun = 15;
-					hitStop = 7;
+					hitStop = 6;
 					break;
 				case 2:
 					hitStun = 20;
-					hitStop = 9;
+					hitStop = 7;
 					break;
 				case 3:
 					hitStun = 10;
-					hitStop = 5;
+					hitStop = 10;
 					break;
 			}
 			
@@ -386,21 +388,21 @@ abstract class Puppet
 					break;
 				case 1:
 					hitStun = 10;
-					hitStop = 7;
+					hitStop = 6;
 					break;
 				case 2:
 					hitStun = 10;
-					hitStop = 9;
+					hitStop = 7;
 					break;
 				case 3:
 					hitStun = 10;
-					hitStop = 5;
+					hitStop = 10;
 					break;
 			}
 			
 			p.puppet.hitInfo[0] = 2;
 			p.puppet.hitInfo[2] = hitStun;
-			p.puppet.hitInfo[1]++;
+		//	p.puppet.hitInfo[1]++;
 		}
 		
 		for(Force f: p.appliedForces)
@@ -512,9 +514,18 @@ abstract class Puppet
 			
 			for(int j = 0; j < hitboxArchiver.get(h)[i].length; j += 4)
 				anatomy.add(new Organ((isFacingRight)? hitboxArchiver.get(h)[i][j]+bounds.xCoord:bounds.xCoord+bounds.width-hitboxArchiver.get(h)[i][j]-hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+1]+bounds.yCoord,hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+3],speed));
-			
+				
 			int f = (int)fIndex+((hitboxArchiver.get(h)[0][3] == 1 && fIndex != (int)fIndex)? 1:0);
-			fIndex += (hitboxArchiver.get(h)[0][3] == 0)? 1.0/(hitboxArchiver.get(h)[0][4]+1):-1.0/(hitboxArchiver.get(h)[0][4]+1);
+			
+			boolean isFlinching = false;
+			if(hitStun > 0 && 4-(PuppetState.values().length-currState.getPosition()) >= 0)
+			{
+				if(fIndex == flinchPoints[4-(PuppetState.values().length-currState.getPosition())])
+					isFlinching = true;
+			}
+			if(!isFlinching)
+				fIndex += (hitboxArchiver.get(h)[0][3] == 0)? 1.0/(hitboxArchiver.get(h)[0][4]+1):-1.0/(hitboxArchiver.get(h)[0][4]+1);
+			
 			if(Math.abs(fIndex-f) >= 1)
 			{
 				fIndex = (int)fIndex;

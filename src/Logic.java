@@ -337,27 +337,34 @@ public class Logic
 				int fLimit = h.forceArchiver.size();
 				for(int f = 0; f < fLimit; f++)
 				{
+					double hitstunDamp = 1;
+					if(h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("yKnockback"))
+					{
+						if(stage.puppets.get(hitboxes.indexOf(h)).hitStun > 0)
+							hitstunDamp = 0.75;
+					}
+					
 					switch(h.forceArchiver.get(f).direction)
 					{
 						case 0:
 							if(!h.forceArchiver.get(f).type.equals("gravity") || (h.forceArchiver.get(f).type.equals("gravity") && !h.isFloating))
-								forces[hitboxes.indexOf(h)][0] += h.forceArchiver.get(f).magnitude;
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay;
+								forces[hitboxes.indexOf(h)][0] += h.forceArchiver.get(f).magnitude*hitstunDamp;
+							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hitstunDamp;
 							break;
 							
 						case 1:
-							forces[hitboxes.indexOf(h)][1] += h.forceArchiver.get(f).magnitude;
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay;
+							forces[hitboxes.indexOf(h)][1] += h.forceArchiver.get(f).magnitude*hitstunDamp;
+							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hitstunDamp;
 							break;
 							
 						case 2:
-							forces[hitboxes.indexOf(h)][2] += h.forceArchiver.get(f).magnitude;
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay;
+							forces[hitboxes.indexOf(h)][2] += h.forceArchiver.get(f).magnitude*hitstunDamp;
+							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hitstunDamp;
 							break;
 							
 						case 3:
-							forces[hitboxes.indexOf(h)][3] += h.forceArchiver.get(f).magnitude;
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay;
+							forces[hitboxes.indexOf(h)][3] += h.forceArchiver.get(f).magnitude*hitstunDamp;
+							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hitstunDamp;
 							break;
 					}
 					
@@ -1728,13 +1735,13 @@ public class Logic
 		{
 			for(Puppet p2: stage.puppets)
 			{
-				for(Hitbox h: p2.anatomy)
+				if(p1.puppet != p2)
 				{
-					if((p1.xCoord >= h.xCoord && p1.xCoord < h.xCoord+h.width) || (p1.xCoord+p1.width > h.xCoord && p1.xCoord+p1.width <= h.xCoord+h.width))
+					for(Hitbox h: p2.anatomy)
 					{
-						if((p1.yCoord >= h.yCoord && p1.yCoord < h.yCoord+h.height) || (p1.yCoord+p1.height > h.yCoord && p1.yCoord+p1.height <= h.yCoord+h.height))
+						if((p1.xCoord >= h.xCoord && p1.xCoord < h.xCoord+h.width) || (p1.xCoord+p1.width > h.xCoord && p1.xCoord+p1.width <= h.xCoord+h.width) || (p1.xCoord <= h.xCoord && p1.xCoord+p1.width >= h.xCoord+h.width))
 						{
-							if(p1.puppet != p2)
+							if((p1.yCoord >= h.yCoord && p1.yCoord < h.yCoord+h.height) || (p1.yCoord+p1.height > h.yCoord && p1.yCoord+p1.height <= h.yCoord+h.height) || (p1.yCoord <= h.yCoord && p1.yCoord+p1.height >= h.yCoord+h.height))
 							{
 								if(p1.duration > 0)
 								{
@@ -1799,7 +1806,7 @@ public class Logic
 					recovery[1][1] = -1;
 				if(recovery[0][1] == -1 && recovery[1][1] == -1)
 				{
-					System.out.println((recovery[1][0]-recovery[0][0])+"   "+recovery[0][0]+" "+recovery[1][0]);
+					System.out.println((recovery[1][0]-recovery[0][0])+" ("+recovery[0][0]+" "+recovery[1][0]+")");
 					recovery = new int[][]{new int[]{-1,-1}, new int[]{-1,-1}};;
 				}
 			}
@@ -1824,7 +1831,7 @@ public class Logic
 			for(Puppet p: stage.puppets)
 			{
 				p.getHitboxes();
-				if(p.hitStop > hitStop && p.fIndex == 1)
+				if(p.hitStop > hitStop)
 				{
 					hitStop = p.hitStop;
 					p.hitStop = 0;
