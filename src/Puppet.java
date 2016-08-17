@@ -11,7 +11,8 @@ abstract class Puppet
 	ArrayList<Organ> anatomy;
 	ArrayList<int[]> touchArchiver;	//, actionList, spriteArchiver;
 	ArrayList<int[][]> hitboxArchiver;
-	ArrayList<Pleb> plebsIn, plebsOut;	//plebArchiver;
+	ArrayList<Pleb> plebsIn, plebsOut;
+	ArrayList<String> plebArchiver;
 	Action[] normals;
 	
 //	ArrayList<Force> forceArchiver;
@@ -53,6 +54,7 @@ abstract class Puppet
 	//	spriteArchiver = new ArrayList<int[]>();	//[xMod,yMod,width,height,sWidth,sHeight]
 		plebsIn = new ArrayList<Pleb>();
 		plebsOut = new ArrayList<Pleb>();
+		plebArchiver = new ArrayList<String>();
 		
 	//	forceArchiver = new ArrayList<Force>();
 		normals = new Action[]{new LightPunch(), new MediumPunch(), new HeavyPunch(), new LightKick(), new MediumKick(), new HeavyKick()};

@@ -6,15 +6,18 @@ public class Pleb extends Hitbox
 {
 	ArrayList<Force> forceArchiver, appliedForces;
 	Puppet puppet;
-//	String faction, type;
+	Action action;
+	String hash;	//action, type;
 	int duration, direction, strength, hDamage, sDamage, xKnockback, yKnockback, /*direction, speed,*/ xDist, yDist;
 //	double decayRate, piercingRate;
 	boolean isAttached;
 	
-	public Pleb(Puppet p, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, boolean a)
+	public Pleb(Puppet p, Action a, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, boolean ia)
 	{
 		super(x,y,w,h);
 		puppet = p;
+		action = a;
+		hash = "";
 		duration = d1;
 		direction = d2;	//[0 = mid, 1 = low, 2 = high]
 		strength = s;
@@ -22,7 +25,7 @@ public class Pleb extends Hitbox
 		sDamage = sd;
 		xKnockback = kx;
 		yKnockback = ky;
-		isAttached = a;
+		isAttached = ia;
 		
 		forceArchiver = new ArrayList<Force>();
 		appliedForces = new ArrayList<Force>();
@@ -46,6 +49,8 @@ public class Pleb extends Hitbox
 	{
 		super(x,y,w,h);
 		puppet = p;
+		action = null;
+		hash = "";
 		duration = d;
 		direction = -1;
 		strength = 0;
@@ -66,12 +71,14 @@ public class Pleb extends Hitbox
 	}
 	
 	//MIGHT REMOVE LATER
-	public Pleb(Puppet p, /*String f, String t,*/ int x, int y, int w, int h, int d1, int d2, int s, int hd, int kx, int ky, boolean a)	//, int d2, int s, double d3, double p)
+	public Pleb(Puppet p, Action a, /*String f, String t,*/ String hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int kx, int ky, boolean ia)	//, int d2, int s, double d3, double p)
 	{
 		super(x,y,w,h);
 		puppet = p;
+		action = a;
 //		faction = f;
 //		type = t;
+		hash = hc;
 		duration = d1;
 		direction = d2;
 		strength = s;
@@ -79,7 +86,7 @@ public class Pleb extends Hitbox
 		sDamage = (int)(hDamage/4.0+0.5);
 		xKnockback = kx;
 		yKnockback = ky;
-		isAttached = a;
+		isAttached = ia;
 //		direction = d2;
 //		speed = s;
 //		decayRate = d3;

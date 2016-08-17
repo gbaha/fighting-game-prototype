@@ -82,7 +82,7 @@ public class Player extends Puppet
 	}
 	
 	public void checkState()
-	{if(isFacingRight)System.out.println(currState.getState()+" "+(currAction == null));
+	{
 		switch(currState.getState())
 		{
 			case "JUMP_NEUTRAL":
@@ -384,7 +384,7 @@ public class Player extends Puppet
 		
 		public FrontDash()
 		{
-			super(Action.DASH,0,1,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true,false},new int[]{11,99});
+			super(Action.DASH,0,1,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true,false},new int[]{10,99});
 			magnitude = 35;
 			decay = 2;
 			frames = (int)(magnitude/decay)+((magnitude/decay == (int)(magnitude/decay))? 0:1)+1;
@@ -405,7 +405,6 @@ public class Player extends Puppet
 					int d = (isFacingRight)? 3:1;
 					currState = PlayerState.DASH_FORWARD;
 					bounds.forceArchiver.add(new Force("dash",(isFacingRight)? 3:1,magnitude,decay));
-					aDash++;
 					
 					if(!bounds.isGrounded)
 					{
@@ -420,6 +419,7 @@ public class Player extends Puppet
 						}
 						if(!j)
 							bounds.forceArchiver.add(new Force("xJump",d,6,0));
+						aDash++;
 					}
 				}
 				else
@@ -434,7 +434,7 @@ public class Player extends Puppet
 		
 		public BackDash()
 		{
-			super(Action.DASH,0,1,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true,false},new int[]{11,99});
+			super(Action.DASH,0,1,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true,false},new int[]{10,99});
 			magnitude = 28;
 			decay = 2;
 			frames = (int)(magnitude/decay)+((magnitude/decay == (int)(magnitude/decay))? 0:1)+1;
@@ -455,7 +455,6 @@ public class Player extends Puppet
 					int d = (isFacingRight)? 1:3;
 					currState = PlayerState.DASH_BACKWARD;
 					bounds.forceArchiver.add(new Force("dash",d,magnitude,decay));
-					aDash++;
 					
 					if(!bounds.isGrounded)
 					{
@@ -470,6 +469,7 @@ public class Player extends Puppet
 						}
 						if(!j)
 							bounds.forceArchiver.add(new Force("xJump",d,4,0));
+						aDash++;
 					}
 				}
 			}

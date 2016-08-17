@@ -187,13 +187,13 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95, 125,10,100,42},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95, 125,10,100,42},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95, 125,10,100,42},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95, 125,10,100,42},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
-		//STANDING MP
+		//STANDING HP
 		hitboxArchiver.add(new int[][]{new int[]{17,0,13,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -219,8 +219,8 @@ public class Roo extends Player
 		{
 			try
 			{
-	//			fIndex = 0; currState = State.JUMP_FORWARD;	//TEST
-			
+		//		fIndex = 4; fCounter = 4; currAction = new MediumPunch(this); currState = PlayerState.STANDING_MP;	//TEST
+				
 				Image sheet = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/roo.png"));
 				int f = /*(hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal())[0][3] == 0)?*/ (int)fIndex;	//:hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal()).length-(int)fIndex-2;
 				s.read(g,i,xHosh,yHosh,width,800,490,f,hitboxArchiver.get(currState.getPosition())[0][0],spriteParams,!isFacingRight,sheet);
@@ -258,6 +258,9 @@ public class Roo extends Player
 				{
 					case 0:
 						currState = (!bounds.isGrounded)? PlayerState.JUMPING_LP:((isCrouching)? PlayerState.CROUCHING_LP:PlayerState.STANDING_LP);
+						hashCounter = "";
+						hits = 1;
+						
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
@@ -268,7 +271,7 @@ public class Roo extends Player
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
-							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+25,140,20,3,0,0,12,1,12,0,true));
+							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+25,140,20,3,0,0,12,1,12,0,true);
 						break;
 				}
 			}
@@ -299,16 +302,28 @@ public class Roo extends Player
 				{
 					case 0:
 						currState = (!bounds.isGrounded)? PlayerState.JUMPING_MP:((isCrouching)? PlayerState.CROUCHING_MP:PlayerState.STANDING_MP);
+						hashCounter = "";
+						hits = 1;
+						
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
 							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+10,180,35,8,true));
 						break;
+					case 3:
+						if(!bounds.isGrounded){}
+						else if(isCrouching){}
+						else
+						{
+							addPleb(roo,0,bounds.xCoord+110,bounds.yCoord+30,85,20,1,0,1,30,10,16,0,true);
+							addPleb(roo,0,bounds.xCoord+200,bounds.yCoord+30,50,30,1,0,1,30,10,16,0,true);
+						}
+						break;
 					case 4:
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
-							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+25,140,20,4,0,1,30,10,16,0,true));
+							addPleb(roo,0,bounds.xCoord+125,bounds.yCoord+30,130,20,3,0,1,30,10,16,0,true);
 						break;
 				}
 			}
@@ -339,6 +354,9 @@ public class Roo extends Player
 				{
 					case 0:
 						currState = (!bounds.isGrounded)? PlayerState.JUMPING_HP:((isCrouching)? PlayerState.CROUCHING_HP:PlayerState.STANDING_HP);
+						hashCounter = "";
+						hits = 1;
+						
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
@@ -348,7 +366,7 @@ public class Roo extends Player
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
-							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+25,140,20,4,0,2,5,25,18,0,true));
+							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+25,140,20,4,0,2,5,25,18,0,true);
 						break;
 				}
 			}

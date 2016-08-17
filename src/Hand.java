@@ -85,7 +85,7 @@ public class Hand implements KeyListener	//, MouseListener
 						f.magnitude = 0;
 				}
 			}
-			player.bounds.isFloating = player.isDashing; // || other isFloating checks;
+			player.bounds.isFloating = player.isDashing && !player.bounds.isGrounded; // || other isFloating checks;
 			currButton = -1;
 			if(fTimer < 1000)
 				fTimer++;
@@ -145,7 +145,7 @@ public class Hand implements KeyListener	//, MouseListener
 			
 			if(stickArchiver[1])
 			{
-				if(player.bounds.xDrag != 1 && player.bounds.isGrounded && !player.isCrouching && !player.isDashing && !player.isBlocking[0] && !player.isBlocking[1])
+				if(player.currAction == null && player.bounds.xDrag != 1 && player.bounds.isGrounded && !player.isCrouching && !player.isDashing && !player.isBlocking[0] && !player.isBlocking[1])
 				{
 					if(player.bounds.xDir == -1 || (player.bounds.xDir == 0 && player.bounds.xDrag != 1 && player.bounds.xVel > 0))
 					{
@@ -171,7 +171,7 @@ public class Hand implements KeyListener	//, MouseListener
 			}
 			else if(stickArchiver[3])
 			{
-				if(player.bounds.xDrag != -1 && player.bounds.isGrounded && !player.isCrouching && !player.isDashing && !player.isBlocking[0] && !player.isBlocking[1])
+				if(player.currAction == null && player.bounds.xDrag != -1 && player.bounds.isGrounded && !player.isCrouching && !player.isDashing && !player.isBlocking[0] && !player.isBlocking[1])
 				{
 					if(player.bounds.xDir == 1 || (player.bounds.xDir == 0 && player.bounds.xVel > 0))
 					{

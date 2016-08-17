@@ -385,7 +385,7 @@ public class Logic
 				
 				x1 += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5*((forces[hitboxes.indexOf(h1)][3] > forces[hitboxes.indexOf(h1)][1])? 1:-1));
 				y1 += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5*((forces[hitboxes.indexOf(h1)][0] > forces[hitboxes.indexOf(h1)][2])? 1:-1));
-			
+				
 				if(h1.xDir != 0)
 					x1 += h1.xForward;
 				if(h1.xDrag != 0)
@@ -1769,10 +1769,23 @@ public class Logic
 													p2.takeDamage(p1,stage.floors.get(0).cornered);
 												break;
 										}*/
+									//	stage.player2.isBlocking[0] = true;
 										
-										p2.takeDamage(p1,stage.floors.get(0).cornered);
-										p1.duration = 0;
-										recovery = new int[][]{new int[]{0,p1.puppet.currState.getPosition()}, new int[]{0,p2.currState.getPosition()}};	//TEST
+										boolean isUnique = true;
+										for(String u: p2.plebArchiver)
+										{
+											if(u.equals(p1.hash) || p1.action.hits == 0)
+												isUnique = false;
+										}
+										
+										if(isUnique)
+										{
+											p2.takeDamage(p1,stage.floors.get(0).cornered);
+											p2.plebArchiver.add(p1.hash);
+											p1.duration = 0;
+											p1.action.hits--;
+											recovery = new int[][]{new int[]{0,p1.puppet.currState.getPosition()}, new int[]{0,p2.currState.getPosition()}};	//TEST
+										}
 									}
 								}
 							}
