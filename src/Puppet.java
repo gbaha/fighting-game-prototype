@@ -23,7 +23,7 @@ abstract class Puppet
 	int maxHp, maxSp, maxMp, maxSpd;
 	int health, stamina, meter, speed;
 	int preFrames, fCounter, hitStun, hitStop;
-	double fIndex, jForce, jump;
+	double fIndex, jForce, jump, hitstunDamp;
 	boolean isFacingRight, isPerformingAction, isCrouching, canBlock;//, isJumping;
 	int[] hitInfo, flinchPoints, jDirections, spriteParams;
 	boolean[] isBlocking;
@@ -97,6 +97,7 @@ abstract class Puppet
 		fIndex = 0;
 		hitStun = 0;
 		hitStop = 0;
+		hitstunDamp = 0;
 		
 		bounds =  new Organ(x,y,w,h,speed);
 		bounds.isFloating = f2;
@@ -363,7 +364,7 @@ abstract class Puppet
 					hitStop = 6;
 					break;
 				case 2:
-					hitStun = 20;
+					hitStun = 22;
 					hitStop = 7;
 					break;
 				case 3:
@@ -424,7 +425,10 @@ abstract class Puppet
 		if(hitStun > 0)
 			hitStun--;
 		else
+		{
+			plebArchiver.clear();
 			currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
+		}
 	}
 	
 	public void guard()
@@ -432,7 +436,10 @@ abstract class Puppet
 		if(hitStun > 0)
 			hitStun--;
 		else if(!isBlocking[0] && !isBlocking[1] && hitStun == 0)
+		{
+			plebArchiver.clear();
 			currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
+		}
 	}
 	
 	public void getHitboxes()

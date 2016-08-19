@@ -197,13 +197,13 @@ public class Roo extends Player
 		hitboxArchiver.add(new int[][]{new int[]{17,0,13,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{42,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -219,7 +219,7 @@ public class Roo extends Player
 		{
 			try
 			{
-		//		fIndex = 4; fCounter = 4; currAction = new MediumPunch(this); currState = PlayerState.STANDING_MP;	//TEST
+	//			fIndex = 5; fCounter = 5; currAction = new HeavyPunch(this); currState = PlayerState.STANDING_HP;	//TEST
 				
 				Image sheet = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/roo.png"));
 				int f = /*(hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal())[0][3] == 0)?*/ (int)fIndex;	//:hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal()).length-(int)fIndex-2;
@@ -271,7 +271,7 @@ public class Roo extends Player
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
-							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+25,140,20,3,0,0,12,1,12,0,true);
+							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+25,140,20,3,0,0,12,1,16,0,0.8,true);
 						break;
 				}
 			}
@@ -284,7 +284,7 @@ public class Roo extends Player
 		
 		public MediumPunch(Roo r)
 		{
-			super(Action.NORMAL,1,18,new int[]{2,5},new boolean[]{false,false,false,false},new int[]{4,18});
+			super(Action.NORMAL,1,18,new int[]{2,5},new boolean[]{false,false,false,false},new int[]{5,18});
 			roo = r;
 		}
 		
@@ -308,22 +308,22 @@ public class Roo extends Player
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
-							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+10,180,35,8,true));
+							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+10,210,35,8,true));
 						break;
 					case 3:
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
 						{
-							addPleb(roo,0,bounds.xCoord+110,bounds.yCoord+30,85,20,1,0,1,30,10,16,0,true);
-							addPleb(roo,0,bounds.xCoord+200,bounds.yCoord+30,50,30,1,0,1,30,10,16,0,true);
+							addPleb(roo,0,bounds.xCoord+110,bounds.yCoord+30,85,20,1,0,1,30,10,24,0,0.1,true);
+							addPleb(roo,0,bounds.xCoord+200,bounds.yCoord+30,50,30,1,0,1,30,10,24,0,0.1,true);
 						}
 						break;
 					case 4:
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
-							addPleb(roo,0,bounds.xCoord+125,bounds.yCoord+30,130,20,3,0,1,30,10,16,0,true);
+							addPleb(roo,0,bounds.xCoord+125,bounds.yCoord+30,130,20,3,0,1,30,10,24,0,0.1,true);
 						break;
 				}
 			}
@@ -360,13 +360,28 @@ public class Roo extends Player
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
-							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+10,180,35,10,true));
+						{
+							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+6,165,135,10,true));
+							plebsOut.add(new Pleb(roo,bounds.xCoord+150,bounds.yCoord-150,80,195,10,true));
+						}
 						break;
-					case 6:
+					case 3:
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
-							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+25,140,20,4,0,2,5,25,18,0,true);
+						{
+							addPleb(roo,0,bounds.xCoord+138,bounds.yCoord+62,72,52,4,0,2,5,25,20,0,0.75,true);
+							addPleb(roo,0,bounds.xCoord+142,bounds.yCoord+6,82,62,4,0,2,5,25,20,0,0.75,true);
+						}
+						break;
+					case 5:
+						if(!bounds.isGrounded){}
+						else if(isCrouching){}
+						else
+						{
+							addPleb(roo,0,bounds.xCoord+148,bounds.yCoord-38,55,40,4,0,2,5,25,20,0,0.75,true);
+							addPleb(roo,0,bounds.xCoord+123,bounds.yCoord-73,55,40,4,0,2,5,25,20,0,0.75,true);
+						}
 						break;
 				}
 			}

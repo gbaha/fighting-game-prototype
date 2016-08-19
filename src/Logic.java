@@ -337,35 +337,41 @@ public class Logic
 				int fLimit = h.forceArchiver.size();
 				for(int f = 0; f < fLimit; f++)
 				{
-					double hitstunDamp = 1;
+					double hDamp = 1;
 					if(h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("yKnockback"))
 					{
 						if(stage.puppets.get(hitboxes.indexOf(h)).hitStun > 0)
-							hitstunDamp = 0.75;
+							hDamp = stage.puppets.get(hitboxes.indexOf(h)).hitstunDamp;
 					}
 					
 					switch(h.forceArchiver.get(f).direction)
 					{
 						case 0:
 							if(!h.forceArchiver.get(f).type.equals("gravity") || (h.forceArchiver.get(f).type.equals("gravity") && !h.isFloating))
-								forces[hitboxes.indexOf(h)][0] += h.forceArchiver.get(f).magnitude*hitstunDamp;
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hitstunDamp;
+								forces[hitboxes.indexOf(h)][0] += h.forceArchiver.get(f).magnitude*hDamp;
+							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
 							break;
 							
 						case 1:
-							forces[hitboxes.indexOf(h)][1] += h.forceArchiver.get(f).magnitude*hitstunDamp;
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hitstunDamp;
+							forces[hitboxes.indexOf(h)][1] += h.forceArchiver.get(f).magnitude*hDamp;
+							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
 							break;
 							
 						case 2:
-							forces[hitboxes.indexOf(h)][2] += h.forceArchiver.get(f).magnitude*hitstunDamp;
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hitstunDamp;
+							forces[hitboxes.indexOf(h)][2] += h.forceArchiver.get(f).magnitude*hDamp;
+							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
 							break;
 							
 						case 3:
-							forces[hitboxes.indexOf(h)][3] += h.forceArchiver.get(f).magnitude*hitstunDamp;
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hitstunDamp;
+							forces[hitboxes.indexOf(h)][3] += h.forceArchiver.get(f).magnitude*hDamp;
+							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
 							break;
+					}
+					
+					if(h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("yKnockback"))
+					{
+						if(stage.puppets.get(hitboxes.indexOf(h)).hitStun > 0 && stage.puppets.get(hitboxes.indexOf(h)).hitstunDamp < 1)
+							stage.puppets.get(hitboxes.indexOf(h)).hitstunDamp += 0.1;
 					}
 					
 					if(h.forceArchiver.get(f).magnitude <= 0)
@@ -1745,6 +1751,8 @@ public class Logic
 							{
 								if(p1.duration > 0)
 								{
+							//		stage.player2.isBlocking[0] = true;	//TEST
+									
 									if(p1.direction == -1)
 									{
 										if(p2.currAction == null)
@@ -1769,7 +1777,6 @@ public class Logic
 													p2.takeDamage(p1,stage.floors.get(0).cornered);
 												break;
 										}*/
-									//	stage.player2.isBlocking[0] = true;
 										
 										boolean isUnique = true;
 										for(String u: p2.plebArchiver)
@@ -1782,6 +1789,7 @@ public class Logic
 										{
 											p2.takeDamage(p1,stage.floors.get(0).cornered);
 											p2.plebArchiver.add(p1.hash);
+											p2.hitstunDamp = p1.hitstunDamp;
 											p1.duration = 0;
 											p1.action.hits--;
 											recovery = new int[][]{new int[]{0,p1.puppet.currState.getPosition()}, new int[]{0,p2.currState.getPosition()}};	//TEST
