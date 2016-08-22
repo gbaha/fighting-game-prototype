@@ -261,22 +261,24 @@ public class Hand implements KeyListener	//, MouseListener
 				{
 					if(m[0][i] != -1)
 					{
-						if(((m[2][0] == 0 && m[2][i] >= sInputs.getFirst()[1]) || (m[2][0] == 1 && m[2][i] <= sInputs.getFirst()[1])) || i == 0)
+						if(((m[2][0] == 0 && (m[2][i] >= sInputs.getFirst()[1] || m[2][i] == -1)) || (m[2][0] == 1 && (m[2][i] <= sInputs.getFirst()[1] || m[2][i] == -1))) || i == 0)
 							sInputs.removeFirst();
 						else
 							c = false;
 					}
 					else if(order.getFirst())
 						c = false;
+					
 					if(m[1][i] != -1)
 					{
-						if(((m[2][0] == 0 && m[2][i] >= bInputs.getFirst()[1]) || (m[2][0] == 1 && m[2][i] <= bInputs.getFirst()[1])) || i == 0)
+						if(((m[2][0] == 0 && (m[2][i] >= bInputs.getFirst()[1] || m[2][i] == -10)) || (m[2][0] == 1 && (m[2][i] <= bInputs.getFirst()[1] || m[2][i] == -10))) || i == 0)
 							bInputs.removeFirst();
 						else
 							c = false;
 					}
 					else if(!order.getFirst())
 						c = false;
+					
 					sInputs.addLast(new int[]{5,1});
 					bInputs.addLast(new int[]{-1,1});
 				}
@@ -302,11 +304,19 @@ public class Hand implements KeyListener	//, MouseListener
 				}
 				player.actions[player.movelist.indexOf(m)].button = currButton;
 			}
-			else if(currButton != -1)
+		}
+		
+		if(currButton != -1)
+		{//System.out.println("@  "+currButton);
+			if(player.currAction == null)
+				player.setAction(player.normals[currButton]);
+			else if(player.currAction.isCancelable(player.hitInfo[0],player.fCounter,player.normals[currButton].type,currButton))
 			{
 				player.setAction(player.normals[currButton]);
-				player.currAction.button = currButton;
+				player.fCounter = 0;
+				player.fIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
 			}
+			player.currAction.button = currButton;
 		}
 	}
 	

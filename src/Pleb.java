@@ -152,9 +152,9 @@ public class Pleb extends Hitbox
 		//-----------RINE ENDS HERE
 	}
 	
-	public void move()
+/*	public void move()
 	{
-	/*	if(xDir > 0)
+		if(xDir > 0)
 		{
 			if(yDir > 0)
 				direction = 1;
@@ -201,9 +201,9 @@ public class Pleb extends Hitbox
 		if(xVel == 0)
 			xDrag = 0;
 		if(yVel == 0)
-			yDrag = 0;	*/
+			yDrag = 0;
 	}
-	
+*/	
 	public void update()
 	{
 		super.update(xVel,yVel,xDir,yDir,xDrag,yDrag,speed);

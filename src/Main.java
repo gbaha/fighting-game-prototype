@@ -63,15 +63,16 @@ public class Main
 		/*		logic.setFocusTo(1000,800);
 				stage.player1.reset(1000-200-100,750);
 				stage.player2.reset(1000+200,750);
-				while(p1.stickInputs.size() > 0)
-					p1.stickInputs.remove();
-				while(p2.stickInputs.size() > 0)
-					p2.stickInputs.remove();*/
-					
+				stage.plebs.clear();
+				p1.buttonInputs.clear();
+				p2.buttonInputs.clear();
+				p1.stickInputs.clear();
+				p2.stickInputs.clear();
+		*/			
 				//FRAME BY FRAME TEST
 				fpsLimit = 2;
 			}
-			//==
+			
 			
 			director.update();
 			gui.update(width,height,gamePaused);

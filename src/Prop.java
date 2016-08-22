@@ -1,86 +1,75 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 
-public class Prop
+abstract class Prop
 {
-	ArrayList<Pleb> plebArchiver;
+	ArrayList<Pleb> plebsIn, plebsOut;
+	ArrayList<int[]> spriteArchiver;
 //	ArrayList<Force> forceArchiver;
-	ArrayList<ArrayList<int[]>> pointArchiver;	//Records where prop's navmesh points are connected
-	ArrayList<int[]> touchArchiver;
 	Organ bounds;
-	String faction;
-	int id, height, weight, maxHp, health, hit;
-//	int[][] navLines;
-	boolean isSturdy;
+	State currState;
+	int id, xCoord, yCoord, xHosh, yHosh, width, height;
+	int maxHp, health, fCounter;
+	double fIndex;
+	boolean isFacingRight;
+	int[] spriteParams;
 	
-	public Prop(String f1, int x, int y, int w1, int h1, int w2, int h2, boolean f2, boolean s)
+	public enum PropState implements State
 	{
-		plebArchiver = new ArrayList<Pleb>();
-//		forceArchiver = new ArrayList<Force>();
-		touchArchiver = new ArrayList<int[]>();	//[{obsPolyNum}, {type, id}, ...]
-		pointArchiver = new ArrayList<ArrayList<int[]>>();
+		IDLE;
 		
-		touchArchiver.add(new int[]{-1});
-		for(int n = 0; n < 4; n++)
+		public String getState()
 		{
-			pointArchiver.add(new ArrayList<int[]>());	//[{xCoord, yCoord}, {floorIds (or -1)}, {type, id, pointNum}, ...]
-			switch(n)
-			{
-				case 0:
-					pointArchiver.get(0).add(new int[]{x,y});
-					pointArchiver.get(0).add(new int[]{-1});
-					break;
-				case 1:
-					pointArchiver.get(1).add(new int[]{x+w1,y});
-					pointArchiver.get(1).add(new int[]{-1});
-					break;
-				case 2:
-					pointArchiver.get(2).add(new int[]{x+w1,y+h1});
-					pointArchiver.get(2).add(new int[]{-1});
-					break;
-				case 3:
-					pointArchiver.get(3).add(new int[]{x,y+h1});
-					pointArchiver.get(3).add(new int[]{-1});
-					break;
-			}
+			return name();
 		}
 		
-		faction = f1;
+		public int getPosition()
+		{
+			return ordinal();
+		}
+	}
+	
+	public Prop(int x, int y, int w1, int h1, int h2)	//, boolean f, boolean s)
+	{
+		plebsIn = new ArrayList<Pleb>();
+		spriteArchiver = new ArrayList<int[]>();
+		currState = PropState.IDLE;
+		
 		id = -1;
+		xCoord = x;
+		yCoord = y;
+		xHosh = xCoord;
+		yHosh = yCoord;
+		width = w1;
 		height = h1;
-		weight = w2;
 		maxHp = h2;
 		health = maxHp;
-		hit = 0;
-	//	navLines = new int[4][5];
+		fCounter = 0;
+		fIndex = 0;
+		isFacingRight = true;
 		
 	/*	xBlocked = false;
 		yBlocked = false;*/
 		
 		bounds = new Organ(x,y,w1,h1,0);
-		bounds.isFloating = f2;
+	//	bounds.isFloating = f;
 		bounds.isMovable = true;
-		isSturdy = s;
 	}
 	
 	
-	public void draw(Graphics2D g, double w, double h, boolean d)
+	public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean d)
 	{
-		//TEST
-		if(isSturdy)
-			g.setColor(new Color(255,125,0));
-		else
-		{
-			g.setColor(Color.ORANGE);
-			g.drawString(health+"",(int)((bounds.xHosh)*w/1280)-15,(int)(bounds.yHosh*h/720));
-		}
-		g.drawRect((int)(bounds.xHosh*w/1280),(int)(bounds.yHosh*h/720),(int)(bounds.width*w/1280),(int)(bounds.height*h/720));
-		
-		if(d)
-			g.drawString(id+"",(int)((bounds.xHosh+bounds.width+2)*w/1280),(int)((bounds.yHosh+bounds.height)*h/720));
-		//END OF RINE
-		//-----------RINE ENDS HERE
+//		if(d)
+//		{
+			g.setColor(Color.CYAN);
+			g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50));
+			g.fillRect((int)(bounds.xHosh*w/1280),(int)(bounds.yHosh*h/720),(int)(bounds.width*w/1280),(int)(bounds.height*h/720));
+			g.setColor(Color.CYAN);
+			g.drawRect((int)(bounds.xHosh*w/1280),(int)(bounds.yHosh*h/720),(int)(bounds.width*w/1280),(int)(bounds.height*h/720));
+			g.drawString(health+"",(int)(bounds.xHosh*w/1280)-15,(int)(bounds.yHosh*h/720));
+//		}
 	}
 	
 	public void move()
@@ -88,86 +77,26 @@ public class Prop
 		bounds.move();
 	}
 	
-	public void takeDamage(Pleb p)
-	{
-		if(!isSturdy)
-		{
-			hit = 2;
-			health -= p.hDamage;
-		}
-		if(health < 0)
-			health = 0;
-		
-	/*	boolean isDamaged = true;
-		if(plebArchiver.isEmpty())
-			plebArchiver.add(p);
-		else
-		{
-			for(int a = 0; a < plebArchiver.size(); a++)
-			{
-				if(plebArchiver.get(a) == p)
-				{
-					isDamaged = false;
-					if(plebArchiver.get(a).cooldown < plebArchiver.get(a).painThreshold)
-						plebArchiver.get(a).cooldown++;
-					else
-					{
-						plebArchiver.get(a).cooldown = 0;
-						plebArchiver.remove(a);
-						a++;
-					}
-				}
-			}
-			if(isDamaged && !p.faction.equals(faction))
-				plebArchiver.add(p);
-		}
-		if(isDamaged && !plebArchiver.isEmpty())
-		{
-			if(health > 0)
-			{
-				for(Pleb a: plebArchiver)
-				{
-					health -= a.strength;
-					if(a.strength > 0)
-						a.strength -= a.maxStr*(1-a.lastingRate);
-				}
-			}
-			else if(health < 0)
-				health = 0;
-		}*/
-	}
-	
 	public void update()
 	{
-		bounds.update();
-		bounds.xDir = bounds.xDir;
-		bounds.yDir = bounds.yDir;
-		bounds.xVel = bounds.xVel;
-		bounds.yVel = bounds.yVel;
-		bounds.xDrag = bounds.xDrag;
-		bounds.yDrag = bounds.yDrag;
-		
-		if(hit > 0)
-			hit--;
-		
-		if(!plebArchiver.isEmpty())
+		int i = (int)fIndex+1-((spriteArchiver.get(currState.getPosition())[3] == 0)? spriteArchiver.get(currState.getPosition())[1]:0);
+		int f = (int)fIndex+((spriteArchiver.get(currState.getPosition())[3] == 1 && fIndex != (int)fIndex)? 1:0);
+		fIndex += (spriteArchiver.get(currState.getPosition())[3] == 0)? 1.0/(spriteArchiver.get(currState.getPosition())[4]+1):-1.0/(spriteArchiver.get(currState.getPosition())[4]+1);
+		if(Math.abs(fIndex-f) >= 1)
 		{
-			for(int a = 0; a < plebArchiver.size(); a++)
+			fIndex = (int)fIndex;
+			i += (spriteArchiver.get(currState.getPosition())[3] == 0)? 1:-1;
+		}
+		if((spriteArchiver.get(currState.getPosition())[3] == 0 && i >= spriteArchiver.get(currState.getPosition()).length) || (spriteArchiver.get(currState.getPosition())[3] == 1 && i <= 0))
+			fIndex = spriteArchiver.get(currState.getPosition())[2];
+		fCounter++;
+		
+		bounds.update();
+		if(!plebsIn.isEmpty())
+		{
+			for(int a = 0; a < plebsIn.size(); a++)
 			{
-		/*		if(plebArchiver.get(a).cooldown < plebArchiver.get(a).painThreshold)
-					plebArchiver.get(a).cooldown++;
-				else
-				{
-					plebArchiver.get(a).cooldown = 0;
-					plebArchiver.remove(a);
-					a++;
-				}*/
 			}
 		}
 	}
-	
-/*	public boolean isFloating()	//STILL DONT KNOW IF WE ARE USING THIS
-	{
-		return bounds.isFloating;
-	}*/
 }

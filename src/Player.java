@@ -15,7 +15,7 @@ public class Player extends Puppet
 		PuppetState, DASH_FORWARD, DASH_BACKWARD, 
 		STANDING_LP, STANDING_MP, STANDING_HP, STANDING_LK, STANDING_MK, STANDING_HK, 
 		CROUCHING_LP, CROUCHING_MP, CROUCHING_HP, CROUCHING_LK, CROUCHING_MK, CROUCHING_HK, 
-		JUMPING_LP, JUMPING_MP, JUMPING_HP, JUMPING_LK, JUMPING_MK, JUMPING_HK;	//, PERFORM_ACTION
+		JUMPING_LP, JUMPING_MP, JUMPING_HP, JUMPING_LK, JUMPING_MK, JUMPING_HK;
 	
 		public String getState()
 		{
@@ -118,12 +118,12 @@ public class Player extends Puppet
 				a.button = -1;
 			}
 		}
-		else if(currAction.isCancelable(hitInfo[0],fCounter,currAction.type,currAction.button))
+		else //if(currAction.isCancelable(hitInfo[0],fCounter,currAction.type,currAction.button))
 		{
 			currAction = a;
 			a.button = -1;
 			fCounter = 0;
-			fIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+	//		fIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 		}
 	}
 	

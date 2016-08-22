@@ -149,7 +149,7 @@ public class Gui extends JPanel
 			{
 				if(order.size() > 0)
 				{
-					if(k < h1.buttonInputs.size())
+					if(k < h1.buttonInputs.size()&& h1.buttonInputs.size() > 0)
 					{
 						while(!order.getFirst() && h1.buttonInputs.get(k)[1] == 0)
 						{
@@ -201,7 +201,7 @@ public class Gui extends JPanel
 					
 					if(order.getFirst())
 					{
-						if(j < h1.stickInputs.size())
+						if(j < h1.stickInputs.size() && h1.stickInputs.size() > 0)
 						{
 							if(h1.stickInputs.get(j)[0] != 5)
 							{

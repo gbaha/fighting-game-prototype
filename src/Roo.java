@@ -8,7 +8,7 @@ public class Roo extends Player
 {
 	public enum RooState implements State
 	{
-		PlayerState;
+		PlayerState, FIREBALL_LAUNCH, FIREBALL_RECOVER;
 		
 		public String getState()
 		{
@@ -17,7 +17,7 @@ public class Roo extends Player
 		
 		public int getPosition()
 		{
-			return ordinal();
+			return Player.PlayerState.values().length+Puppet.PuppetState.values().length+ordinal()-1;
 		}
 	}
 	
@@ -209,7 +209,80 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//STANDING LK
+		hitboxArchiver.add(new int[][]{new int[]{15,0,7,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//STANDING LK
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//STANDING MK
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//STANDING HK
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//CROUCHING LP
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//CROUCHING MP
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//CROUCHING HP
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//CROUCHING LK
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//CROUCHING MK
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//CROUCHING HK
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//JUMPING LP
+		hitboxArchiver.add(new int[][]{new int[]{18,0,0,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//JUMPING MP
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//JUMPING HP
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//JUMPING LK
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//JUMPING MK
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//JUMPING HK
+		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		
+		//FIREBALL LAUNCH
+		hitboxArchiver.add(new int[][]{new int[]{18,0,9,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		
+		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,0},{0,-1,10,10}});//{0,7,4,3}});
+		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,1},{0,-1,10,10}});
+		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,2},{0,-1,10,10}});
+		
+		actions = new Action[]{actions[0], actions[1], actions[2], actions[3], new FireBall(this,0), new FireBall(this,1), new FireBall(this,2)};
 		normals = new Action[]{new LightPunch(this), new MediumPunch(this), new HeavyPunch(this), new LightKick(this), new MediumKick(this), new HeavyKick(this)};
 	}
 	
@@ -233,6 +306,17 @@ public class Roo extends Player
 		super.draw(g,i,s,w,h,d);
 	}
 	
+	public void checkState()
+	{
+		switch(currState.getState())
+		{
+			case "FIREBALL_LAUNCH":
+				performAction();
+				break;
+		}
+		super.checkState();
+	}
+	
 	
 	public class LightPunch extends Action
 	{
@@ -240,7 +324,7 @@ public class Roo extends Player
 		
 		public LightPunch(Roo r)
 		{
-			super(Action.NORMAL,1,10,new int[]{0,1,4},new boolean[]{false,false,false,false},new int[]{3,10});
+			super(Action.NORMAL,1,10,new int[]{0,1,4},new boolean[]{true,true,false,false},new int[]{3,10});
 			roo = r;
 		}
 		
@@ -261,10 +345,19 @@ public class Roo extends Player
 						hashCounter = "";
 						hits = 1;
 						
-						if(!bounds.isGrounded){}
-						else if(isCrouching){}
+						if(!bounds.isGrounded)
+						{
+							frames = 1;
+						}
+						else if(isCrouching)
+						{
+							frames = 1;
+						}
 						else
+						{
 							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+10,180,35,5,true));
+							frames = 10;
+						}
 						break;
 						
 					case 2:
@@ -284,7 +377,7 @@ public class Roo extends Player
 		
 		public MediumPunch(Roo r)
 		{
-			super(Action.NORMAL,1,18,new int[]{2,5},new boolean[]{false,false,false,false},new int[]{5,18});
+			super(Action.NORMAL,1,18,new int[]{2,5},new boolean[]{true,true,false,false},new int[]{5,18});
 			roo = r;
 		}
 		
@@ -305,10 +398,19 @@ public class Roo extends Player
 						hashCounter = "";
 						hits = 1;
 						
-						if(!bounds.isGrounded){}
-						else if(isCrouching){}
+						if(!bounds.isGrounded)
+						{
+							frames = 1;
+						}
+						else if(isCrouching)
+						{
+							frames = 1;
+						}
 						else
+						{
 							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+10,210,35,8,true));
+							frames = 18;
+						}
 						break;
 					case 3:
 						if(!bounds.isGrounded){}
@@ -336,7 +438,7 @@ public class Roo extends Player
 		
 		public HeavyPunch(Roo r)
 		{
-			super(Action.NORMAL,1,28,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
+			super(Action.NORMAL,1,28,new int[]{},new boolean[]{true,true,false,false},new int[]{4,38});
 			roo = r;
 		}
 		
@@ -357,12 +459,19 @@ public class Roo extends Player
 						hashCounter = "";
 						hits = 1;
 						
-						if(!bounds.isGrounded){}
-						else if(isCrouching){}
+						if(!bounds.isGrounded)
+						{
+							frames = 1;
+						}
+						else if(isCrouching)
+						{
+							frames = 1;
+						}
 						else
 						{
 							plebsOut.add(new Pleb(roo,bounds.xCoord+130,bounds.yCoord+6,165,135,10,true));
 							plebsOut.add(new Pleb(roo,bounds.xCoord+150,bounds.yCoord-150,80,195,10,true));
+							frames = 28;
 						}
 						break;
 					case 3:
@@ -394,7 +503,7 @@ public class Roo extends Player
 		
 		public LightKick(Roo r)
 		{
-			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{true,true,false,false},new int[]{0,0});
 			roo = r;
 		}
 		
@@ -409,7 +518,7 @@ public class Roo extends Player
 		
 		public MediumKick(Roo r)
 		{
-			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{true,true,false,false},new int[]{0,0});
 			roo = r;
 		}
 		
@@ -424,12 +533,93 @@ public class Roo extends Player
 		
 		public HeavyKick(Roo r)
 		{
-			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{true,true,false,false},new int[]{0,0});
 			roo = r;
 		}
 		
 		public void perform(int f)
 		{
+		}
+	}
+	
+	public class FireBall extends Action
+	{
+		Roo roo;
+		int strength;
+		
+		public FireBall(Roo r, int s)
+		{
+			super(Action.SPECIAL,1,38,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
+			roo = r;
+			strength = s;
+		}
+		
+		public void perform(int f)
+		{
+			isPerformingAction = true;
+			isCrouching = false;
+			bounds.yCoord = yCoord;
+			bounds.height = height;
+			
+			if(f >= frames)
+			{
+				isPerformingAction = false;
+				return;
+			}
+			else
+			{
+				switch(f)
+				{
+					case 0:
+						currState = RooState.FIREBALL_LAUNCH;
+						hashCounter = "";
+						break;
+						
+					case 9:
+						propArchiver.add(new Ninja(roo,bounds.xCoord+((isFacingRight)? bounds.width+100:0),bounds.yCoord+42,120,50,999,1,strength));
+						break;
+				}
+			}
+		}
+	}
+	
+	public class Ninja extends Projectile
+	{
+		Roo roo;
+		int speed;
+		
+		public Ninja(Roo r, int x, int y, int w1, int h1, int h2, int h3, int s)
+		{
+			super(r,x,y,w1,h1,h2,h3,s);
+			roo = r;
+			hDamage = 100;
+			sDamage = 40;
+			
+			switch(strength)
+			{
+				case 0:
+					speed = 3; 
+					break;
+				
+				case 1:
+					speed = 8; 
+					break;
+					
+				case 2:
+					speed = 12; 
+					break;
+			}
+			
+			spriteParams = new int[]{935,653,640,480};
+			spriteArchiver.add(new int[]{0,0,0,0,2});
+		}
+		
+		public void move()
+		{
+			if(isFacingRight)
+				bounds.xCoord += speed;
+			else
+				bounds.xCoord -= speed;
 		}
 	}
 }

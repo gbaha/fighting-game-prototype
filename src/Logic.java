@@ -60,6 +60,8 @@ public class Logic
 		}
 		for(Prop p2: stage.props)
 		{
+			p2.xHosh = p2.xCoord+xFocus;
+			p2.yHosh = p2.yCoord+yFocus;
 			p2.bounds.xHosh = p2.bounds.xCoord+xFocus;
 			p2.bounds.yHosh = p2.bounds.yCoord+yFocus;							
 		}
@@ -282,8 +284,8 @@ public class Logic
 //		do{
 			for(Puppet p: stage.puppets)
 			{
-				p.touchArchiver = new ArrayList<int[]>();
-				p.touchArchiver.add(new int[]{-1});
+		//		p.touchArchiver = new ArrayList<int[]>();
+		//		p.touchArchiver.add(new int[]{-1});
 				p.bounds.isGrounded = false;
 				
 		/*		cLimit = collisionPriority.size();
@@ -305,9 +307,6 @@ public class Logic
 	//		isPrioritized = false;
 			for(Prop p: stage.props)
 			{
-				int t = p.touchArchiver.get(0)[0];
-				p.touchArchiver = new ArrayList<int[]>();
-				p.touchArchiver.add(new int[]{t});
 				p.bounds.isGrounded = false;
 				
 		/*		for(int c = 0; c < cLimit; c++)
@@ -323,7 +322,9 @@ public class Logic
 					}
 				}
 				if(!isPrioritized)*/
-					hitboxes.add(p.bounds);
+			
+			//COMMENT OUT FOR NOW SO FIREBALLS DONT HAVE OR CAUSE COLLISION
+			//		hitboxes.add(p.bounds);
 			}
 			
 			double[][] forces = new double[hitboxes.size()][4];
@@ -857,7 +858,7 @@ public class Logic
 							h1.blocked[3] = h1.xCoord+h1.width/2;
 						}*/
 						
-						if((h1.xCoord >= h2.xCoord && h1.xCoord <= h2.xCoord+h2.width) || (h1.xCoord+h1.width >= h2.xCoord && h1.xCoord+h1.width <= h2.xCoord+h2.width) || (h1.xCoord <= h2.xCoord && h1.xCoord+h1.width >= h2.xCoord+h2.width))
+					/*	if((h1.xCoord >= h2.xCoord && h1.xCoord <= h2.xCoord+h2.width) || (h1.xCoord+h1.width >= h2.xCoord && h1.xCoord+h1.width <= h2.xCoord+h2.width) || (h1.xCoord <= h2.xCoord && h1.xCoord+h1.width >= h2.xCoord+h2.width))
 						{
 							if((h1.yCoord >= h2.yCoord && h1.yCoord <= h2.yCoord+h2.height) || (h1.yCoord+h1.height >= h2.yCoord && h1.yCoord+h1.height <= h2.yCoord+h2.height) || (h1.yCoord <= h2.yCoord && h1.yCoord+h1.height >= h2.yCoord+h2.height))
 							{
@@ -874,7 +875,7 @@ public class Logic
 										stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).touchArchiver.add(t);
 								}
 							}
-						}
+						}*/
 						/*	else
 						{
 							h1.blocked[0] = h1.yCoord+h1.height/2;
@@ -1527,7 +1528,7 @@ public class Logic
 						}
 					}
 					
-					if((j.xCoord >= o.xCoord && j.xCoord <= o.xCoord+o.width) || (j.xCoord+j.width >= o.xCoord && j.xCoord+j.width <= o.xCoord+o.width) || (j.xCoord <= o.xCoord && j.xCoord+j.width >= o.xCoord+o.width))
+				/*	if((j.xCoord >= o.xCoord && j.xCoord <= o.xCoord+o.width) || (j.xCoord+j.width >= o.xCoord && j.xCoord+j.width <= o.xCoord+o.width) || (j.xCoord <= o.xCoord && j.xCoord+j.width >= o.xCoord+o.width))
 					{
 						if((j.yCoord >= o.yCoord && j.yCoord <= o.yCoord+o.height) || (j.yCoord+j.height >= o.yCoord && j.yCoord+j.height <= o.yCoord+o.height) || (j.yCoord <= o.yCoord && j.yCoord+j.height >= o.yCoord+o.height))
 						{
@@ -1544,7 +1545,7 @@ public class Logic
 									stage.props.get(h.indexOf(j)-stage.puppets.size()).touchArchiver.add(t);
 							}
 						}
-					}
+					}*/
 					/*	else
 					{
 						j.blocked[0] = j.yCoord+j.height/2;
@@ -1842,6 +1843,11 @@ public class Logic
 					stage.plebs.add(p.plebsOut.get(0));
 					p.plebsOut.remove(0);
 				}
+				for(int i = 0; i < p.propArchiver.size(); i++)
+				{
+					stage.props.add(p.propArchiver.get(0));
+					p.propArchiver.remove(0);
+				}
 				p.canBlock = false;
 			}
 			
@@ -1859,13 +1865,10 @@ public class Logic
 				}
 			}
 			
-			stage.update();
-		//	stage.updateTrail();
-		//	stage.updatePoints();
-			
 			int pLimit = stage.props.size();
 			for(int p= 0; p < pLimit; p++)
 			{
+				stage.props.get(p).move();
 				stage.props.get(p).update();
 		/*		if(stage.props.get(p).bounds.isMoving || stage.props.get(p).bounds.wasMoving || stage.props.get(p).health == 0)
 					stage.updateTrail(p);
@@ -1895,7 +1898,7 @@ public class Logic
 			pLimit = stage.plebs.size();
 			for(int p = 0; p < pLimit; p++)
 			{
-				stage.plebs.get(p).move();
+			//	stage.plebs.get(p).move();
 				stage.plebs.get(p).update();
 				
 				if(stage.plebs.get(p).duration <= 0)

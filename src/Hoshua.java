@@ -55,11 +55,6 @@ public class Hoshua extends JPanel
 		{
 			Graphics2D g2 = (Graphics2D) g;
 			gui.draw(g2,this,canvas.player1,canvas.player2,width,height);
-			for(Prop p: canvas.props)
-			{
-		//		if(p.bounds.xCoord <= width*21/20-xFocus && p.bounds.xCoord+p.bounds.width >= -(xFocus+width/20) && p.bounds.yCoord <= height*21/20-yFocus && p.bounds.yCoord+p.bounds.height >= -(yFocus+height/20))	
-					p.draw(g2,width,height,debugging);
-			}
 			
 			ArrayList<Puppet> puppets = new ArrayList<Puppet>();
 			ArrayList<Puppet> players = new ArrayList<Puppet>();
@@ -109,6 +104,8 @@ public class Hoshua extends JPanel
 					p.draw(g2,this,sReader,width,height,debugging);
 			for(Puppet p: players)
 				p.draw(g2,this,sReader,width,height,debugging);
+			for(Prop p: canvas.props)
+				p.draw(g2,this,sReader,width,height,debugging);
 			
 			for(Pleb p: canvas.plebs)
 			{
@@ -122,10 +119,7 @@ public class Hoshua extends JPanel
 			paintComponent(g);
 		}
 		
-	//	fog.draw(g,width,height);
-		
 		//TEST
-		canvas.drawMesh(g,width,height,debugging);
 /*		for(BlueFairy b: canvas.fairies)
 			b.draw(g,canvas.xFocus,canvas.yFocus,width,height);*/
 		

@@ -9,9 +9,10 @@ import java.util.ArrayList;
 abstract class Puppet
 {
 	ArrayList<Organ> anatomy;
-	ArrayList<int[]> touchArchiver;	//, actionList, spriteArchiver;
+//	ArrayList<int[]> touchArchiver, actionList, spriteArchiver;
 	ArrayList<int[][]> hitboxArchiver;
 	ArrayList<Pleb> plebsIn, plebsOut;
+	ArrayList<Prop> propArchiver;
 	ArrayList<String> plebArchiver;
 	Action[] normals;
 	
@@ -48,12 +49,13 @@ abstract class Puppet
 	{
 		anatomy = new ArrayList<Organ>();
 	//	plebArchiver = new ArrayList<Pleb>();
-		touchArchiver = new ArrayList<int[]>();	//[type, id]
+	//	touchArchiver = new ArrayList<int[]>();	//[type, id]
 		hitboxArchiver = new ArrayList<int[][]>(); //[sheet.y, sheet.xStart, sheet.xLoop, reversed?, frame delay], [[hitbox.x, hitbox.y, hitbox.w, hitbox.h, ...], ...
 	//	actionList = new ArrayList<int[]>();	//[action name, sprites in row, loops?]
 	//	spriteArchiver = new ArrayList<int[]>();	//[xMod,yMod,width,height,sWidth,sHeight]
 		plebsIn = new ArrayList<Pleb>();
 		plebsOut = new ArrayList<Pleb>();
+		propArchiver = new ArrayList<Prop>();
 		plebArchiver = new ArrayList<String>();
 		
 	//	forceArchiver = new ArrayList<Force>();
@@ -102,7 +104,7 @@ abstract class Puppet
 		bounds =  new Organ(x,y,w,h,speed);
 		bounds.isFloating = f2;
 		bounds.isMovable = true;
-		touchArchiver.add(new int[]{-1});
+	//	touchArchiver.add(new int[]{-1});
 	}
 	
 	public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean d)
@@ -546,14 +548,6 @@ abstract class Puppet
 			if((hitboxArchiver.get(h)[0][3] == 0 && i >= hitboxArchiver.get(h).length) || (hitboxArchiver.get(h)[0][3] == 1 && i <= 0))
 				fIndex = hitboxArchiver.get(h)[0][2];
 		}
-	}
-	
-	
-	public interface State
-	{
-		public String getState();
-		
-		public int getPosition();
 	}
 	
 	
