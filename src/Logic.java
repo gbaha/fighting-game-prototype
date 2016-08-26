@@ -1782,7 +1782,7 @@ public class Logic
 										boolean isUnique = true;
 										for(String u: p2.plebArchiver)
 										{
-											if(u.equals(p1.hash) || p1.action.hits == 0)
+											if(u.equals(p1.hash))
 												isUnique = false;
 										}
 										
@@ -1792,8 +1792,13 @@ public class Logic
 											p2.plebArchiver.add(p1.hash);
 											p2.hitstunDamp = p1.hitstunDamp;
 											p1.duration = 0;
-											p1.action.hits--;
 											recovery = new int[][]{new int[]{0,p1.puppet.currState.getPosition()}, new int[]{0,p2.currState.getPosition()}};	//TEST
+											
+											for(Prop p3: stage.props)
+											{
+												if(p1.bounds == p3.bounds)
+													p3.hits--;
+											}
 										}
 									}
 								}
@@ -1873,6 +1878,11 @@ public class Logic
 		/*		if(stage.props.get(p).bounds.isMoving || stage.props.get(p).bounds.wasMoving || stage.props.get(p).health == 0)
 					stage.updateTrail(p);
 		*/		
+				for(int i = 0; i < stage.props.get(p).plebsOut.size(); i++)
+				{
+					stage.plebs.add(stage.props.get(p).plebsOut.get(0));
+					stage.props.get(p).plebsOut.remove(0);
+				}
 				if(stage.props.get(p).health == 0)
 				{
 					stage.props.remove(p);

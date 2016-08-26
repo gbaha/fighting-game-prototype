@@ -6,17 +6,18 @@ abstract class Action
 	public static final int DASH = 3;
 	public static final int JUMP = 4;
 	
+	Puppet target;
 	int[] buttonPath, cancelWindow;
+	int button, type, cancelType, frames;
+	boolean isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable, groundOk, airOk;
 	String hashCounter;
-	int button, type, hits, cancelType, frames;
-	boolean isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable;
 	
-	public Action(int t, int ct, int f, int[] b, boolean[] c, int[] cw)
+	public Action(int t, int ct, int f, int[] b, boolean[] c, int[] cw, boolean[] ok)
 	{
+		target = null;
 		hashCounter = "";
 		button = -1;
 		type = t;
-		hits = 1;
 		cancelType = ct;	// 0 = on whiff, 1 = on block, 2 = on hit
 		frames = f;
 		
@@ -24,6 +25,9 @@ abstract class Action
 		isSuperCancelable =	c[1];
 		isDashCancelable =	c[2];
 		isJumpCancelable =	c[3];
+		
+		groundOk = ok[0];
+		airOk = ok[1];
 		
 		buttonPath = b;
 		cancelWindow = cw;
@@ -54,7 +58,7 @@ abstract class Action
 	
 	protected void addPleb(Puppet pu, int hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean a)
 	{
-		Pleb p = new Pleb(pu,this,x,y,w,h,d1,d2,s,hd,sd,kx,ky,hs,a);
+		Pleb p = new Pleb(pu,pu.bounds,this,x,y,w,h,d1,d2,s,hd,sd,kx,ky,hs,a);
 		
 		if(hashCounter.equals(""))
 			hashCounter = p.toString()+hc;

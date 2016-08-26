@@ -149,7 +149,7 @@ public class Player extends Puppet
 		
 		if(isBlocking[0] || isBlocking[1])
 		{
-			currState = PuppetState.GUARD_STANDING;
+			currState = (bounds.isGrounded)? ((isBlocking[0])? PuppetState.GUARD_STANDING:PuppetState.GUARD_CROUCHING):PuppetState.GUARD_JUMPING;
 			return;
 		}
 		
@@ -243,7 +243,7 @@ public class Player extends Puppet
 		
 		if(isBlocking[0] || isBlocking[1])
 		{
-			currState = PuppetState.GUARD_STANDING;
+			currState = (bounds.isGrounded)? ((isBlocking[0])? PuppetState.GUARD_STANDING:PuppetState.GUARD_CROUCHING):PuppetState.GUARD_JUMPING;
 			return;
 		}
 		
@@ -297,7 +297,7 @@ public class Player extends Puppet
 		
 		if(isBlocking[0] || isBlocking[1])
 		{
-			currState = PuppetState.GUARD_STANDING;
+			currState = (bounds.isGrounded)? ((isBlocking[0])? PuppetState.GUARD_STANDING:PuppetState.GUARD_CROUCHING):PuppetState.GUARD_JUMPING;
 			return;
 		}
 		
@@ -343,7 +343,7 @@ public class Player extends Puppet
 	
 	public void update()
 	{
-		super.update();
+	//	super.update();
 		if(bounds.isGrounded)
 		{
 			int fLimit = bounds.forceArchiver.size();
@@ -363,8 +363,9 @@ public class Player extends Puppet
 			bounds.xDir = 0;
 			bounds.xDrag = 0;
 		}
+		super.update();
 		
-		if(currState == PuppetState.CROUCH)
+	/*	if(currState == PuppetState.CROUCH)
 		{
 			bounds.yCoord = yCoord+height-crHeight;
 			bounds.height = crHeight;
@@ -374,7 +375,7 @@ public class Player extends Puppet
 			bounds.yCoord = yCoord;
 			bounds.height = height;
 		}
-		bounds.update();
+		bounds.update();*/
 	}
 	
 	
@@ -384,7 +385,7 @@ public class Player extends Puppet
 		
 		public FrontDash()
 		{
-			super(Action.DASH,0,1,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true,false},new int[]{10,99});
+			super(Action.DASH,0,1,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true,false},new int[]{10,99},new boolean[]{true,true});
 			magnitude = 35;
 			decay = 2;
 			frames = (int)(magnitude/decay)+((magnitude/decay == (int)(magnitude/decay))? 0:1)+1;
@@ -434,7 +435,7 @@ public class Player extends Puppet
 		
 		public BackDash()
 		{
-			super(Action.DASH,0,1,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true,false},new int[]{10,99});
+			super(Action.DASH,0,1,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true,false},new int[]{10,99},new boolean[]{true,true});
 			magnitude = 28;
 			decay = 2;
 			frames = (int)(magnitude/decay)+((magnitude/decay == (int)(magnitude/decay))? 0:1)+1;

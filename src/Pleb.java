@@ -6,16 +6,18 @@ public class Pleb extends Hitbox
 {
 	ArrayList<Force> forceArchiver, appliedForces;
 	Puppet puppet;
+	Organ bounds;
 	Action action;
 	String hash;	//action, type;
 	int duration, direction, strength, hDamage, sDamage, xKnockback, yKnockback, xDist, yDist;
 	double hitstunDamp;	//decayRate, piercingRate;
 	boolean isAttached;
 	
-	public Pleb(Puppet p, Action a, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia)
+	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia)
 	{
 		super(x,y,w,h);
 		puppet = p;
+		bounds = b;
 		action = a;
 		hash = "";
 		duration = d1;
@@ -31,25 +33,26 @@ public class Pleb extends Hitbox
 		forceArchiver = new ArrayList<Force>();
 		appliedForces = new ArrayList<Force>();
 		
-		if(puppet != null)
+		if(bounds != null)
 		{
 			if(xKnockback != 0)
 				appliedForces.add(new Force("xKnockback",((xKnockback > 0 && puppet.isFacingRight) || (xKnockback < 0 && !puppet.isFacingRight))? 3:1,Math.abs(xKnockback),(Math.abs(xKnockback)/5 > 0)? Math.abs(xKnockback)/5:1));
 			if(yKnockback != 0)
 				appliedForces.add(new Force("yKnockback",(yKnockback > 0)? 0:2,Math.abs(yKnockback),(Math.abs(yKnockback)/5 > 0)? Math.abs(yKnockback)/5:1));
 			
-			xDist = xCoord-puppet.xCoord;
-			yDist = yCoord-puppet.yCoord;
+			xDist = xCoord-bounds.xCoord;
+			yDist = yCoord-bounds.yCoord;
 			if(!puppet.isFacingRight)
-				xCoord = puppet.xCoord+puppet.width-xDist-width;
+				xCoord = bounds.xCoord+bounds.width-xDist-width;
 		}
 	}
 	
 	//FOR GUARD TRIGGER
-	public Pleb(Puppet p, int x, int y, int w, int h, int d, boolean a)
+	public Pleb(Puppet p, Organ b, int x, int y, int w, int h, int d, boolean r, boolean a)
 	{
 		super(x,y,w,h);
 		puppet = p;
+		bounds = b;
 		action = null;
 		hash = "";
 		duration = d;
@@ -65,18 +68,19 @@ public class Pleb extends Hitbox
 		forceArchiver = new ArrayList<Force>();
 		appliedForces = new ArrayList<Force>();
 		
-		if(puppet != null)
+		if(puppet != null && bounds != null)
 		{
-			xDist = xCoord-puppet.xCoord;
-			yDist = yCoord-puppet.yCoord;
+			xDist = xCoord-bounds.xCoord;
+			yDist = yCoord-bounds.yCoord;
 		}
 	}
 	
 	//MIGHT REMOVE LATER
-	public Pleb(Puppet p, Action a, /*String f, String t,*/ String hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int kx, int ky, double hs, boolean ia)	//, int d2, int s, double d3, double p)
+	public Pleb(Puppet p, Organ b, Action a, /*String f, String t,*/ String hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int kx, int ky, double hs, boolean ia)	//, int d2, int s, double d3, double p)
 	{
 		super(x,y,w,h);
 		puppet = p;
+		bounds = b;
 		action = a;
 //		faction = f;
 //		type = t;
@@ -109,17 +113,17 @@ public class Pleb extends Hitbox
 		
 		forceArchiver = new ArrayList<Force>();
 		appliedForces = new ArrayList<Force>();
-		if(puppet != null)
+		if(puppet != null && bounds != null)
 		{
 			if(xKnockback != 0)
 				appliedForces.add(new Force("xKnockback",((xKnockback > 0 && puppet.isFacingRight) || (xKnockback < 0 && !puppet.isFacingRight))? 3:1,Math.abs(xKnockback),(Math.abs(xKnockback)/5 > 0)? Math.abs(xKnockback)/5:1));
 			if(yKnockback != 0)
 				appliedForces.add(new Force("yKnockback",(yKnockback > 0)? 0:2,Math.abs(yKnockback),(Math.abs(yKnockback)/5 > 0)? Math.abs(yKnockback)/5:1));
 			
-			xDist = xCoord-puppet.xCoord;
-			yDist = yCoord-puppet.yCoord;
+			xDist = xCoord-bounds.xCoord;
+			yDist = yCoord-bounds.yCoord;
 			if(!puppet.isFacingRight)
-				xCoord = puppet.xCoord+puppet.width-xDist-width;
+				xCoord = bounds.xCoord+bounds.width-xDist-width;
 		}
 	}
 	
@@ -209,13 +213,13 @@ public class Pleb extends Hitbox
 		super.update(xVel,yVel,xDir,yDir,xDrag,yDrag,speed);
 		duration--;
 		
-		if(puppet != null && isAttached)
+		if(puppet != null && bounds != null && isAttached)
 		{
 			if(puppet.isFacingRight)
-				xCoord = puppet.xCoord+xDist;
+				xCoord = bounds.xCoord+xDist;
 			else
-				xCoord = puppet.xCoord+puppet.width-xDist-width;
-			yCoord = puppet.yCoord+yDist;
+				xCoord = bounds.xCoord+bounds.width-xDist-width;
+			yCoord = bounds.yCoord+yDist;
 		}
 	}
 }

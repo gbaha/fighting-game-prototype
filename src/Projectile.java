@@ -7,14 +7,15 @@ import java.util.ArrayList;
 abstract class Projectile extends Prop
 {
 	Puppet puppet;
-	int hits, strength, hDamage, sDamage, speed;
+	String hashCounter;
+	int strength, hDamage, sDamage, speed;
 	
 	public Projectile(Puppet p, int x, int y, int w1, int h1, int h2, int h3, int s)
 	{
-		super(x,y,w1,h1,h2);
+		super(x,y,w1,h1,h2,h3);
 		puppet = p;
+		hashCounter = "";
 		
-		hits = h3;
 		strength = s;
 		isFacingRight = puppet.isFacingRight;
 		bounds.isFloating = true;
@@ -44,5 +45,18 @@ abstract class Projectile extends Prop
 		health--;
 		if(health <= 0 || hits <= 0)
 			health = 0;
+	}
+	
+	protected void addPleb(int hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia)
+	{
+		Pleb p = new Pleb(puppet,bounds,null,x,y,w,h,d1,d2,s,hd,sd,kx,ky,hs,ia);
+		
+		if(hashCounter.equals(""))
+			hashCounter = this.toString()+hc;
+		else if(Integer.parseInt(hashCounter.substring(hashCounter.length()-1)) != hc)
+			hashCounter = this.toString()+hc;
+		p.hash = hashCounter;
+		
+		plebsOut.add(p);
 	}
 }

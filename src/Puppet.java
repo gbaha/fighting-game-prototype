@@ -23,16 +23,16 @@ abstract class Puppet
 	int id, xCoord, yCoord, xHosh, yHosh, width, height, crHeight;
 	int maxHp, maxSp, maxMp, maxSpd;
 	int health, stamina, meter, speed;
-	int preFrames, fCounter, hitStun, hitStop;
+	int preFrames, fCounter, hitStun, hitStop, sCooldown;
 	double fIndex, jForce, jump, hitstunDamp;
-	boolean isFacingRight, isPerformingAction, isCrouching, canBlock;//, isJumping;
-	int[] hitInfo, flinchPoints, jDirections, spriteParams;
+	boolean isFacingRight, isPerformingAction, isCrouching, canBlock, isGuardBroken;	//, isJumping;
+	int[] hitInfo, flinchPoints, jDirections, spriteParams;	//Add tint later
 	boolean[] isBlocking;
 	
 	public enum PuppetState implements State
 	{
 		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD, 	//, PERFORM_ACTION
-		GUARD_STANDING, FLINCH_STANDING0, FLINCH_STANDING1, FLINCH_STANDING2, FLINCH_CROUCHING;
+		GUARD_STANDING, GUARD_CROUCHING, GUARD_JUMPING, FLINCH_STANDING0, FLINCH_STANDING1, FLINCH_STANDING2, FLINCH_CROUCHING;	//FLINCH_MIDAIR, BREAK_GROUND, BREAK_AIR
 		
 		public String getState()
 		{
@@ -75,6 +75,7 @@ abstract class Puppet
 		isFacingRight = r;
 		isPerformingAction = false;
 		canBlock = false;
+		isGuardBroken = false;
 	//	isJumping = false;
 		
 		hitInfo = new int[]{0,0,0};	//[type, counter, hitstun]
@@ -100,6 +101,7 @@ abstract class Puppet
 		hitStun = 0;
 		hitStop = 0;
 		hitstunDamp = 0;
+		sCooldown = 0;
 		
 		bounds =  new Organ(x,y,w,h,speed);
 		bounds.isFloating = f2;
@@ -165,6 +167,8 @@ abstract class Puppet
 				break;
 			
 			case "GUARD_STANDING":
+			case "GUARD_CROUCHING":
+			case "GUARD_JUMPING":
 				guard();
 				break;
 			
@@ -177,7 +181,7 @@ abstract class Puppet
 		}
 		
 		xCoord = bounds.xCoord;
-		if(!isCrouching && currState != PuppetState.STANDING)
+		if(!isCrouching && currState != PuppetState.STANDING && currState != PuppetState.GUARD_CROUCHING)
 			yCoord = bounds.yCoord;
 		
 		if(currState.getPosition() < hitboxArchiver.size())
@@ -224,7 +228,7 @@ abstract class Puppet
 	{
 		if(isBlocking[0] || isBlocking[1])
 		{
-			currState = PuppetState.GUARD_STANDING;
+			currState = (bounds.isGrounded)? ((isBlocking[0])? PuppetState.GUARD_STANDING:PuppetState.GUARD_CROUCHING):PuppetState.GUARD_JUMPING;
 			return;
 		}
 		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
@@ -261,7 +265,7 @@ abstract class Puppet
 	{
 		if(isBlocking[0] || isBlocking[1])
 		{
-			currState = PuppetState.GUARD_STANDING;
+			currState = (isBlocking[0])? PuppetState.GUARD_STANDING:PuppetState.GUARD_CROUCHING;
 			return;
 		}
 		if(isCrouching)
@@ -286,7 +290,7 @@ abstract class Puppet
 		bounds.move();
 		if(isBlocking[0] || isBlocking[1])
 		{
-			currState = PuppetState.GUARD_STANDING;
+			currState = (isBlocking[0])? PuppetState.GUARD_STANDING:PuppetState.GUARD_CROUCHING;
 			return;
 		}
 		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
@@ -332,7 +336,7 @@ abstract class Puppet
 		
 		if(hitSuccessful)
 		{
-			health -= p.hDamage;
+			health -= (!isGuardBroken)? p.hDamage:(int)((double)p.hDamage*2.5+0.5);
 			if(health < 0)
 				health = 0;
 			
@@ -369,7 +373,7 @@ abstract class Puppet
 					hitStun = 22;
 					hitStop = 7;
 					break;
-				case 3:
+				case 3:	//Change later
 					hitStun = 10;
 					hitStop = 10;
 					break;
@@ -378,37 +382,47 @@ abstract class Puppet
 			p.puppet.hitInfo[0] = 1;
 			p.puppet.hitInfo[2] = hitStun;
 			p.puppet.hitInfo[1]++;
+			p.puppet.stamina = p.puppet.maxSp;
 		}
 		else
 		{
 			stamina -= p.sDamage;
-			if(stamina < 0)
-				stamina = 0;
-			
-			switch(p.strength)
+			if(stamina <= 0)
 			{
-				case 0:
-					hitStun = 10;
-					hitStop = 5;
-					break;
-				case 1:
-					hitStun = 10;
-					hitStop = 6;
-					break;
-				case 2:
-					hitStun = 10;
-					hitStop = 7;
-					break;
-				case 3:
-					hitStun = 10;
-					hitStop = 10;
-					break;
+				stamina = 0;
+			//	currState = (bounds.isGrounded)? PuppetState.BREAK_GROUND:PuppetState.BREAK_AIR;
+				isGuardBroken = true;
+				hitStun = 90;
+				hitStop = 30;
+			}
+			else
+			{
+				switch(p.strength)
+				{
+					case 0:
+						hitStun = 10;
+						hitStop = 5;
+						break;
+					case 1:
+						hitStun = 10;
+						hitStop = 6;
+						break;
+					case 2:
+						hitStun = 10;
+						hitStop = 7;
+						break;
+					case 3:
+						hitStun = 10;
+						hitStop = 10;
+						break;
+				}
 			}
 			
 			p.puppet.hitInfo[0] = 2;
 			p.puppet.hitInfo[2] = hitStun;
 		//	p.puppet.hitInfo[1]++;
 		}
+		sCooldown = 120;
 		
 		for(Force f: p.appliedForces)
 		{
@@ -451,7 +465,7 @@ abstract class Puppet
 	
 	public void update()
 	{
-		if(currState == PuppetState.CROUCH)
+		if(currState == PuppetState.CROUCH || currState == PuppetState.GUARD_CROUCHING)
 		{
 			bounds.yCoord = yCoord+height-crHeight;
 			bounds.height = crHeight;
@@ -490,6 +504,9 @@ abstract class Puppet
 			}
 		}
 		
+		if(isGuardBroken && hitStun == 0)
+			isGuardBroken = false;
+		
 		if(hitInfo[2] > 0)
 			hitInfo[2]--;
 		else
@@ -500,6 +517,14 @@ abstract class Puppet
 		
 		if(isPerformingAction)
 			fCounter++;
+		
+		if(sCooldown == 0)
+		{
+			if(stamina < maxSp)
+				stamina++;
+		}
+		else
+			sCooldown--;
 	}
 	
 	protected void getHitboxes(int h)
@@ -555,7 +580,7 @@ abstract class Puppet
 	{
 		public LightPunch()
 		{
-			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0},new boolean[]{true,true});
 		}
 		
 		public void perform(int f){}
@@ -565,7 +590,7 @@ abstract class Puppet
 	{
 		public MediumPunch()
 		{
-			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0},new boolean[]{true,true});
 		}
 		
 		public void perform(int f){}
@@ -575,7 +600,7 @@ abstract class Puppet
 	{
 		public HeavyPunch()
 		{
-			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0},new boolean[]{true,true});
 		}
 		
 		public void perform(int f){}
@@ -585,7 +610,7 @@ abstract class Puppet
 	{
 		public LightKick()
 		{
-			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0},new boolean[]{true,true});
 		}
 		
 		public void perform(int f){}
@@ -595,7 +620,7 @@ abstract class Puppet
 	{
 		public MediumKick()
 		{
-			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0},new boolean[]{true,true});
 		}
 		
 		public void perform(int f){}
@@ -605,7 +630,7 @@ abstract class Puppet
 	{
 		public HeavyKick()
 		{
-			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0});
+			super(Action.NORMAL,1,1,new int[]{},new boolean[]{false,false,false,false},new int[]{0,0},new boolean[]{true,true});
 		}
 		
 		public void perform(int f){}

@@ -292,7 +292,7 @@ public class Hand implements KeyListener	//, MouseListener
 				i--;
 			}
 			
-			if(c)
+			if(c && ((player.bounds.isGrounded && player.actions[player.movelist.indexOf(m)].groundOk) || (!player.bounds.isGrounded && player.actions[player.movelist.indexOf(m)].airOk)))
 			{//System.out.println(">> "+player.movelist.indexOf(m));
 				if(player.currAction == null)
 					player.setAction(player.actions[player.movelist.indexOf(m)]);
@@ -306,7 +306,7 @@ public class Hand implements KeyListener	//, MouseListener
 			}
 		}
 		
-		if(currButton != -1)
+		if(currButton != -1 && ((player.bounds.isGrounded && player.normals[currButton].groundOk) || (!player.bounds.isGrounded && player.normals[currButton].airOk)))
 		{//System.out.println("@  "+currButton);
 			if(player.currAction == null)
 				player.setAction(player.normals[currButton]);

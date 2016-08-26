@@ -125,11 +125,8 @@ public class Hoshua extends JPanel
 		
 		//TEST
 		g.setColor(Color.GRAY);
-	//	g.drawString(canvas.puppets.get(0).health+"",5,15);
-		if(canvas.player1 != null)
-			g.drawString(canvas.player1.xCoord+"("+canvas.player1.bounds.xForward+") "+canvas.player1.yCoord+"("+canvas.player1.bounds.yForward+")",5,20);
-		g.drawString(fps+"",5,40);
-		g.setColor(new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255)));
+		g.drawString(fps+"",5,20);
+	//	g.setColor(new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255)));
 	//	g.fillRect((int)(width-20*width/1280),0,(int)(20*width/1280),(int)(20*height/720));
 		
 		int hqz1 = MouseInfo.getPointerInfo().getLocation().x-xCoord+(int)(10*width/1280);

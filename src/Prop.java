@@ -11,7 +11,7 @@ abstract class Prop
 	Organ bounds;
 	State currState;
 	int id, xCoord, yCoord, xHosh, yHosh, width, height;
-	int maxHp, health, fCounter;
+	int maxHp, health, hits, fCounter;
 	double fIndex;
 	boolean isFacingRight;
 	int[] spriteParams;
@@ -31,9 +31,10 @@ abstract class Prop
 		}
 	}
 	
-	public Prop(int x, int y, int w1, int h1, int h2)	//, boolean f, boolean s)
+	public Prop(int x, int y, int w1, int h1, int h2, int h3)	//, boolean f, boolean s)
 	{
 		plebsIn = new ArrayList<Pleb>();
+		plebsOut = new ArrayList<Pleb>();
 		spriteArchiver = new ArrayList<int[]>();
 		currState = PropState.IDLE;
 		
@@ -46,6 +47,7 @@ abstract class Prop
 		height = h1;
 		maxHp = h2;
 		health = maxHp;
+		hits = h3;
 		fCounter = 0;
 		fIndex = 0;
 		isFacingRight = true;
