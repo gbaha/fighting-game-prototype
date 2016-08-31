@@ -278,244 +278,695 @@ public class Logic
 		boolean xBlocked = false;
 		boolean yBlocked = false;
 		
-	//	boolean isPrioritized = false;
-	//	int cLimit = collisionPriority.size();
+		for(Puppet p: stage.puppets)
+				hitboxes.add(p.bounds);
+	/*	for(Prop p: stage.props)
+				hitboxes.add(p.bounds);*/
 		
-//		do{
-			for(Puppet p: stage.puppets)
+		double[][] forces = new double[hitboxes.size()][4];
+		for(Organ h: hitboxes)
+		{
+			forces[hitboxes.indexOf(h)][0] = 0;
+			forces[hitboxes.indexOf(h)][1] = 0;
+			forces[hitboxes.indexOf(h)][2] = 0;
+			forces[hitboxes.indexOf(h)][3] = 0;
+			
+			int fLimit = h.forceArchiver.size();
+			for(int f = 0; f < fLimit; f++)
 			{
-		//		p.touchArchiver = new ArrayList<int[]>();
-		//		p.touchArchiver.add(new int[]{-1});
-				p.bounds.isGrounded = false;
-				
-		/*		cLimit = collisionPriority.size();
-				for(int c = 0; c < cLimit; c++)
+				double hDamp = 1;
+				if(h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("yKnockback"))	// || h.forceArchiver.get(f).type.equals("gravity"))
 				{
-					if(collisionPriority.get(c) == p.bounds)
-					{
-						hitboxes.add(0,p.bounds);
-						isPrioritized = true;
+					if(stage.puppets.get(hitboxes.indexOf(h)).hitStun > 0)
+						hDamp = stage.puppets.get(hitboxes.indexOf(h)).hitstunDamp;
+				}
+				
+				switch(h.forceArchiver.get(f).direction)
+				{
+					case 0:
+						if(!h.forceArchiver.get(f).type.equals("gravity") || (h.forceArchiver.get(f).type.equals("gravity") && !h.isFloating))
+							forces[hitboxes.indexOf(h)][0] += h.forceArchiver.get(f).magnitude*hDamp;
+						h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+						break;
 						
-						collisionPriority.remove(c);
-						cLimit = collisionPriority.size();
-						c--;
-					}
-				}
-				if(!isPrioritized)*/
-					hitboxes.add(p.bounds);
-			}
-	//		isPrioritized = false;
-			for(Prop p: stage.props)
-			{
-				p.bounds.isGrounded = false;
-				
-		/*		for(int c = 0; c < cLimit; c++)
-				{	
-					if(collisionPriority.get(c) == p.bounds)
-					{
-						hitboxes.add(0,p.bounds);
-						isPrioritized = true;
+					case 1:
+						forces[hitboxes.indexOf(h)][1] += h.forceArchiver.get(f).magnitude*hDamp;
+						if(!h.forceArchiver.get(f).type.equals("xKnockback") || h.isGrounded || hDamp < 1)
+							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+						else
+						{
+							h.forceArchiver.get(f).magnitude = 8;
+							h.forceArchiver.get(f).decay = 8;
+						}
+						break;
 						
-						collisionPriority.remove(c);
-						cLimit = collisionPriority.size();
-						c--;
-					}
+					case 2:
+						forces[hitboxes.indexOf(h)][2] += h.forceArchiver.get(f).magnitude*hDamp;
+						h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+						break;
+						
+					case 3:
+						forces[hitboxes.indexOf(h)][3] += h.forceArchiver.get(f).magnitude*hDamp;
+						if(!h.forceArchiver.get(f).type.equals("xKnockback") || h.isGrounded || hDamp < 1)
+							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+						else
+						{
+							h.forceArchiver.get(f).magnitude = 8;
+							h.forceArchiver.get(f).decay = 8;
+						}
+						break;
 				}
-				if(!isPrioritized)*/
-			
-			//COMMENT OUT FOR NOW SO FIREBALLS DONT HAVE OR CAUSE COLLISION
-			//		hitboxes.add(p.bounds);
-			}
-			
-			double[][] forces = new double[hitboxes.size()][4];
-			for(Organ h: hitboxes)
-			{
-				forces[hitboxes.indexOf(h)][0] = 0;
-				forces[hitboxes.indexOf(h)][1] = 0;
-				forces[hitboxes.indexOf(h)][2] = 0;
-				forces[hitboxes.indexOf(h)][3] = 0;
 				
-				int fLimit = h.forceArchiver.size();
-				for(int f = 0; f < fLimit; f++)
+				if(h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("yKnockback"))
 				{
-					double hDamp = 1;
-					if(h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("yKnockback"))
-					{
-						if(stage.puppets.get(hitboxes.indexOf(h)).hitStun > 0)
-							hDamp = stage.puppets.get(hitboxes.indexOf(h)).hitstunDamp;
-					}
-					
-					switch(h.forceArchiver.get(f).direction)
-					{
-						case 0:
-							if(!h.forceArchiver.get(f).type.equals("gravity") || (h.forceArchiver.get(f).type.equals("gravity") && !h.isFloating))
-								forces[hitboxes.indexOf(h)][0] += h.forceArchiver.get(f).magnitude*hDamp;
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
-							break;
-							
-						case 1:
-							forces[hitboxes.indexOf(h)][1] += h.forceArchiver.get(f).magnitude*hDamp;
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
-							break;
-							
-						case 2:
-							forces[hitboxes.indexOf(h)][2] += h.forceArchiver.get(f).magnitude*hDamp;
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
-							break;
-							
-						case 3:
-							forces[hitboxes.indexOf(h)][3] += h.forceArchiver.get(f).magnitude*hDamp;
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
-							break;
-					}
-					
-					if(h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("yKnockback"))
-					{
-						if(stage.puppets.get(hitboxes.indexOf(h)).hitStun > 0 && stage.puppets.get(hitboxes.indexOf(h)).hitstunDamp < 1)
-							stage.puppets.get(hitboxes.indexOf(h)).hitstunDamp += 0.1;
-					}
-					
-					if(h.forceArchiver.get(f).magnitude <= 0)
-					{
-						h.forceArchiver.remove(f);
-						fLimit = h.forceArchiver.size();
-						f--;
-					}
+					if(stage.puppets.get(hitboxes.indexOf(h)).hitStun > 0 && stage.puppets.get(hitboxes.indexOf(h)).hitstunDamp < 1)
+						stage.puppets.get(hitboxes.indexOf(h)).hitstunDamp += 0.1;
+					if(stage.puppets.get(hitboxes.indexOf(h)).hitstunDamp > 1)
+						stage.puppets.get(hitboxes.indexOf(h)).hitstunDamp = 1;
+				}
+				
+				if(h.forceArchiver.get(f).magnitude <= 0)
+				{
+					h.forceArchiver.remove(f);
+					fLimit = h.forceArchiver.size();
+					f--;
 				}
 			}
+		}
+		
+		boolean[] cornerOccupied = new boolean[]{false, false};
+		for(Organ h1: hitboxes)
+		{
+			int x1 = h1.xCoord;
+			int y1 = h1.yCoord;
+			h1.isGrounded = false;
 			
-			boolean[] cornerOccupied = new boolean[]{false, false};
-			for(Organ h1: hitboxes)
+			x1 += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5*((forces[hitboxes.indexOf(h1)][3] > forces[hitboxes.indexOf(h1)][1])? 1:-1));
+			y1 += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5*((forces[hitboxes.indexOf(h1)][0] > forces[hitboxes.indexOf(h1)][2])? 1:-1));
+			
+			if(h1.xDir != 0)
+				x1 += h1.xForward;
+			if(h1.xDrag != 0)
+				x1 += h1.xDrift;
+			if(h1.yDir != 0)
+				y1 -= h1.yForward;
+			if(h1.yDrag != 0)
+				y1 -= h1.yDrift;
+			
+			for(Floor f: stage.floors)
 			{
-				int x1 = h1.xCoord;
-				int y1 = h1.yCoord;
-				
-				x1 += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5*((forces[hitboxes.indexOf(h1)][3] > forces[hitboxes.indexOf(h1)][1])? 1:-1));
-				y1 += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5*((forces[hitboxes.indexOf(h1)][0] > forces[hitboxes.indexOf(h1)][2])? 1:-1));
-				
-				if(h1.xDir != 0)
-					x1 += h1.xForward;
-				if(h1.xDrag != 0)
-					x1 += h1.xDrift;
-				if(h1.yDir != 0)
-					y1 -= h1.yForward;
-				if(h1.yDrag != 0)
-					y1 -= h1.yDrift;
-				
-				for(Floor f: stage.floors)
+				if(h1.xCoord == f.xCoord)
 				{
-					if(h1.xCoord == f.xCoord)
+					if(f.cornered[0] == null)
+						f.cornered[0] = h1;
+					else if(h1 != f.cornered[0] && y1+h1.height > f.cornered[0].yCoord && h1.yCoord <= f.cornered[0].yCoord)
 					{
-						if(f.cornered[0] == null)
-							f.cornered[0] = h1;
-						else if(h1 != f.cornered[0] && y1+h1.height > f.cornered[0].yCoord && h1.yCoord <= f.cornered[0].yCoord)
-						{
-							h1.xCoord = f.cornered[0].xCoord+f.cornered[0].width;
-							h1.blocked[1] = f.cornered[0].xCoord+f.cornered[0].width;
-						}
-						cornerOccupied[0] = true;
+						h1.xCoord = f.cornered[0].xCoord+f.cornered[0].width;
+						h1.blocked[1] = f.cornered[0].xCoord+f.cornered[0].width;
 					}
-					if(h1.xCoord+h1.width == f.xCoord+f.width)
+					cornerOccupied[0] = true;
+				}
+				if(h1.xCoord+h1.width == f.xCoord+f.width)
+				{
+					if(f.cornered[1] == null)
+						f.cornered[1] = h1;
+					else if(h1 != f.cornered[1] && y1+h1.height > f.cornered[1].yCoord && h1.yCoord <= f.cornered[1].yCoord)
 					{
-						if(f.cornered[1] == null)
-							f.cornered[1] = h1;
-						else if(h1 != f.cornered[1] && y1+h1.height > f.cornered[1].yCoord && h1.yCoord <= f.cornered[1].yCoord)
+						h1.xCoord = f.cornered[1].xCoord-h1.width;
+						h1.blocked[1] = f.cornered[1].xCoord-h1.width;
+					}
+					cornerOccupied[1] = true;
+				}
+			}
+			
+			if(stage.player1 != null && stage.player2 != null && stage.player1.health > 0 && stage.player2.health > 0)
+			{
+				if(h1 == stage.player1.bounds || h1 == stage.player2.bounds)
+				{
+					int p = (h1 == stage.player1.bounds)? hitboxes.indexOf(stage.player2.bounds):hitboxes.indexOf(stage.player1.bounds);
+					if(x1 > h1.xCoord || h1.xDir > 0 || h1.xDrag > 0 || h1.blocked[1] != h1.xCoord+h1.width/2)
+					{
+						for(int x = h1.xCoord; x <= x1; x++)
 						{
-							h1.xCoord = f.cornered[1].xCoord-h1.width;
-							h1.blocked[1] = f.cornered[1].xCoord-h1.width;
+							if(x+h1.width >= 1280-xFocus-focusWidth[0] && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280-focusWidth[0]*2)
+							{
+								stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
+							
+								if(h1.blocked[1] > 1280-xFocus-focusWidth[0]  || h1.xCoord+h1.width > 1280-xFocus-focusWidth[0] || h1.blocked[1] == h1.xCoord+h1.width/2)
+									h1.xCoord = 1280-xFocus-h1.width-focusWidth[0];
+								x = x1;
+							}
+							
+							if(h1.xCoord == 1280-xFocus-h1.width-focusWidth[0] && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280-focusWidth[0]*2)
+							{
+								h1.blocked[1] = 1280-xFocus-focusWidth[0];
+								xBlocked = true;
+							}
+							
+							if(x <= focusWidth[1]-xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280-focusWidth[1] && stage.floors.get(0).xCoord+stage.floors.get(0).width-x >= 1280)
+							{
+								xFocus = focusWidth[0]-x;
+								x = x1;
+							}
 						}
-						cornerOccupied[1] = true;
+					}
+					if(x1 < h1.xCoord || h1.xDir < 0 || h1.xDrag < 0 || h1.blocked[3] != h1.xCoord+h1.width/2)
+					{
+						for(int x = h1.xCoord; x >= x1; x--)
+						{
+							if(x <= focusWidth[0]-xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280-focusWidth[0]*2)
+							{
+								stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
+								
+								if(h1.blocked[3] < focusWidth[0]-xFocus || h1.xCoord < focusWidth[0]-xFocus || h1.blocked[3] == h1.xCoord+h1.width/2)
+									h1.xCoord = focusWidth[0]-xFocus;
+								x = x1;
+							}
+							
+							if(h1.xCoord == focusWidth[0]-xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280-focusWidth[0]*2)
+							{
+								h1.blocked[3] = focusWidth[0]-xFocus;
+								xBlocked = true;
+							}
+							
+							if(x+h1.width >= 1280-xFocus-focusWidth[1] && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280-focusWidth[1] && x+h1.width-stage.floors.get(0).xCoord >= 1280)
+							{
+								xFocus = 1280-x-h1.width-focusWidth[0];
+								x = x1;
+							}
+						}
 					}
 				}
-				
-				if(stage.player1 != null && stage.player2 != null && stage.player1.health > 0 && stage.player2.health > 0)
+			}
+			
+			for(Organ h2: hitboxes)
+			{
+				if(hitboxes.indexOf(h1) != hitboxes.indexOf(h2))
 				{
-					if(h1 == stage.player1.bounds || h1 == stage.player2.bounds)
+					int x2 = h2.xCoord;
+					int y2 = h2.yCoord;
+					
+					x2 += (int)(forces[hitboxes.indexOf(h2)][3]-forces[hitboxes.indexOf(h2)][1]+0.5*((forces[hitboxes.indexOf(h2)][3] > forces[hitboxes.indexOf(h2)][1])? 1:-1));
+					y2 += (int)(forces[hitboxes.indexOf(h2)][0]-forces[hitboxes.indexOf(h2)][2]+0.5*((forces[hitboxes.indexOf(h2)][0] > forces[hitboxes.indexOf(h2)][2])? 1:-1));
+					
+					if(h2.xDir != 0)
+						x2 += h2.xForward;
+					if(h2.xDrag != 0)
+						x2 += h2.xDrift;
+					if(h2.yDir != 0)
+						y2 -= h2.yForward;
+					if(h2.yDrag != 0)
+						y2 -= h2.yDrift;
+					
+					if(h1.xCoord != h2.xCoord+h2.width && h1.xCoord+h1.width != h2.xCoord && ((h1.xCoord >= h2.xCoord && h1.xCoord < h2.xCoord+h2.width) || (h1.xCoord+h1.width > h2.xCoord && h1.xCoord+h1.width <= h2.xCoord+h2.width) || (h1.xCoord <= h2.xCoord && h1.xCoord+h1.width >= h2.xCoord+h2.width) /*|| (x1 == x2 || x1+h1.height == x2+h2.height)*/))
 					{
-						int p = (h1 == stage.player1.bounds)? hitboxes.indexOf(stage.player2.bounds):hitboxes.indexOf(stage.player1.bounds);
+				/*		if(y1 < h1.yCoord || h1.yDir < 0 || h1.yDrag < 0)
+						{
+							if((h1.xCoord < h2.xCoord+h2.width && h1.blocked[3] != h2.xCoord+h2.width) || (h1.xCoord+h1.width > h2.xCoord && h1.blocked[1] != h2.xCoord))
+							{
+								for(int y = h1.yCoord; y >= y1; y--)
+								{
+									if(y < y2+h2.height && h1.yCoord+h1.height >= y2+h2.height)
+									{
+										if(hitboxes.indexOf(h1) < stage.puppets.size())
+										{
+											if(forces[hitboxes.indexOf(h1)][2] > 0)
+											{
+												int fLimit = stage.puppets.get(hitboxes.indexOf(h1)).bounds.forceArchiver.size();
+												for(int g = 0; g < fLimit; g++)
+												{
+													if(stage.puppets.get(hitboxes.indexOf(h1)).bounds.forceArchiver.get(g).type.equals("jump") && stage.puppets.get(hitboxes.indexOf(h1)).bounds.forceArchiver.get(g).direction == 2)
+													{
+														stage.puppets.get(hitboxes.indexOf(h1)).jump = stage.puppets.get(hitboxes.indexOf(h1)).bounds.forceArchiver.get(g).magnitude;
+														stage.puppets.get(hitboxes.indexOf(h1)).bounds.forceArchiver.remove(g);
+														fLimit = stage.puppets.get(hitboxes.indexOf(h1)).bounds.forceArchiver.size();
+														g--;
+													}
+												}
+											}
+											
+											for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
+												h3.yVel = 0;
+											stage.puppets.get(hitboxes.indexOf(h1)).bounds.yVel = 0;
+										}
+										else
+											stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.yVel = 0;
+										
+										if(h1.blocked[0] < y2+h2.height || h1.yCoord < y2+h2.height || h1.blocked[0] == h1.yCoord+h1.height/2)
+											h1.yCoord = y2+h2.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
+										y = y1;
+									}
+								}
+								
+								if(h1.yCoord == y2+h2.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1))
+								{
+									h1.blocked[0] = y2+h2.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
+									yBlocked = true;
+								}
+							}
+						}
+						else*/ if(y1 > h1.yCoord || h1.yDir > 0 || h1.yDrag > 0)
+						{
+							if((h1.xCoord < h2.xCoord+h2.width && h1.blocked[3] != h2.xCoord+h2.width) || (h1.xCoord+h1.width > h2.xCoord && h1.blocked[1] != h2.xCoord))
+							{
+								for(int y = h1.yCoord; y <= y1; y++)
+								{
+									if(y+h1.height >= y2 && h1.yCoord <= y2)
+									{
+									/*	if(hitboxes.indexOf(h1) < stage.puppets.size())
+										{ 
+											for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
+												h3.yVel = 0;
+											stage.puppets.get(hitboxes.indexOf(h1)).bounds.yVel = 0;
+											stage.puppets.get(hitboxes.indexOf(h1)).bounds.isGrounded = true;
+										}
+										else
+										{
+											stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.yVel = 0;
+											stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.isGrounded = true;
+										}*/
+										
+										if(stage.floors.get(0).cornered[0] == h1)
+											h2.xCoord = h1.xCoord+h1.width;
+										else if(stage.floors.get(0).cornered[1] == h1)
+											h2.xCoord = h1.xCoord-h2.width;
+										else
+										{
+											if(x1+h1.width/2 >= x2+h2.width/2)
+													h1.xCoord = x2+h2.width;
+											else
+												h1.xCoord = x2-h1.width;
+										}
+										
+								/*		if(h1.blocked[2] > y2 || h1.yCoord+h1.height > y2 || h1.blocked[2] == h1.yCoord+h1.height/2)
+											h1.yCoord = y2-h1.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
+								*/		y = y1;
+									}
+								}
+								
+								if(h1.yCoord == y2-h1.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1))
+								{
+							//		h1.blocked[2] = y2-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
+									yBlocked = true;
+								}
+							}
+						}
+						if(y2 > h2.yCoord || h2.yDir > 0 || h2.yDrag > 0)
+						{
+							if((h2.xCoord < h1.xCoord+h1.width && h2.blocked[3] != h1.xCoord+h1.width) || (h2.xCoord+h2.width > h1.xCoord && h2.blocked[1] != h1.xCoord))
+							{
+								for(int y = h2.yCoord; y <= y2; y++)
+								{
+									if(y+h2.height >= y1 && h2.yCoord <= y1)
+									{
+										if(stage.floors.get(0).cornered[0] == h2)
+											h1.xCoord = h2.xCoord+h2.width;
+										else if(stage.floors.get(0).cornered[1] == h2)
+											h1.xCoord = h2.xCoord-h1.width;
+										else
+										{
+											if(x2+h2.width/2 >= x1+h1.width/2)
+													h2.xCoord = x1+h1.width;
+											else
+												h2.xCoord = x1-h2.width;
+										}
+										
+								/*		if(h1.blocked[2] > y2 || h1.yCoord+h1.height > y2 || h1.blocked[2] == h1.yCoord+h1.height/2)
+											h1.yCoord = y2-h1.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
+								*/		y = y2;
+									}
+								}
+								
+								if(h2.yCoord == y1-h2.height-(int)(gravity.magnitude+0.5)*((h1.isGrounded)? 0:1))
+								{
+							//		h1.blocked[2] = y2-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
+									yBlocked = true;
+								}
+							}
+						}
+					}
+					
+					if(h1.yCoord != h2.yCoord+h2.height && h1.yCoord+h1.height != h2.yCoord && ((h1.yCoord >= h2.yCoord && h1.yCoord < h2.yCoord+h2.height) || (h1.yCoord+h1.height > h2.yCoord && h1.yCoord+h1.height <= h2.yCoord+h2.height) || (h1.yCoord <= h2.yCoord && h1.yCoord+h1.height >= h2.yCoord+h2.height) /*|| (y1 == y2 || y1+h1.height == y2+h2.height)*/))
+					{
+						if(x1 > h1.xCoord || h1.xDir > 0 || h1.xDrag > 0)
+						{
+							for(int x = h1.xCoord; x <= x1; x++)
+							{
+								if(x+h1.width > x2 && h1.xCoord <= x2/* && !(h2.isMovable && x2 < 0 && x1+x2 < 0)*/)
+								{
+							/*		if(hitboxes.indexOf(h1) < stage.puppets.size())
+									{
+										for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
+											h3.xVel = 0;
+										stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
+									}
+									else
+										stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.xVel = 0;
+							*/		
+									if(h1.blocked[1] > h2.xCoord || x1+h1.width > h2.xCoord || h1.blocked[1] == h1.xCoord+h1.width/2)
+										h1.xCoord = h2.xCoord-h1.width;
+									x = x1;
+								}
+							}
+							
+							if(h1.xCoord == h2.xCoord-h1.width/*  && !(h2.isMovable && h2.xCoord < 0 && x1+h2.xCoord < 0)*/)
+							{
+								h1.blocked[1] = h2.xCoord;
+								h2.blocked[3] = h1.xCoord+h1.width;
+								xBlocked = true;
+								
+								if(h2.isMovable/* && h2.blocked[1] != h2.xCoord+h2.width*/)
+								{
+									int m = 0;
+									if(h1.xDir > 0)
+										m += h1.xForward;
+									if(h1.xDrag > 0)
+										m += h1.xDrift;
+									if(h2.xDir < 0)
+										m += h2.xForward;
+									if(h2.xDrag < 0)
+										m += h2.xDrift;
+									
+									for(Force f: h1.forceArchiver)
+									{
+										if(f.direction == 1)
+											m -= f.magnitude;
+										if(f.direction == 3)
+											m += f.magnitude;
+									}
+									for(Force f: h2.forceArchiver)
+									{
+										if(f.direction == 1)
+											m -= f.magnitude;
+										if(f.direction == 3)
+											m += f.magnitude;
+									}
+									if(m > 0)
+										applyNewtonsThird(m,0,h1,hitboxes);
+								}
+							}
+						}
+						else if(x1 < h1.xCoord || h1.xDir < 0 || h1.xDrag < 0)
+						{
+							for(int x = h1.xCoord; x >= x1; x--)
+							{
+								if(x < x2+h2.width && h1.xCoord+h1.width >= x2+h2.width)
+								{
+							/*		if(hitboxes.indexOf(h1) < stage.puppets.size())
+									{
+										for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
+											h3.xVel = 0;
+										stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
+									}
+									else
+										stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.xVel = 0;
+							*/		
+									if(h1.blocked[3] < x2+h2.width || x1 < x2+h2.width || h1.blocked[3] == h1.xCoord+h1.width/2)
+										h1.xCoord = h2.xCoord+h2.width;
+									x = x1;
+								}
+							}
+							
+							if(h1.xCoord == h2.xCoord+h2.width)
+							{
+								h2.blocked[1] = h1.xCoord;
+								h1.blocked[3] = h2.xCoord+h2.width;
+								xBlocked = true;
+								
+								if(h2.isMovable/* && h2.blocked[1] != h2.xCoord+h2.width*/)
+								{
+									int m = 0;
+									if(h1.xDir < 0)
+										m += h1.xForward;
+									if(h1.xDrag < 0)
+										m += h1.xDrift;
+									if(h2.xDir > 0)
+										m += h2.xForward;
+									if(h2.xDrag > 0)
+										m += h2.xDrift;
+									
+									for(Force f: h1.forceArchiver)
+									{
+										if(f.direction == 1)
+											m -= f.magnitude;
+										if(f.direction == 3)
+											m += f.magnitude;
+									}
+									for(Force f: h2.forceArchiver)
+									{
+										if(f.direction == 1)
+											m -= f.magnitude;
+										if(f.direction == 3)
+											m += f.magnitude;
+									}
+									if(m < 0)
+										applyNewtonsThird(m,0,h1,hitboxes);
+								}
+							}
+						}
+						if(x2 < h2.xCoord || h2.xDir < 0 || h2.xDrag < 0)
+						{
+							for(int x = h2.xCoord; x >= x2; x--)
+							{
+								if(x < x1+h1.width && h2.xCoord >= x1+h1.width)
+								{
+									if(h1.blocked[1] > h2.xCoord || x1+h1.width > h2.xCoord || h1.blocked[1] == h1.xCoord+h1.width/2)
+										h1.xCoord = h2.xCoord-h1.width;
+									x = x2;
+								}
+							}
+							
+							if(h1.xCoord == h2.xCoord-h1.width)
+							{
+								h1.blocked[1] = h2.xCoord;
+								h2.blocked[3] = h1.xCoord+h1.width;
+								xBlocked = true;
+								
+						/*		if(h2.isMovable && h2.blocked[1] != h2.xCoord+h2.width)
+								{
+									int m = 0;
+									if(h1.xDir != 0)
+										m += h1.xForward;
+									if(h1.xDrag != 0)
+										m += h1.xDrift;
+									if(h2.xDir != 0)
+										m -= h2.xForward;
+									if(h2.xDrag != 0)
+										m -= h2.xDrift;
+								//	int d = m;
+									
+									for(Force f: h1.forceArchiver)
+									{
+										if(f.direction == 3)
+										{
+											m += f.magnitude;
+								//			d += f.decay;
+										}
+									}
+									for(Force f: h2.forceArchiver)
+									{
+										if(f.direction == 1)
+											m -= f.magnitude;
+									}
+									if(m > 0)
+										applyNewtonsThird(m,0,h1,hitboxes);
+								}*/
+							}
+						}
+						else if(x2 > h2.xCoord || h2.xDir > 0 || h2.xDrag > 0)
+						{
+							for(int x = h2.xCoord; x <= x2; x++)
+							{
+								if(x+h2.width > x1 && h2.xCoord+h2.width <= x1)
+								{
+									if(h1.blocked[3] < x2+h2.width || x1 < x2+h2.width || h1.blocked[3] == h1.xCoord+h1.width/2)
+										h1.xCoord = h2.xCoord+h2.width;
+									x = x2;
+								}
+							}
+							
+							if(h1.xCoord == h2.xCoord+h2.width)
+							{
+								h2.blocked[1] = h1.xCoord;
+								h1.blocked[3] = h2.xCoord+h2.width;
+								xBlocked = true;
+								
+						/*		if(h2.isMovable && h2.blocked[1] != h2.xCoord+h2.width)
+								{
+									int m = 0;
+									if(h1.xDir != 0)
+										m += h1.xForward;
+									if(h1.xDrag != 0)
+										m += h1.xDrift;
+									if(h2.xDir != 0)
+										m -= h2.xForward;
+									if(h2.xDrag != 0)
+										m -= h2.xDrift;
+							//		int d = m;
+									
+									for(Force f: h1.forceArchiver)
+									{
+										if(f.direction == 1)
+										{
+											m -= f.magnitude;
+							//				d -= f.decay;
+										}
+									}
+									for(Force f: h2.forceArchiver)
+									{
+										if(f.direction == 3)
+											m -= f.magnitude;
+									}
+									if(m < 0)
+										applyNewtonsThird(m,0,h1,hitboxes);
+								}*/
+							}
+						}
+					}
+				/*	else
+					{
+						h1.blocked[1] = h1.xCoord+h1.width/2;
+						h1.blocked[3] = h1.xCoord+h1.width/2;
+					}*/
+					
+				/*	if((h1.xCoord >= h2.xCoord && h1.xCoord <= h2.xCoord+h2.width) || (h1.xCoord+h1.width >= h2.xCoord && h1.xCoord+h1.width <= h2.xCoord+h2.width) || (h1.xCoord <= h2.xCoord && h1.xCoord+h1.width >= h2.xCoord+h2.width))
+					{
+						if((h1.yCoord >= h2.yCoord && h1.yCoord <= h2.yCoord+h2.height) || (h1.yCoord+h1.height >= h2.yCoord && h1.yCoord+h1.height <= h2.yCoord+h2.height) || (h1.yCoord <= h2.yCoord && h1.yCoord+h1.height >= h2.yCoord+h2.height))
+						{
+							int[] t = new int[]{-1,-1};
+							if(hitboxes.indexOf(h2) < stage.puppets.size())
+								t = new int[]{0,stage.puppets.get(hitboxes.indexOf(h2)).id};
+							else
+								t = new int[]{1,stage.props.get(hitboxes.indexOf(h2)-stage.puppets.size()).id};
+							if(t[0] != -1)
+							{
+								if(hitboxes.indexOf(h1) < stage.puppets.size())
+									stage.puppets.get(hitboxes.indexOf(h1)).touchArchiver.add(t);
+								else
+									stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).touchArchiver.add(t);
+							}
+						}
+					}*/
+					/*	else
+					{
+						h1.blocked[0] = h1.yCoord+h1.height/2;
+						h1.blocked[2] = h1.yCoord+h1.height/2;
+					}*/
+				}
+			}
+			
+		/*	x1 += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5);
+			y1 += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5);
+			if(h1.xDir != 0)
+				x1 += h1.xForward;
+			else if(h1.xDrag != 0)
+				x1 += h1.xDrift;
+			if(h1.yDir != 0)
+				y1 -= h1.yForward;
+			else if(h1.yDrag != 0)
+				y1 -= h1.yDrift;	*/
+			
+			for(Floor f: stage.floors)
+			{
+		//		if(h1.yCoord != f.yCoord+f.height && h1.yCoord+h1.height != f.yCoord && ((x1 > f.xCoord && x1 < f.xCoord+f.width) || (x1+h1.width > f.xCoord && x1+h1.width < x1+f.width)) && ((y1 > f.yCoord && y1 < f.yCoord+f.height) || (y1+h1.height >= f.yCoord && y1+h1.height < f.yCoord+f.height)))
+				if(/*h1.xCoord != f.xCoord+f.width && h1.xCoord+h1.width != f.xCoord &&*/ ((x1+h1.width > f.xCoord && x1 < f.xCoord+f.width) || (h1.xCoord+h1.width > f.xCoord && h1.xCoord < f.xCoord+f.width) /*|| (x1+h1.width > f.xCoord && x1+h1.width < f.xCoord+f.width) /*|| (x1 == f.xCoord || x1+h1.width == f.xCoord+f.width)*/))
+				{
+					if(/*h1.yCoord != f.yCoord+f.height && h1.yCoord+h1.height != f.yCoord &&*/ ((y1+h1.height > f.yCoord && y1 < f.yCoord+f.height) || (h1.yCoord+h1.height > f.yCoord && h1.yCoord < f.yCoord+f.height) /*|| (y1+h1.height > f.yCoord && y1+h1.height < f.yCoord+f.height) /*|| (y1 == f.yCoord || y1+h1.height == f.yCoord+f.height)*/))
+					{
 						if(x1 > h1.xCoord || h1.xDir > 0 || h1.xDrag > 0 || h1.blocked[1] != h1.xCoord+h1.width/2)
 						{
 							for(int x = h1.xCoord; x <= x1; x++)
 							{
-								if(x+h1.width >= 1280-xFocus-focusWidth[0] && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280-focusWidth[0]*2)
+								for(int[] w: f.walls[1])
 								{
-									stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
-								
-									if(h1.blocked[1] > 1280-xFocus-focusWidth[0]  || h1.xCoord+h1.width > 1280-xFocus-focusWidth[0] || h1.blocked[1] == h1.xCoord+h1.width/2)
-										h1.xCoord = 1280-xFocus-h1.width-focusWidth[0];
-									x = x1;
-								}
-								
-								if(h1.xCoord == 1280-xFocus-h1.width-focusWidth[0] && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280-focusWidth[0]*2)
-								{
-									h1.blocked[1] = 1280-xFocus-focusWidth[0];
-									xBlocked = true;
-								}
-								
-								if(x <= focusWidth[1]-xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280-focusWidth[1] && stage.floors.get(0).xCoord+stage.floors.get(0).width-x >= 1280)
-								{
-									xFocus = focusWidth[0]-x;
-									x = x1;
+									if((y1 > w[0] && y1 < w[1] && (h1.yCoord < w[1] || h1.blocked[0] != w[1])) || (y1+h1.height > w[0] && y1+h1.height <= w[1] && (h1.yCoord+h1.height > w[0] || h1.blocked[2] != w[0])))
+									{
+										if(x+h1.width >= f.xCoord+f.width && h1.xCoord <= f.xCoord+f.width /*&& !xBlocked*/)
+										{
+									/*		if(hitboxes.indexOf(h1) < stage.puppets.size())
+											{
+												for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
+													h3.xVel = 0;
+												
+												stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
+											}
+											else
+												stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.xVel = 0;
+									*/		
+											h1.xVel = 0;
+											
+											if(h1.blocked[1] > f.xCoord+f.width  || h1.xCoord+h1.width > f.xCoord+f.width || h1.blocked[1] == h1.xCoord+h1.width/2)
+												h1.xCoord = f.xCoord+f.width-h1.width;	//f.xCoord+f.width-h1.xCoord-h1.width+h1.xCoord;
+											x = x1;
+										}
+										
+										if(h1.xCoord == f.xCoord+f.width-h1.width)
+										{
+											h1.blocked[1] = f.xCoord+f.width;
+											xBlocked = true;
+										}
+									}
 								}
 							}
+							
+						/*	if(!xBlocked)
+							{
+								x1 += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5);
+								h1.xCoord += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5);
+							}*/
 						}
 						if(x1 < h1.xCoord || h1.xDir < 0 || h1.xDrag < 0 || h1.blocked[3] != h1.xCoord+h1.width/2)
 						{
 							for(int x = h1.xCoord; x >= x1; x--)
 							{
-								if(x <= focusWidth[0]-xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280-focusWidth[0]*2)
+								for(int[] w: f.walls[3])
 								{
-									stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
-									
-									if(h1.blocked[3] < focusWidth[0]-xFocus || h1.xCoord < focusWidth[0]-xFocus || h1.blocked[3] == h1.xCoord+h1.width/2)
-										h1.xCoord = focusWidth[0]-xFocus;
-									x = x1;
-								}
-								
-								if(h1.xCoord == focusWidth[0]-xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280-focusWidth[0]*2)
-								{
-									h1.blocked[3] = focusWidth[0]-xFocus;
-									xBlocked = true;
-								}
-								
-								if(x+h1.width >= 1280-xFocus-focusWidth[1] && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280-focusWidth[1] && x+h1.width-stage.floors.get(0).xCoord >= 1280)
-								{
-									xFocus = 1280-x-h1.width-focusWidth[0];
-									x = x1;
+									if((y1 > w[0] && y1 < w[1] && (h1.yCoord < w[1] || h1.blocked[0] != w[1])) || (y1+h1.height > w[0] && y1+h1.height <= w[1] && h1.blocked[2] != w[0]))
+									{
+										if(x < f.xCoord && h1.xCoord+h1.width >= f.xCoord /*&& !xBlocked*/)
+										{
+									/*		if(hitboxes.indexOf(h1) < stage.puppets.size())
+											{
+												for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
+													h3.xVel = 0;
+												
+												stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
+											}
+											else
+												stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.xVel = 0;
+									*/		
+											h1.xVel = 0;
+											
+											if(h1.blocked[3] < f.xCoord || h1.xCoord < f.xCoord || h1.blocked[3] == h1.xCoord+h1.width/2)
+												h1.xCoord = f.xCoord;	//f.xCoord-h1.xCoord+h1.xCoord;
+											x = x1;
+										}
+										
+										if(h1.xCoord == f.xCoord)
+										{
+											h1.blocked[3] = f.xCoord;
+											xBlocked = true;
+										}
+									}
 								}
 							}
-						}
-					}
-				}
-				
-				for(Organ h2: hitboxes)
-				{
-					if(hitboxes.indexOf(h1) != hitboxes.indexOf(h2))
-					{
-						int x2 = h2.xCoord;
-						int y2 = h2.yCoord;
-						
-						x2 += (int)(forces[hitboxes.indexOf(h2)][3]-forces[hitboxes.indexOf(h2)][1]+0.5*((forces[hitboxes.indexOf(h2)][3] > forces[hitboxes.indexOf(h2)][1])? 1:-1));
-						y2 += (int)(forces[hitboxes.indexOf(h2)][0]-forces[hitboxes.indexOf(h2)][2]+0.5*((forces[hitboxes.indexOf(h2)][0] > forces[hitboxes.indexOf(h2)][2])? 1:-1));
-						
-						if(h2.xDir != 0)
-							x2 += h2.xForward;
-						if(h2.xDrag != 0)
-							x2 += h2.xDrift;
-						if(h2.yDir != 0)
-							y2 -= h2.yForward;
-						if(h2.yDrag != 0)
-							y2 -= h2.yDrift;
-						
-						if(h1.xCoord != h2.xCoord+h2.width && h1.xCoord+h1.width != h2.xCoord && ((h1.xCoord >= h2.xCoord && h1.xCoord < h2.xCoord+h2.width) || (h1.xCoord+h1.width > h2.xCoord && h1.xCoord+h1.width <= h2.xCoord+h2.width) || (h1.xCoord <= h2.xCoord && h1.xCoord+h1.width >= h2.xCoord+h2.width) /*|| (x1 == x2 || x1+h1.height == x2+h2.height)*/))
-						{
-					/*		if(y1 < h1.yCoord || h1.yDir < 0 || h1.yDrag < 0)
+							
+					/*		if(!xBlocked)
 							{
-								if((h1.xCoord < h2.xCoord+h2.width && h1.blocked[3] != h2.xCoord+h2.width) || (h1.xCoord+h1.width > h2.xCoord && h1.blocked[1] != h2.xCoord))
+								x1 += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5);
+								h1.xCoord += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5);
+							}*/
+						}
+						
+						if(y1 < h1.yCoord || h1.yDir < 0 || h1.yDrag < 0)
+						{
+							for(int y = h1.yCoord; y >= y1; y--)
+							{
+								for(int[] w: f.walls[0])
 								{
-									for(int y = h1.yCoord; y >= y1; y--)
+									if((x1 > w[0] && x1 < w[1] && (h1.xCoord < w[1] || h1.blocked[3] != w[1])) || (x1+h1.width > w[0] && x1+h1.width < w[1] && (h1.xCoord+h1.width > w[0] || h1.blocked[1] != w[0])))
 									{
-										if(y < y2+h2.height && h1.yCoord+h1.height >= y2+h2.height)
+										if(y < f.yCoord && h1.yCoord+h1.height >= f.yCoord /*&& !yBlocked*/)
 										{
 											if(hitboxes.indexOf(h1) < stage.puppets.size())
 											{
@@ -534,621 +985,141 @@ public class Logic
 													}
 												}
 												
-												for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
+										/*		for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
 													h3.yVel = 0;
+												
 												stage.puppets.get(hitboxes.indexOf(h1)).bounds.yVel = 0;
-											}
-											else
+										*/	}
+										/*	else
 												stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.yVel = 0;
+										*/	
+											h1.yVel = 0;
 											
-											if(h1.blocked[0] < y2+h2.height || h1.yCoord < y2+h2.height || h1.blocked[0] == h1.yCoord+h1.height/2)
-												h1.yCoord = y2+h2.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
+											if(h1.blocked[0] < f.yCoord  || h1.yCoord < f.yCoord || h1.blocked[0] == h1.yCoord+h1.height/2)
+												h1.yCoord = f.yCoord;	//f.yCoord-h1.yCoord+h1.yCoord;
 											y = y1;
 										}
-									}
-									
-									if(h1.yCoord == y2+h2.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1))
-									{
-										h1.blocked[0] = y2+h2.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
-										yBlocked = true;
+										
+										if(h1.yCoord == f.yCoord)
+										{
+											h1.blocked[0] = f.yCoord;
+											yBlocked = true;
+										}
 									}
 								}
 							}
-							else*/ if(y1 > h1.yCoord || h1.yDir > 0 || h1.yDrag > 0)
+							
+						/*	if(!yBlocked)
 							{
-								if((h1.xCoord < h2.xCoord+h2.width && h1.blocked[3] != h2.xCoord+h2.width) || (h1.xCoord+h1.width > h2.xCoord && h1.blocked[1] != h2.xCoord))
+								y1 += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5);
+								h1.yCoord += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5);
+							}*/
+						}
+						if(y1 > h1.yCoord || h1.yDir > 0 || h1.yDrag > 0)
+						{
+							for(int y = h1.yCoord; y <= y1; y++)
+							{
+								for(int[] w: f.walls[2])
 								{
-									for(int y = h1.yCoord; y <= y1; y++)
+									if((x1 > w[0] && x1 < w[1] && (h1.xCoord < w[1] || h1.blocked[3] != w[1])) || (x1+h1.width > w[0] && x1+h1.width < w[1] && (h1.xCoord+h1.width > w[0] || h1.blocked[1] != w[0])))
 									{
-										if(y+h1.height >= y2 && h1.yCoord <= y2)
+										if(y+h1.height >= f.yCoord+f.height && h1.yCoord <= f.yCoord+f.height /*&& !yBlocked*/)
 										{
-										/*	if(hitboxes.indexOf(h1) < stage.puppets.size())
-											{ 
-												for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
+											if(hitboxes.indexOf(h1) < stage.puppets.size())
+											{
+									/*			for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
 													h3.yVel = 0;
+									*/			
 												stage.puppets.get(hitboxes.indexOf(h1)).bounds.yVel = 0;
 												stage.puppets.get(hitboxes.indexOf(h1)).bounds.isGrounded = true;
 											}
 											else
 											{
-												stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.yVel = 0;
+									//			stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.yVel = 0;
 												stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.isGrounded = true;
-											}*/
-											
-											if(stage.floors.get(0).cornered[0] == h1)
-												h2.xCoord = h1.xCoord+h1.width;
-											else if(stage.floors.get(0).cornered[1] == h1)
-												h2.xCoord = h1.xCoord-h2.width;
-											else
-											{
-												if(x1+h1.width/2 >= x2+h2.width/2)
-														h1.xCoord = x2+h2.width;
-												else
-													h1.xCoord = x2-h1.width;
 											}
-											
-									/*		if(h1.blocked[2] > y2 || h1.yCoord+h1.height > y2 || h1.blocked[2] == h1.yCoord+h1.height/2)
-												h1.yCoord = y2-h1.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
-									*/		y = y1;
-										}
-									}
-									
-									if(h1.yCoord == y2-h1.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1))
-									{
-								//		h1.blocked[2] = y2-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
-										yBlocked = true;
-									}
-								}
-							}
-							if(y2 > h2.yCoord || h2.yDir > 0 || h2.yDrag > 0)
-							{
-								if((h2.xCoord < h1.xCoord+h1.width && h2.blocked[3] != h1.xCoord+h1.width) || (h2.xCoord+h2.width > h1.xCoord && h2.blocked[1] != h1.xCoord))
-								{
-									for(int y = h2.yCoord; y <= y2; y++)
-									{
-										if(y+h2.height >= y1 && h2.yCoord <= y1)
-										{
-											if(stage.floors.get(0).cornered[0] == h2)
-												h1.xCoord = h2.xCoord+h2.width;
-											else if(stage.floors.get(0).cornered[1] == h2)
-												h1.xCoord = h2.xCoord-h1.width;
-											else
-											{
-												if(x2+h2.width/2 >= x1+h1.width/2)
-														h2.xCoord = x1+h1.width;
-												else
-													h2.xCoord = x1-h2.width;
-											}
-											
-									/*		if(h1.blocked[2] > y2 || h1.yCoord+h1.height > y2 || h1.blocked[2] == h1.yCoord+h1.height/2)
-												h1.yCoord = y2-h1.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
-									*/		y = y2;
-										}
-									}
-									
-									if(h2.yCoord == y1-h2.height-(int)(gravity.magnitude+0.5)*((h1.isGrounded)? 0:1))
-									{
-								//		h1.blocked[2] = y2-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
-										yBlocked = true;
-									}
-								}
-							}
-						}
-						
-						if(h1.yCoord != h2.yCoord+h2.height && h1.yCoord+h1.height != h2.yCoord && ((h1.yCoord >= h2.yCoord && h1.yCoord < h2.yCoord+h2.height) || (h1.yCoord+h1.height > h2.yCoord && h1.yCoord+h1.height <= h2.yCoord+h2.height) || (h1.yCoord <= h2.yCoord && h1.yCoord+h1.height >= h2.yCoord+h2.height) /*|| (y1 == y2 || y1+h1.height == y2+h2.height)*/))
-						{
-							if(x1 > h1.xCoord || h1.xDir > 0 || h1.xDrag > 0)
-							{
-								for(int x = h1.xCoord; x <= x1; x++)
-								{
-									if(x+h1.width > x2 && h1.xCoord <= x2/* && !(h2.isMovable && x2 < 0 && x1+x2 < 0)*/)
-									{
-								/*		if(hitboxes.indexOf(h1) < stage.puppets.size())
-										{
-											for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
-												h3.xVel = 0;
-											stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
-										}
-										else
-											stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.xVel = 0;
-								*/		
-										if(h1.blocked[1] > h2.xCoord || x1+h1.width > h2.xCoord || h1.blocked[1] == h1.xCoord+h1.width/2)
-											h1.xCoord = h2.xCoord-h1.width;
-										x = x1;
-									}
-								}
-								
-								if(h1.xCoord == h2.xCoord-h1.width/*  && !(h2.isMovable && h2.xCoord < 0 && x1+h2.xCoord < 0)*/)
-								{
-									h1.blocked[1] = h2.xCoord;
-									h2.blocked[3] = h1.xCoord+h1.width;
-									xBlocked = true;
-									
-									if(h2.isMovable/* && h2.blocked[1] != h2.xCoord+h2.width*/)
-									{
-										int m = 0;
-										if(h1.xDir > 0)
-											m += h1.xForward;
-										if(h1.xDrag > 0)
-											m += h1.xDrift;
-										if(h2.xDir < 0)
-											m += h2.xForward;
-										if(h2.xDrag < 0)
-											m += h2.xDrift;
+											h1.yVel = 0;
 										
-										for(Force f: h1.forceArchiver)
-										{
-											if(f.direction == 1)
-												m -= f.magnitude;
-											if(f.direction == 3)
-												m += f.magnitude;
+											if(h1.blocked[2] > f.yCoord+f.height || h1.yCoord+h1.height > f.yCoord+f.height || h1.blocked[2] == h1.yCoord+h1.height/2)
+												h1.yCoord = f.yCoord+f.height-h1.height;	//f.yCoord+f.height-h1.yCoord-h1.height+stage.puppets.get(hitboxes.indexOf(h1)).bounds.yCoord;
+											y = y1;
 										}
-										for(Force f: h2.forceArchiver)
-										{
-											if(f.direction == 1)
-												m -= f.magnitude;
-											if(f.direction == 3)
-												m += f.magnitude;
-										}
-										if(m > 0)
-											applyNewtonsThird(m,0,h1,hitboxes);
-									}
-								}
-							}
-							else if(x1 < h1.xCoord || h1.xDir < 0 || h1.xDrag < 0)
-							{
-								for(int x = h1.xCoord; x >= x1; x--)
-								{
-									if(x < x2+h2.width && h1.xCoord+h1.width >= x2+h2.width)
-									{
-								/*		if(hitboxes.indexOf(h1) < stage.puppets.size())
-										{
-											for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
-												h3.xVel = 0;
-											stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
-										}
-										else
-											stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.xVel = 0;
-								*/		
-										if(h1.blocked[3] < x2+h2.width || x1 < x2+h2.width || h1.blocked[3] == h1.xCoord+h1.width/2)
-											h1.xCoord = h2.xCoord+h2.width;
-										x = x1;
-									}
-								}
-								
-								if(h1.xCoord == h2.xCoord+h2.width)
-								{
-									h2.blocked[1] = h1.xCoord;
-									h1.blocked[3] = h2.xCoord+h2.width;
-									xBlocked = true;
-									
-									if(h2.isMovable/* && h2.blocked[1] != h2.xCoord+h2.width*/)
-									{
-										int m = 0;
-										if(h1.xDir < 0)
-											m += h1.xForward;
-										if(h1.xDrag < 0)
-											m += h1.xDrift;
-										if(h2.xDir > 0)
-											m += h2.xForward;
-										if(h2.xDrag > 0)
-											m += h2.xDrift;
 										
-										for(Force f: h1.forceArchiver)
+										if(h1.yCoord == f.yCoord+f.height-h1.height)
 										{
-											if(f.direction == 1)
-												m -= f.magnitude;
-											if(f.direction == 3)
-												m += f.magnitude;
-										}
-										for(Force f: h2.forceArchiver)
-										{
-											if(f.direction == 1)
-												m -= f.magnitude;
-											if(f.direction == 3)
-												m += f.magnitude;
-										}
-										if(m < 0)
-											applyNewtonsThird(m,0,h1,hitboxes);
-									}
-								}
-							}
-							if(x2 < h2.xCoord || h2.xDir < 0 || h2.xDrag < 0)
-							{
-								for(int x = h2.xCoord; x >= x2; x--)
-								{
-									if(x < x1+h1.width && h2.xCoord >= x1+h1.width)
-									{
-										if(h1.blocked[1] > h2.xCoord || x1+h1.width > h2.xCoord || h1.blocked[1] == h1.xCoord+h1.width/2)
-											h1.xCoord = h2.xCoord-h1.width;
-										x = x2;
-									}
-								}
-								
-								if(h1.xCoord == h2.xCoord-h1.width)
-								{
-									h1.blocked[1] = h2.xCoord;
-									h2.blocked[3] = h1.xCoord+h1.width;
-									xBlocked = true;
-									
-							/*		if(h2.isMovable && h2.blocked[1] != h2.xCoord+h2.width)
-									{
-										int m = 0;
-										if(h1.xDir != 0)
-											m += h1.xForward;
-										if(h1.xDrag != 0)
-											m += h1.xDrift;
-										if(h2.xDir != 0)
-											m -= h2.xForward;
-										if(h2.xDrag != 0)
-											m -= h2.xDrift;
-									//	int d = m;
-										
-										for(Force f: h1.forceArchiver)
-										{
-											if(f.direction == 3)
-											{
-												m += f.magnitude;
-									//			d += f.decay;
-											}
-										}
-										for(Force f: h2.forceArchiver)
-										{
-											if(f.direction == 1)
-												m -= f.magnitude;
-										}
-										if(m > 0)
-											applyNewtonsThird(m,0,h1,hitboxes);
-									}*/
-								}
-							}
-							else if(x2 > h2.xCoord || h2.xDir > 0 || h2.xDrag > 0)
-							{
-								for(int x = h2.xCoord; x <= x2; x++)
-								{
-									if(x+h2.width > x1 && h2.xCoord+h2.width <= x1)
-									{
-										if(h1.blocked[3] < x2+h2.width || x1 < x2+h2.width || h1.blocked[3] == h1.xCoord+h1.width/2)
-											h1.xCoord = h2.xCoord+h2.width;
-										x = x2;
-									}
-								}
-								
-								if(h1.xCoord == h2.xCoord+h2.width)
-								{
-									h2.blocked[1] = h1.xCoord;
-									h1.blocked[3] = h2.xCoord+h2.width;
-									xBlocked = true;
-									
-							/*		if(h2.isMovable && h2.blocked[1] != h2.xCoord+h2.width)
-									{
-										int m = 0;
-										if(h1.xDir != 0)
-											m += h1.xForward;
-										if(h1.xDrag != 0)
-											m += h1.xDrift;
-										if(h2.xDir != 0)
-											m -= h2.xForward;
-										if(h2.xDrag != 0)
-											m -= h2.xDrift;
-								//		int d = m;
-										
-										for(Force f: h1.forceArchiver)
-										{
-											if(f.direction == 1)
-											{
-												m -= f.magnitude;
-								//				d -= f.decay;
-											}
-										}
-										for(Force f: h2.forceArchiver)
-										{
-											if(f.direction == 3)
-												m -= f.magnitude;
-										}
-										if(m < 0)
-											applyNewtonsThird(m,0,h1,hitboxes);
-									}*/
-								}
-							}
-						}
-					/*	else
-						{
-							h1.blocked[1] = h1.xCoord+h1.width/2;
-							h1.blocked[3] = h1.xCoord+h1.width/2;
-						}*/
-						
-					/*	if((h1.xCoord >= h2.xCoord && h1.xCoord <= h2.xCoord+h2.width) || (h1.xCoord+h1.width >= h2.xCoord && h1.xCoord+h1.width <= h2.xCoord+h2.width) || (h1.xCoord <= h2.xCoord && h1.xCoord+h1.width >= h2.xCoord+h2.width))
-						{
-							if((h1.yCoord >= h2.yCoord && h1.yCoord <= h2.yCoord+h2.height) || (h1.yCoord+h1.height >= h2.yCoord && h1.yCoord+h1.height <= h2.yCoord+h2.height) || (h1.yCoord <= h2.yCoord && h1.yCoord+h1.height >= h2.yCoord+h2.height))
-							{
-								int[] t = new int[]{-1,-1};
-								if(hitboxes.indexOf(h2) < stage.puppets.size())
-									t = new int[]{0,stage.puppets.get(hitboxes.indexOf(h2)).id};
-								else
-									t = new int[]{1,stage.props.get(hitboxes.indexOf(h2)-stage.puppets.size()).id};
-								if(t[0] != -1)
-								{
-									if(hitboxes.indexOf(h1) < stage.puppets.size())
-										stage.puppets.get(hitboxes.indexOf(h1)).touchArchiver.add(t);
-									else
-										stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).touchArchiver.add(t);
-								}
-							}
-						}*/
-						/*	else
-						{
-							h1.blocked[0] = h1.yCoord+h1.height/2;
-							h1.blocked[2] = h1.yCoord+h1.height/2;
-						}*/
-					}
-				}
-				
-			/*	x1 += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5);
-				y1 += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5);
-				if(h1.xDir != 0)
-					x1 += h1.xForward;
-				else if(h1.xDrag != 0)
-					x1 += h1.xDrift;
-				if(h1.yDir != 0)
-					y1 -= h1.yForward;
-				else if(h1.yDrag != 0)
-					y1 -= h1.yDrift;	*/
-				
-				for(Floor f: stage.floors)
-				{
-			//		if(h1.yCoord != f.yCoord+f.height && h1.yCoord+h1.height != f.yCoord && ((x1 > f.xCoord && x1 < f.xCoord+f.width) || (x1+h1.width > f.xCoord && x1+h1.width < x1+f.width)) && ((y1 > f.yCoord && y1 < f.yCoord+f.height) || (y1+h1.height >= f.yCoord && y1+h1.height < f.yCoord+f.height)))
-					if(/*h1.xCoord != f.xCoord+f.width && h1.xCoord+h1.width != f.xCoord &&*/ ((x1+h1.width > f.xCoord && x1 < f.xCoord+f.width) || (h1.xCoord+h1.width > f.xCoord && h1.xCoord < f.xCoord+f.width) /*|| (x1+h1.width > f.xCoord && x1+h1.width < f.xCoord+f.width) /*|| (x1 == f.xCoord || x1+h1.width == f.xCoord+f.width)*/))
-					{
-						if(/*h1.yCoord != f.yCoord+f.height && h1.yCoord+h1.height != f.yCoord &&*/ ((y1+h1.height > f.yCoord && y1 < f.yCoord+f.height) || (h1.yCoord+h1.height > f.yCoord && h1.yCoord < f.yCoord+f.height) /*|| (y1+h1.height > f.yCoord && y1+h1.height < f.yCoord+f.height) /*|| (y1 == f.yCoord || y1+h1.height == f.yCoord+f.height)*/))
-						{
-							if(x1 > h1.xCoord || h1.xDir > 0 || h1.xDrag > 0 || h1.blocked[1] != h1.xCoord+h1.width/2)
-							{
-								for(int x = h1.xCoord; x <= x1; x++)
-								{
-									for(int[] w: f.walls[1])
-									{
-										if((y1 > w[0] && y1 < w[1] && (h1.yCoord < w[1] || h1.blocked[0] != w[1])) || (y1+h1.height > w[0] && y1+h1.height <= w[1] && (h1.yCoord+h1.height > w[0] || h1.blocked[2] != w[0])))
-										{
-											if(x+h1.width >= f.xCoord+f.width && h1.xCoord <= f.xCoord+f.width /*&& !xBlocked*/)
-											{
-										/*		if(hitboxes.indexOf(h1) < stage.puppets.size())
-												{
-													for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
-														h3.xVel = 0;
-													
-													stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
-												}
-												else
-													stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.xVel = 0;
-										*/		
-												h1.xVel = 0;
-												
-												if(h1.blocked[1] > f.xCoord+f.width  || h1.xCoord+h1.width > f.xCoord+f.width || h1.blocked[1] == h1.xCoord+h1.width/2)
-													h1.xCoord = f.xCoord+f.width-h1.width;	//f.xCoord+f.width-h1.xCoord-h1.width+h1.xCoord;
-												x = x1;
-											}
-											
-											if(h1.xCoord == f.xCoord+f.width-h1.width)
-											{
-												h1.blocked[1] = f.xCoord+f.width;
-												xBlocked = true;
-											}
+											h1.blocked[2] = f.yCoord+f.height;
+											yBlocked = true;
 										}
 									}
 								}
-								
-							/*	if(!xBlocked)
-								{
-									x1 += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5);
-									h1.xCoord += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5);
-								}*/
-							}
-							if(x1 < h1.xCoord || h1.xDir < 0 || h1.xDrag < 0 || h1.blocked[3] != h1.xCoord+h1.width/2)
-							{
-								for(int x = h1.xCoord; x >= x1; x--)
-								{
-									for(int[] w: f.walls[3])
-									{
-										if((y1 > w[0] && y1 < w[1] && (h1.yCoord < w[1] || h1.blocked[0] != w[1])) || (y1+h1.height > w[0] && y1+h1.height <= w[1] && h1.blocked[2] != w[0]))
-										{
-											if(x < f.xCoord && h1.xCoord+h1.width >= f.xCoord /*&& !xBlocked*/)
-											{
-										/*		if(hitboxes.indexOf(h1) < stage.puppets.size())
-												{
-													for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
-														h3.xVel = 0;
-													
-													stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
-												}
-												else
-													stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.xVel = 0;
-										*/		
-												h1.xVel = 0;
-												
-												if(h1.blocked[3] < f.xCoord || h1.xCoord < f.xCoord || h1.blocked[3] == h1.xCoord+h1.width/2)
-													h1.xCoord = f.xCoord;	//f.xCoord-h1.xCoord+h1.xCoord;
-												x = x1;
-											}
-											
-											if(h1.xCoord == f.xCoord)
-											{
-												h1.blocked[3] = f.xCoord;
-												xBlocked = true;
-											}
-										}
-									}
-								}
-								
-						/*		if(!xBlocked)
-								{
-									x1 += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5);
-									h1.xCoord += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5);
-								}*/
 							}
 							
-							if(y1 < h1.yCoord || h1.yDir < 0 || h1.yDrag < 0)
+						/*	if(!yBlocked)
 							{
-								for(int y = h1.yCoord; y >= y1; y--)
-								{
-									for(int[] w: f.walls[0])
-									{
-										if((x1 > w[0] && x1 < w[1] && (h1.xCoord < w[1] || h1.blocked[3] != w[1])) || (x1+h1.width > w[0] && x1+h1.width < w[1] && (h1.xCoord+h1.width > w[0] || h1.blocked[1] != w[0])))
-										{
-											if(y < f.yCoord && h1.yCoord+h1.height >= f.yCoord /*&& !yBlocked*/)
-											{
-												if(hitboxes.indexOf(h1) < stage.puppets.size())
-												{
-													if(forces[hitboxes.indexOf(h1)][2] > 0)
-													{
-														int fLimit = stage.puppets.get(hitboxes.indexOf(h1)).bounds.forceArchiver.size();
-														for(int g = 0; g < fLimit; g++)
-														{
-															if(stage.puppets.get(hitboxes.indexOf(h1)).bounds.forceArchiver.get(g).type.equals("jump") && stage.puppets.get(hitboxes.indexOf(h1)).bounds.forceArchiver.get(g).direction == 2)
-															{
-																stage.puppets.get(hitboxes.indexOf(h1)).jump = stage.puppets.get(hitboxes.indexOf(h1)).bounds.forceArchiver.get(g).magnitude;
-																stage.puppets.get(hitboxes.indexOf(h1)).bounds.forceArchiver.remove(g);
-																fLimit = stage.puppets.get(hitboxes.indexOf(h1)).bounds.forceArchiver.size();
-																g--;
-															}
-														}
-													}
-													
-											/*		for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
-														h3.yVel = 0;
-													
-													stage.puppets.get(hitboxes.indexOf(h1)).bounds.yVel = 0;
-											*/	}
-											/*	else
-													stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.yVel = 0;
-											*/	
-												h1.yVel = 0;
-												
-												if(h1.blocked[0] < f.yCoord  || h1.yCoord < f.yCoord || h1.blocked[0] == h1.yCoord+h1.height/2)
-													h1.yCoord = f.yCoord;	//f.yCoord-h1.yCoord+h1.yCoord;
-												y = y1;
-											}
-											
-											if(h1.yCoord == f.yCoord)
-											{
-												h1.blocked[0] = f.yCoord;
-												yBlocked = true;
-											}
-										}
-									}
-								}
-								
-							/*	if(!yBlocked)
-								{
-									y1 += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5);
-									h1.yCoord += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5);
-								}*/
-							}
-							if(y1 > h1.yCoord || h1.yDir > 0 || h1.yDrag > 0)
-							{
-								for(int y = h1.yCoord; y <= y1; y++)
-								{
-									for(int[] w: f.walls[2])
-									{
-										if((x1 > w[0] && x1 < w[1] && (h1.xCoord < w[1] || h1.blocked[3] != w[1])) || (x1+h1.width > w[0] && x1+h1.width < w[1] && (h1.xCoord+h1.width > w[0] || h1.blocked[1] != w[0])))
-										{
-											if(y+h1.height >= f.yCoord+f.height && h1.yCoord <= f.yCoord+f.height /*&& !yBlocked*/)
-											{
-												if(hitboxes.indexOf(h1) < stage.puppets.size())
-												{
-										/*			for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
-														h3.yVel = 0;
-										*/			
-													stage.puppets.get(hitboxes.indexOf(h1)).bounds.yVel = 0;
-													stage.puppets.get(hitboxes.indexOf(h1)).bounds.isGrounded = true;
-												}
-												else
-												{
-										//			stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.yVel = 0;
-													stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.isGrounded = true;
-												}
-												h1.yVel = 0;
-											
-												if(h1.blocked[2] > f.yCoord+f.height || h1.yCoord+h1.height > f.yCoord+f.height || h1.blocked[2] == h1.yCoord+h1.height/2)
-													h1.yCoord = f.yCoord+f.height-h1.height;	//f.yCoord+f.height-h1.yCoord-h1.height+stage.puppets.get(hitboxes.indexOf(h1)).bounds.yCoord;
-												y = y1;
-											}
-											
-											if(h1.yCoord == f.yCoord+f.height-h1.height)
-											{
-												h1.blocked[2] = f.yCoord+f.height;
-												yBlocked = true;
-											}
-										}
-									}
-								}
-								
-							/*	if(!yBlocked)
-								{
-									y1 += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5);
-									h1.yCoord += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5);
-								}*/
-							}
+								y1 += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5);
+								h1.yCoord += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5);
+							}*/
 						}
 					}
 				}
-				
-				if(hitboxes.indexOf(h1) < stage.puppets.size())
-				{
-					int fLimit = h1.forceArchiver.size();
-					for(int f = 0; f < fLimit; f++)
-					{
-						if((h1.forceArchiver.get(f).type.equals("jump") || h1.forceArchiver.get(f).type.equals("headhug")) && h1.forceArchiver.get(f).direction == 2 && stage.puppets.get(hitboxes.indexOf(h1)).bounds.isGrounded)
-						{
-							h1.forceArchiver.remove(f);
-							fLimit = h1.forceArchiver.size();
-							f--;
-						}
-					}
-					
-					//FOCUS WALLS USED TO BE HERE
-				}
-				
-				if(!xBlocked)
-				{
-					x1 += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5*((forces[hitboxes.indexOf(h1)][3] > forces[hitboxes.indexOf(h1)][1])? 1:-1));
-					h1.xCoord += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5*((forces[hitboxes.indexOf(h1)][3] > forces[hitboxes.indexOf(h1)][1])? 1:-1));
-				}
-				
-				//UPDATE YBLOCKED FOR BOUNDS LATER???
-				if(!yBlocked)
-				{
-					y1 += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5*((forces[hitboxes.indexOf(h1)][0] > forces[hitboxes.indexOf(h1)][2])? 1:-1));
-					h1.yCoord += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5*((forces[hitboxes.indexOf(h1)][0] > forces[hitboxes.indexOf(h1)][2])? 1:-1));
-					h1.blocked[0] = h1.yCoord+h1.height/2;
-					h1.blocked[2] = h1.yCoord+h1.height/2;
-				}
-				else
-				{
-					if(h1.yDir != 0)
-						h1.yCoord += h1.yForward;
-					if(h1.yDrag != 0)
-						h1.yCoord += h1.yDrift;
-				}
-				
-				if(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1] == 0 && (forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2] == 0 || (forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2] > 0 && (h1.isGrounded || h1.isFloating))))
-				{
-					if(h1.isMoving)
-						h1.wasMoving = true;
-					else
-						h1.wasMoving = false;
-					
-					h1.isMoving = false;
-				}
-				else
-					h1.isMoving = true;
-				xBlocked = false;
-				yBlocked = false;
 			}
-			if(!cornerOccupied[0])
-				stage.floors.get(0).cornered[0] = null;
-			if(!cornerOccupied[1])
-				stage.floors.get(0).cornered[1] = null;
+			
+			if(hitboxes.indexOf(h1) < stage.puppets.size())
+			{
+				int fLimit = h1.forceArchiver.size();
+				for(int f = 0; f < fLimit; f++)
+				{
+					if((h1.forceArchiver.get(f).type.equals("jump") || h1.forceArchiver.get(f).type.equals("headhug")) && h1.forceArchiver.get(f).direction == 2 && stage.puppets.get(hitboxes.indexOf(h1)).bounds.isGrounded)
+					{
+						h1.forceArchiver.remove(f);
+						fLimit = h1.forceArchiver.size();
+						f--;
+					}
+				}
+				
+				//FOCUS WALLS USED TO BE HERE
+			}
+			
+			if(!xBlocked)
+			{
+				x1 += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5*((forces[hitboxes.indexOf(h1)][3] > forces[hitboxes.indexOf(h1)][1])? 1:-1));
+				h1.xCoord += (int)(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1]+0.5*((forces[hitboxes.indexOf(h1)][3] > forces[hitboxes.indexOf(h1)][1])? 1:-1));
+			}
+			
+			//UPDATE YBLOCKED FOR BOUNDS LATER???
+			if(!yBlocked)
+			{
+				y1 += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5*((forces[hitboxes.indexOf(h1)][0] > forces[hitboxes.indexOf(h1)][2])? 1:-1));
+				h1.yCoord += (int)(forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2]+0.5*((forces[hitboxes.indexOf(h1)][0] > forces[hitboxes.indexOf(h1)][2])? 1:-1));
+				h1.blocked[0] = h1.yCoord+h1.height/2;
+				h1.blocked[2] = h1.yCoord+h1.height/2;
+			}
+			else
+			{
+				if(h1.yDir != 0)
+					h1.yCoord += h1.yForward;
+				if(h1.yDrag != 0)
+					h1.yCoord += h1.yDrift;
+			}
+			
+			if(forces[hitboxes.indexOf(h1)][3]-forces[hitboxes.indexOf(h1)][1] == 0 && (forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2] == 0 || (forces[hitboxes.indexOf(h1)][0]-forces[hitboxes.indexOf(h1)][2] > 0 && (h1.isGrounded || h1.isFloating))))
+			{
+				if(h1.isMoving)
+					h1.wasMoving = true;
+				else
+					h1.wasMoving = false;
+				
+				h1.isMoving = false;
+			}
+			else
+				h1.isMoving = true;
+			xBlocked = false;
+			yBlocked = false;
+		}
+		if(!cornerOccupied[0])
+			stage.floors.get(0).cornered[0] = null;
+		if(!cornerOccupied[1])
+			stage.floors.get(0).cornered[1] = null;
 		
 /*		double[][]*/ forces = new double[stage.plebs.size()][4];
 		for(Pleb p: stage.plebs)

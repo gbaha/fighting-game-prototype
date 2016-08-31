@@ -56,9 +56,9 @@ abstract class Action
 		return false;
 	}
 	
-	protected void addPleb(Puppet pu, int hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean a)
+	protected void addPleb(Puppet pu, int hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, int[] pr)
 	{
-		Pleb p = new Pleb(pu,pu.bounds,this,x,y,w,h,d1,d2,s,hd,sd,kx,ky,hs,a);
+		Pleb p = new Pleb(pu,pu.bounds,this,x,y,w,h,d1,d2,s,hd,sd,kx,ky,hs,ia,ip,pr);
 		
 		if(hashCounter.equals(""))
 			hashCounter = p.toString()+hc;

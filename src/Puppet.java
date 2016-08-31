@@ -32,7 +32,7 @@ abstract class Puppet
 	public enum PuppetState implements State
 	{
 		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD, 	//, PERFORM_ACTION
-		GUARD_STANDING, GUARD_CROUCHING, GUARD_JUMPING, FLINCH_STANDING0, FLINCH_STANDING1, FLINCH_STANDING2, FLINCH_CROUCHING;	//FLINCH_MIDAIR, BREAK_GROUND, BREAK_AIR
+		GUARD_STANDING, GUARD_CROUCHING, GUARD_JUMPING, FLINCH_STANDING0, FLINCH_STANDING1, FLINCH_STANDING2, FLINCH_CROUCHING, FLINCH_AERIAL0, FLINCH_AERIAL1, FLINCH_AERIAL2, FALLING, BREAK_GROUND, BREAK_AIR;
 		
 		public String getState()
 		{
@@ -79,7 +79,7 @@ abstract class Puppet
 	//	isJumping = false;
 		
 		hitInfo = new int[]{0,0,0};	//[type, counter, hitstun]
-		flinchPoints = new int[]{0,0,0,0};
+		flinchPoints = new int[]{0,0,0,0,0,0,0};
 		jDirections = new int[]{0,0};
 		isBlocking = new boolean[]{false,false};
 		
@@ -146,7 +146,7 @@ abstract class Puppet
 	public void checkState()
 	{
 		switch(currState.getState())
-		{
+		{//ADD CASE FALLING SOMEWHERE
 			case "IDLE":
 			case "FALL_NEUTRAL":
 			case "FALL_FORWARD":
@@ -176,6 +176,11 @@ abstract class Puppet
 			case "FLINCH_STANDING1":
 			case "FLINCH_STANDING2":
 			case "FLINCH_CROUCHING":
+			case "FLINCH_AERIAL0":
+			case "FLINCH_AERIAL1":
+			case "FLINCH_AERIAL2":
+			case "BREAK_GROUND":
+			case "BREAK_AIR":
 				flinch();
 				break;
 		}
@@ -340,7 +345,9 @@ abstract class Puppet
 			if(health < 0)
 				health = 0;
 			
-			if(isCrouching)
+			if(!bounds.isGrounded)
+				currState = PuppetState.FLINCH_AERIAL0;
+			else if(isCrouching)
 				currState = PuppetState.FLINCH_CROUCHING;
 			else
 			{
@@ -390,7 +397,7 @@ abstract class Puppet
 			if(stamina <= 0)
 			{
 				stamina = 0;
-			//	currState = (bounds.isGrounded)? PuppetState.BREAK_GROUND:PuppetState.BREAK_AIR;
+				currState = (bounds.isGrounded)? PuppetState.BREAK_GROUND:PuppetState.BREAK_AIR;
 				isGuardBroken = true;
 				hitStun = 90;
 				hitStop = 30;
@@ -423,16 +430,21 @@ abstract class Puppet
 		//	p.puppet.hitInfo[1]++;
 		}
 		sCooldown = 120;
+		if(p.puppet.hitInfo[1] == 1)
+			p.puppet.stamina = p.puppet.maxSp;
 		
 		for(Force f: p.appliedForces)
 		{
-			if(f.type.equals("xKnockback") && ((f.direction == 1 && bounds == c[0]) || (f.direction == 3 && bounds == c[1])))
+			if(f.type.equals("xKnockback") && !p.isProjectile && ((f.direction == 1 && bounds == c[0]) || (f.direction == 3 && bounds == c[1])))
 			{
 				f.direction = (f.direction+2)%4;
 				p.puppet.bounds.forceArchiver.add(f);
 			}
 			else
 				bounds.forceArchiver.add(f);
+			
+			if(!bounds.isGrounded)
+				bounds.forceArchiver.add(new Force("juggle",2,24,2));
 		}
 	}
 	
@@ -505,7 +517,10 @@ abstract class Puppet
 		}
 		
 		if(isGuardBroken && hitStun == 0)
+		{
+			stamina = maxSp;
 			isGuardBroken = false;
+		}
 		
 		if(hitInfo[2] > 0)
 			hitInfo[2]--;
@@ -520,7 +535,7 @@ abstract class Puppet
 		
 		if(sCooldown == 0)
 		{
-			if(stamina < maxSp)
+			if(stamina < maxSp && hitInfo[1] == 0)
 				stamina++;
 		}
 		else
@@ -554,9 +569,9 @@ abstract class Puppet
 			int f = (int)fIndex+((hitboxArchiver.get(h)[0][3] == 1 && fIndex != (int)fIndex)? 1:0);
 			
 			boolean isFlinching = false;
-			if(hitStun > 0 && 4-(PuppetState.values().length-currState.getPosition()) >= 0)
+			if(hitStun > 0 && currState.getState().length() >= 6 && currState.getState().substring(0,6).equals("FLINCH"))	//4-(PuppetState.values().length-currState.getPosition()) >= 0)
 			{
-				if(fIndex == flinchPoints[4-(PuppetState.values().length-currState.getPosition())])
+				if(hitStun > hitboxArchiver.get(h).length-flinchPoints[currState.getPosition()-PuppetState.FLINCH_STANDING0.getPosition()]+1 && fIndex == flinchPoints[currState.getPosition()-PuppetState.FLINCH_STANDING0.getPosition()])
 					isFlinching = true;
 			}
 			if(!isFlinching)

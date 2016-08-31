@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 public class Pleb extends Hitbox
 {
+	public static final int KNOCKDOWN = 0;
+	public static final int LAUNCH = 1;
+	
 	ArrayList<Force> forceArchiver, appliedForces;
 	Puppet puppet;
 	Organ bounds;
@@ -11,9 +14,10 @@ public class Pleb extends Hitbox
 	String hash;	//action, type;
 	int duration, direction, strength, hDamage, sDamage, xKnockback, yKnockback, xDist, yDist;
 	double hitstunDamp;	//decayRate, piercingRate;
-	boolean isAttached;
+	boolean isAttached, isProjectile;
+	int[] properties;
 	
-	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia)
+	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, int[] pr)
 	{
 		super(x,y,w,h);
 		puppet = p;
@@ -29,6 +33,8 @@ public class Pleb extends Hitbox
 		yKnockback = ky;
 		hitstunDamp = hs;
 		isAttached = ia;
+		isProjectile = ip;
+		properties = pr;
 		
 		forceArchiver = new ArrayList<Force>();
 		appliedForces = new ArrayList<Force>();
@@ -64,6 +70,8 @@ public class Pleb extends Hitbox
 		yKnockback = 0;
 		hitstunDamp = 0;
 		isAttached = a;
+		isProjectile = false;
+		properties = new int[]{};
 		
 		forceArchiver = new ArrayList<Force>();
 		appliedForces = new ArrayList<Force>();
@@ -76,7 +84,7 @@ public class Pleb extends Hitbox
 	}
 	
 	//MIGHT REMOVE LATER
-	public Pleb(Puppet p, Organ b, Action a, /*String f, String t,*/ String hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int kx, int ky, double hs, boolean ia)	//, int d2, int s, double d3, double p)
+	public Pleb(Puppet p, Organ b, Action a, /*String f, String t,*/ String hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int kx, int ky, double hs, boolean ia, boolean ip, int[] pr)	//, int d2, int s, double d3, double p)
 	{
 		super(x,y,w,h);
 		puppet = p;
@@ -94,6 +102,8 @@ public class Pleb extends Hitbox
 		yKnockback = ky;
 		hitstunDamp = hs;
 		isAttached = ia;
+		isProjectile = ip;
+		properties = pr;
 //		direction = d2;
 //		speed = s;
 //		decayRate = d3;
