@@ -90,7 +90,7 @@ abstract class Puppet
 		jForce = j;
 		
 		health = maxHp;
-		stamina = maxSp;
+		stamina = maxSp;	//0;
 		meter = 0;
 		speed = maxSpd;
 		jump = jForce;
@@ -101,7 +101,7 @@ abstract class Puppet
 		hitStun = 0;
 		hitStop = 0;
 		hitstunDamp = 0;
-		sCooldown = 0;
+		sCooldown = 0;		//999999;
 		
 		bounds =  new Organ(x,y,w,h,speed);
 		bounds.isFloating = f2;
@@ -186,7 +186,7 @@ abstract class Puppet
 		}
 		
 		xCoord = bounds.xCoord;
-		if(!isCrouching && currState != PuppetState.STANDING && currState != PuppetState.GUARD_CROUCHING)
+		if(!bounds.isGrounded || currState == PuppetState.LANDING)	//!isCrouching || currState != PuppetState.STANDING || currState != PuppetState.GUARD_CROUCHING)
 			yCoord = bounds.yCoord;
 		
 		if(currState.getPosition() < hitboxArchiver.size())
@@ -224,7 +224,7 @@ abstract class Puppet
 		if(!isPerformingAction)
 		{
 			currAction = null;
-			currState = PuppetState.IDLE;
+			currState = (isCrouching)? PuppetState.CROUCH:PuppetState.IDLE;
 			fCounter = 0;
 		}
 	}
@@ -477,7 +477,7 @@ abstract class Puppet
 	
 	public void update()
 	{
-		if(currState == PuppetState.CROUCH || currState == PuppetState.GUARD_CROUCHING)
+		if((isCrouching && currState != PuppetState.LANDING) || currState == PuppetState.GUARD_CROUCHING)
 		{
 			bounds.yCoord = yCoord+height-crHeight;
 			bounds.height = crHeight;
@@ -488,7 +488,6 @@ abstract class Puppet
 			bounds.height = height;
 		}
 		bounds.update();
-	//	grabBox.update();
 		
 		for(Organ o: anatomy)
 		{
@@ -575,7 +574,7 @@ abstract class Puppet
 					isFlinching = true;
 			}
 			if(!isFlinching)
-				fIndex += (hitboxArchiver.get(h)[0][3] == 0)? 1.0/(hitboxArchiver.get(h)[0][4]+1):-1.0/(hitboxArchiver.get(h)[0][4]+1);
+				fIndex += (hitboxArchiver.get(h)[0][3] == 0)? (1.0/hitboxArchiver.get(h)[0][4]):(-1.0/hitboxArchiver.get(h)[0][4]);
 			
 			if(Math.abs(fIndex-f) >= 1)
 			{

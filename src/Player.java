@@ -8,7 +8,7 @@ public class Player extends Puppet
 	ArrayList<int[][]> movelist;	//[stick inputs, button inputs, input delay, move(int method?)]
 	Action[] actions;
 	int airDashLimit, aDash;
-	boolean isDashing;	//ADD isLanding TO MAKE FORWARD/BACK JUMPS PIXEL PERFECT??
+	boolean isDashing;
 	
 	public enum PlayerState implements State
 	{
@@ -94,14 +94,23 @@ public class Player extends Puppet
 			case "DASH_FORWARD":
 			case "DASH_BACKWARD":
 			case "STANDING_LP":
-			case "CROUCHING_LP":
-			case "JUMPING_LP":
 			case "STANDING_MP":
-			case "CROUCHING_MP":
-			case "JUMPING_MP":
 			case "STANDING_HP":
+			case "STANDING_LK":
+			case "STANDING_MK":
+			case "STANDING_HK":
+			case "CROUCHING_LP":
+			case "CROUCHING_MP":
 			case "CROUCHING_HP":
+			case "CROUCHING_LK":
+			case "CROUCHING_MK":
+			case "CROUCHING_HK":
+			case "JUMPING_LP":
+			case "JUMPING_MP":
 			case "JUMPING_HP":
+			case "JUMPING_LK":
+			case "JUMPING_MK":
+			case "JUMPING_HK":
 				performAction();
 				break;
 		}
@@ -147,6 +156,11 @@ public class Player extends Puppet
 			return;
 		}
 		
+		if(isCrouching && currState == PuppetState.LANDING)
+		{
+			currState = PuppetState.CROUCHING;
+			return;
+		}
 		if(isBlocking[0] || isBlocking[1])
 		{
 			currState = (bounds.isGrounded)? ((isBlocking[0])? PuppetState.GUARD_STANDING:PuppetState.GUARD_CROUCHING):PuppetState.GUARD_JUMPING;

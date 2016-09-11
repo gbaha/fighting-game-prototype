@@ -33,7 +33,7 @@ public class Main
 		stage = new Stage();
 		geebs = new Beaman(stage);
 		director = new Director(stage,geebs);
-		p1 = new Hand(xCoord,yCoord,width,height,new int[]{87,68,83,65},new int[]{73,79,80,74,75,76,91,59,10,27});
+		p1 = new Hand(xCoord,yCoord,width,height,new int[]{87,68,83,65},new int[]{85,73,79,74,75,76,80,59,10,27});
 		p2 = new Hand(xCoord,yCoord,width,height,new int[]{38,39,40,37},new int[]{90,88,67,86,66,78,999,999,999,8});
 		gui = new Gui(p1,p2,gamePaused);
 		
@@ -56,7 +56,7 @@ public class Main
 			yCoord = window.getLocation().y;
 			
 			
-			int fpsLimit = 60;	//test
+			double fpsLimit = 60;	//test
 			if(p1.buttonArchiver[8])
 			{
 				//RESET TEST
@@ -70,7 +70,7 @@ public class Main
 				p2.stickInputs.clear();
 		*/			
 				//FRAME BY FRAME TEST
-				fpsLimit = 2;
+				fpsLimit = 1;
 			}
 			
 			

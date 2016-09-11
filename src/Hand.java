@@ -374,7 +374,7 @@ public class Hand implements KeyListener	//, MouseListener
 	
 	
 	public void keyPressed(KeyEvent e)
-	{
+	{//System.out.println(e.getKeyCode());
 		if(player != null)
 		{
 		/*	if(e.getKeyCode() == KeyEvent.VK_P)

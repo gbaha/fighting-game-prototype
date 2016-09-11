@@ -1813,7 +1813,7 @@ public class Logic
 				f.update(stage.floors);
 			for(Puppet p: stage.puppets)
 			{
-				p.getHitboxes();
+		//		p.getHitboxes();
 				for(int i = 0; i < p.plebsOut.size(); i++)
 				{
 					stage.plebs.add(p.plebsOut.get(0));
