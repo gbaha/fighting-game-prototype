@@ -379,17 +379,12 @@ public class Player extends Puppet
 		}
 		super.update();
 		
-	/*	if(currState == PuppetState.CROUCH)
-		{
-			bounds.yCoord = yCoord+height-crHeight;
-			bounds.height = crHeight;
-		}
-		else
+	/*	if(!isCrouching)
 		{
 			bounds.yCoord = yCoord;
 			bounds.height = height;
-		}
-		bounds.update();*/
+		}*/
+		bounds.update();
 	}
 	
 	

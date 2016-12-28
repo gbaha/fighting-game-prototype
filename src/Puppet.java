@@ -186,7 +186,7 @@ abstract class Puppet
 		}
 		
 		xCoord = bounds.xCoord;
-		if(!bounds.isGrounded || currState == PuppetState.LANDING)	//!isCrouching || currState != PuppetState.STANDING || currState != PuppetState.GUARD_CROUCHING)
+		if((!bounds.isGrounded || currState == PuppetState.LANDING) && currState != PuppetState.GUARD_CROUCHING && currState != PuppetState.FLINCH_CROUCHING)	//!isCrouching || currState != PuppetState.STANDING || currState != PuppetState.GUARD_CROUCHING)
 			yCoord = bounds.yCoord;
 		
 		if(currState.getPosition() < hitboxArchiver.size())
@@ -477,7 +477,7 @@ abstract class Puppet
 	
 	public void update()
 	{
-		if((isCrouching && currState != PuppetState.LANDING) || currState == PuppetState.GUARD_CROUCHING)
+		if((isCrouching && currState != PuppetState.LANDING) || currState == PuppetState.CROUCHING)
 		{
 			bounds.yCoord = yCoord+height-crHeight;
 			bounds.height = crHeight;

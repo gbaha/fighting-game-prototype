@@ -145,7 +145,6 @@ public class Hoshua extends JPanel
 		g.setColor(Color.GRAY);
 		g.drawString("("+(int)((MouseInfo.getPointerInfo().getLocation().x-xCoord-xFocus)*1280/width)+","+(int)((MouseInfo.getPointerInfo().getLocation().y-yCoord-yFocus-25)*720/height+40)+")",hqz1,hqz2+15);
 		
-		
 	/*	g.setColor(Color.LIGHT_GRAY);
 		if(canvas.player != null)
 			g.drawLine((int)((canvas.player.xHosh+canvas.player.width/2)*width/1280),(int)((canvas.player.yHosh+canvas.player.height/2)*height/720),(MouseInfo.getPointerInfo().getLocation().x-xCoord),(MouseInfo.getPointerInfo().getLocation().y-yCoord-25));*/

@@ -161,10 +161,10 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//CROUCHING FLINCH
 		hitboxArchiver.add(new int[][]{new int[]{12,0,3,0,2},
-			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,175,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,175,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,175,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,175,40,	-45,60,185,90}});
 		//MIDAIR FLINCH(STANDARD)
 		hitboxArchiver.add(new int[][]{new int[]{10,0,5,0,2},
 			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -423,11 +423,13 @@ public class Roo extends Player
 	public class LightPunch extends Action
 	{
 		Roo roo;
+		boolean cLock;
 		
 		public LightPunch(Roo r)
 		{
 			super(Action.NORMAL,1,10,new int[]{0,1,4},new boolean[]{true,true,false,false},new int[]{3,10},new boolean[]{true,true});
 			roo = r;
+			cLock = false;
 		}
 		
 		public void perform(int f)
@@ -440,6 +442,11 @@ public class Roo extends Player
 			}
 			else
 			{
+				if(f == 0)
+					cLock = isCrouching;
+				else
+					isCrouching = cLock;
+				
 				switch(f)
 				{
 					case 0:
@@ -477,11 +484,13 @@ public class Roo extends Player
 	public class MediumPunch extends Action
 	{
 		Roo roo;
+		boolean cLock;
 		
 		public MediumPunch(Roo r)
 		{
 			super(Action.NORMAL,1,18,new int[]{2,5},new boolean[]{true,true,false,false},new int[]{5,18},new boolean[]{true,true});
 			roo = r;
+			cLock = false;
 		}
 		
 		public void perform(int f)
@@ -494,6 +503,11 @@ public class Roo extends Player
 			}
 			else
 			{
+				if(f == 0)
+					cLock = isCrouching;
+				else
+					isCrouching = cLock;
+				
 				switch(f)
 				{
 					case 0:
@@ -537,11 +551,13 @@ public class Roo extends Player
 	public class HeavyPunch extends Action
 	{
 		Roo roo;
+		boolean cLock;
 		
 		public HeavyPunch(Roo r)
 		{
 			super(Action.NORMAL,1,28,new int[]{},new boolean[]{true,true,false,false},new int[]{4,28},new boolean[]{true,true});
 			roo = r;
+			cLock = false;
 		}
 		
 		public void perform(int f)
@@ -554,6 +570,11 @@ public class Roo extends Player
 			}
 			else
 			{
+				if(f == 0)
+					cLock = isCrouching;
+				else
+					isCrouching = cLock;
+				
 				switch(f)
 				{
 					case 0:
@@ -601,11 +622,13 @@ public class Roo extends Player
 	public class LightKick extends Action
 	{
 		Roo roo;
+		boolean cLock;
 		
 		public LightKick(Roo r)
 		{
 			super(Action.NORMAL,1,15,new int[]{1,4},new boolean[]{true,true,false,false},new int[]{5,15},new boolean[]{true,true});
 			roo = r;
+			cLock = false;
 		}
 		
 		public void perform(int f)
@@ -618,6 +641,11 @@ public class Roo extends Player
 			}
 			else
 			{
+				if(f == 0)
+					cLock = isCrouching;
+				else
+					isCrouching = cLock;
+				
 				switch(f)
 				{
 					case 0:
@@ -653,11 +681,13 @@ public class Roo extends Player
 	public class MediumKick extends Action
 	{
 		Roo roo;
+		boolean cLock;
 		
 		public MediumKick(Roo r)
 		{
 			super(Action.NORMAL,1,20,new int[]{2,5},new boolean[]{true,true,false,false},new int[]{6,20},new boolean[]{true,true});
 			roo = r;
+			cLock = false;
 		}
 		
 		public void perform(int f)
@@ -670,6 +700,11 @@ public class Roo extends Player
 			}
 			else
 			{
+				if(f == 0)
+					cLock = isCrouching;
+				else
+					isCrouching = cLock;
+				
 				switch(f)
 				{
 					case 0:
@@ -717,11 +752,13 @@ public class Roo extends Player
 	public class HeavyKick extends Action
 	{
 		Roo roo;
+		boolean cLock;
 		
 		public HeavyKick(Roo r)
 		{
 			super(Action.NORMAL,1,26,new int[]{},new boolean[]{true,true,false,false},new int[]{0,0},new boolean[]{true,true});
 			roo = r;
+			cLock = false;
 		}
 		
 		public void perform(int f)
@@ -734,6 +771,11 @@ public class Roo extends Player
 			}
 			else
 			{
+				if(f == 0)
+					cLock = isCrouching;
+				else
+					isCrouching = cLock;
+				
 				switch(f)
 				{
 					case 0:
@@ -755,6 +797,7 @@ public class Roo extends Player
 							frames = 26;
 						}
 						break;
+						
 					case 8:
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
