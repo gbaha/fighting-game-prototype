@@ -103,7 +103,7 @@ public class Main
 	
 	public static void main(String[] args)
 	{
-   	// 	Main show = new Main(1280,720);
+   	 //	Main show = new Main(1280,720);
      	Main show = new Main(800,450);
      	show.window.getContentPane().add(show.jas);
    	 	show.window.pack();

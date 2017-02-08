@@ -93,29 +93,32 @@ public class Hand implements KeyListener	//, MouseListener
 			//INPUT CHECKS
 			if(stickArchiver[0])
 			{
-				if(player.bounds.isGrounded)
+				if(player.currAction == null)
 				{
-					if(stickArchiver[1])
-						player.bounds.forceArchiver.add(new Force("xJump",3,6,0));
-					if(stickArchiver[3])
-						player.bounds.forceArchiver.add(new Force("xJump",1,6,0));
-				}
-				
-				if(player.currAction == null && !player.isDashing && !player.isBlocking[0] && !player.isBlocking[1])
-				{
-					if(player.bounds.isGrounded && !player.bounds.isFloating)
-						player.bounds.forceArchiver.add(new Force("yJump",2,player.jump,1));
-					else if(player.bounds.blocked[0] != player.bounds.yCoord+player.bounds.height/2 && player.bounds.forceArchiver.size() > 0)
+					if(player.bounds.isGrounded)
 					{
-						boolean j = true;
-						for(Force f: player.bounds.forceArchiver)
+						if(stickArchiver[1])
+							player.bounds.forceArchiver.add(new Force("xJump",3,6,0));
+						if(stickArchiver[3])
+							player.bounds.forceArchiver.add(new Force("xJump",1,6,0));
+					}
+					
+					if(!player.isDashing && !player.isBlocking[0] && !player.isBlocking[1])
+					{
+						if(player.bounds.isGrounded && !player.bounds.isFloating)
+							player.bounds.forceArchiver.add(new Force("yJump",2,player.jump,1));
+					/*	else if(player.bounds.blocked[0] != player.bounds.yCoord+player.bounds.height/2 && player.bounds.forceArchiver.size() > 0)
 						{
-							if(f.type.equals("headhug"))
-								j = false;
-						}
-						
-						if(j)
-							player.bounds.forceArchiver.add(new Force("headhug",2,player.jump*0.75,0.8));
+							boolean j = true;
+							for(Force f: player.bounds.forceArchiver)
+							{
+								if(f.type.equals("headhug"))
+									j = false;
+							}
+							
+							if(j)
+								player.bounds.forceArchiver.add(new Force("headhug",2,player.jump*0.75,0.8));
+						}*/
 					}
 				}
 				
@@ -300,7 +303,7 @@ public class Hand implements KeyListener	//, MouseListener
 				{
 					player.setAction(player.actions[player.movelist.indexOf(m)]);
 					player.fCounter = 0;
-					player.fIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
+					player.sIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
 				}
 				player.actions[player.movelist.indexOf(m)].button = currButton;
 			}
@@ -314,7 +317,7 @@ public class Hand implements KeyListener	//, MouseListener
 			{
 				player.setAction(player.normals[currButton]);
 				player.fCounter = 0;
-				player.fIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
+				player.sIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
 			}
 			player.currAction.button = currButton;
 		}
@@ -468,8 +471,6 @@ public class Hand implements KeyListener	//, MouseListener
 	
 	public void keyTyped(KeyEvent e)
 	{
-		if(player != null)
-		{
-		}
+		if(player != null){}
 	}
 }

@@ -24,7 +24,7 @@ abstract class Puppet
 	int maxHp, maxSp, maxMp, maxSpd;
 	int health, stamina, meter, speed;
 	int preFrames, fCounter, hitStun, hitStop, sCooldown;
-	double fIndex, jForce, jump, hitstunDamp;
+	double sIndex, jForce, jump, hitstunDamp;
 	boolean isFacingRight, isPerformingAction, isCrouching, canBlock, isGuardBroken;	//, isJumping;
 	int[] hitInfo, flinchPoints, jDirections, spriteParams;	//Add tint later
 	boolean[] isBlocking;
@@ -97,7 +97,7 @@ abstract class Puppet
 		
 		preFrames = 0;
 		fCounter = 0;
-		fIndex = 0;
+		sIndex = 0;
 		hitStun = 0;
 		hitStop = 0;
 		hitstunDamp = 0;
@@ -193,7 +193,7 @@ abstract class Puppet
 		{
 			if(currState != prevState)
 			{
-				fIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+				sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 				prevState = currState;
 			}
 		}
@@ -211,7 +211,7 @@ abstract class Puppet
 			currAction = a;
 			a.button = -1;
 			fCounter = 0;
-			fIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+			sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 		}
 	}
 	
@@ -364,7 +364,7 @@ abstract class Puppet
 						break;
 				}
 			}
-			fIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+			sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 			
 			switch(p.strength)
 			{
@@ -433,6 +433,7 @@ abstract class Puppet
 		if(p.puppet.hitInfo[1] == 1)
 			p.puppet.stamina = p.puppet.maxSp;
 		
+		bounds.forceArchiver.clear();
 		for(Force f: p.appliedForces)
 		{
 			if(f.type.equals("xKnockback") && !p.isProjectile && ((f.direction == 1 && bounds == c[0]) || (f.direction == 3 && bounds == c[1])))
@@ -486,6 +487,20 @@ abstract class Puppet
 		{
 			bounds.yCoord = yCoord;
 			bounds.height = height;
+		}
+		
+		if(bounds.isGrounded)
+		{
+			int fLimit = bounds.forceArchiver.size();
+			for(int f = 0; f < fLimit; f++)
+			{
+				if(bounds.forceArchiver.get(f).type.equals("yJump"))
+				{
+					bounds.forceArchiver.remove(f);
+					fLimit = bounds.forceArchiver.size();
+					f--;
+				}
+			}
 		}
 		bounds.update();
 		
@@ -549,43 +564,43 @@ abstract class Puppet
 			//MIGHT REMOVE AGAIN, COULD BE PLACED IN PUBLIC METHOD
 		/*	if(currState != prevState)
 			{
-				fIndex = hitboxArchiver.get(PuppetState.valueOf(currState.toString()).ordinal())[0][1];
+				sIndex = hitboxArchiver.get(PuppetState.valueOf(currState.toString()).ordinal())[0][1];
 				prevState = currState;
 			}*/
 			//===
 			
-		//	fIndex = 0;	//TEST
+		//	sIndex = 0;	//TEST
 			
-			int i = (int)fIndex+1-((hitboxArchiver.get(h)[0][3] == 0)? hitboxArchiver.get(h)[0][1]:0);
-		/*	if(hitboxArchiver.get(h)[0][3] == 0) //&& fIndex >= hitboxArchiver.get(h)[0][2])
+			int i = (int)sIndex+1-((hitboxArchiver.get(h)[0][3] == 0)? hitboxArchiver.get(h)[0][1]:0);
+		/*	if(hitboxArchiver.get(h)[0][3] == 0) //&& sIndex >= hitboxArchiver.get(h)[0][2])
 				i -= hitboxArchiver.get(h)[0][1];
-		/*	else if(hitboxArchiver.get(h)[0][3] == 1 && fIndex <= hitboxArchiver.get(h)[0][2])
+		/*	else if(hitboxArchiver.get(h)[0][3] == 1 && sIndex <= hitboxArchiver.get(h)[0][2])
 				i += hitboxArchiver.get(h)[0][1];*/
 			
 			for(int j = 0; j < hitboxArchiver.get(h)[i].length; j += 4)
 				anatomy.add(new Organ((isFacingRight)? hitboxArchiver.get(h)[i][j]+bounds.xCoord:bounds.xCoord+bounds.width-hitboxArchiver.get(h)[i][j]-hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+1]+bounds.yCoord,hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+3],speed));
 				
-			int f = (int)fIndex+((hitboxArchiver.get(h)[0][3] == 1 && fIndex != (int)fIndex)? 1:0);
+			int f = (int)sIndex+((hitboxArchiver.get(h)[0][3] == 1 && sIndex != (int)sIndex)? 1:0);
 			
 			boolean isFlinching = false;
 			if(hitStun > 0 && currState.getState().length() >= 6 && currState.getState().substring(0,6).equals("FLINCH"))	//4-(PuppetState.values().length-currState.getPosition()) >= 0)
 			{
-				if(hitStun > hitboxArchiver.get(h).length-flinchPoints[currState.getPosition()-PuppetState.FLINCH_STANDING0.getPosition()]+1 && fIndex == flinchPoints[currState.getPosition()-PuppetState.FLINCH_STANDING0.getPosition()])
+				if(hitStun > hitboxArchiver.get(h).length-flinchPoints[currState.getPosition()-PuppetState.FLINCH_STANDING0.getPosition()]+1 && sIndex == flinchPoints[currState.getPosition()-PuppetState.FLINCH_STANDING0.getPosition()])
 					isFlinching = true;
 			}
 			if(!isFlinching)
-				fIndex += (hitboxArchiver.get(h)[0][3] == 0)? (1.0/hitboxArchiver.get(h)[0][4]):(-1.0/hitboxArchiver.get(h)[0][4]);
+				sIndex += (hitboxArchiver.get(h)[0][3] == 0)? (1.0/hitboxArchiver.get(h)[0][4]):(-1.0/hitboxArchiver.get(h)[0][4]);
 			
-			if(Math.abs(fIndex-f) >= 1)
+			if(Math.abs(sIndex-f) >= 1)
 			{
-				fIndex = (int)fIndex;
+				sIndex = (int)sIndex;
 				i += (hitboxArchiver.get(h)[0][3] == 0)? 1:-1;
 				
 				if(preFrames > 0)
 					preFrames--;
 			}
 			if((hitboxArchiver.get(h)[0][3] == 0 && i >= hitboxArchiver.get(h).length) || (hitboxArchiver.get(h)[0][3] == 1 && i <= 0))
-				fIndex = hitboxArchiver.get(h)[0][2];
+				sIndex = hitboxArchiver.get(h)[0][2];
 		}
 	}
 	

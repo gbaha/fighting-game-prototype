@@ -71,7 +71,7 @@ public class Player extends Puppet
 		super.draw(g,i,s,w,h,d);
 		g.setColor(Color.BLUE);
 		g.drawString(currState+"",(int)((bounds.xHosh+bounds.width+2)*w/1280),(int)((bounds.yHosh)*h/720));
-		g.drawString((int)fIndex+"",(int)((bounds.xHosh+bounds.width+2)*w/1280),(int)((bounds.yHosh+bounds.height*3/4)*h/720));
+		g.drawString((int)sIndex+"",(int)((bounds.xHosh+bounds.width+2)*w/1280),(int)((bounds.yHosh+bounds.height*3/4)*h/720));
 		g.drawString(fCounter+"",(int)((bounds.xHosh+bounds.width+2)*w/1280),(int)((bounds.yHosh+bounds.height*5/6)*h/720));
 		g.setColor(Color.RED);
 		g.drawString(hitInfo[0]+"",(int)(bounds.xHosh*w/1280),(int)((bounds.yHosh+bounds.height+20)*h/720));
@@ -132,7 +132,7 @@ public class Player extends Puppet
 			currAction = a;
 			a.button = -1;
 			fCounter = 0;
-	//		fIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+	//		sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 		}
 	}
 	
@@ -239,6 +239,30 @@ public class Player extends Puppet
 	//		currState = PuppetState.PERFORM_ACTION;
 			performAction();
 			return;
+		}
+		
+		if(isBlocking[0] || isBlocking[1])
+		{
+			currState = (bounds.isGrounded)? ((isBlocking[0])? PuppetState.GUARD_STANDING:PuppetState.GUARD_CROUCHING):PuppetState.GUARD_JUMPING;
+			return;
+		}
+		
+		if(jDirections[1] == 1)
+		{
+			switch(jDirections[0])
+			{
+				case 0:
+					currState = PuppetState.JUMP_NEUTRAL;
+					return;
+					
+				case 1:
+					currState = (isFacingRight)? PuppetState.JUMP_FORWARD:PuppetState.JUMP_BACKWARD;
+					return;
+					
+				case -1:
+					currState = (isFacingRight)? PuppetState.JUMP_BACKWARD:PuppetState.JUMP_FORWARD;
+					return;
+			}
 		}
 		super.crouch();
 	}
@@ -357,6 +381,9 @@ public class Player extends Puppet
 	
 	public void update()
 	{
+	//	HITBOX FRAME TEST
+	//	isCrouching = true; currState = PlayerState.CROUCHING_MK; setAction(normals[4]); sIndex = 3; fCounter = 4;
+	
 	//	super.update();
 		if(bounds.isGrounded)
 		{

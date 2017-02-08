@@ -318,7 +318,6 @@ public class Roo extends Player
 			new int[]{50,-28,58,50,	-32,8,150,55,	-22,55,160,110,	-22,175,160,75},
 			new int[]{50,-28,58,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 			
-			
 		//CROUCHING LP
 		hitboxArchiver.add(new int[][]{new int[]{25,0,4,0,2},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
@@ -327,20 +326,87 @@ public class Roo extends Player
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	125,-5,80,40},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90}});
 		//CROUCHING MP
-		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
-			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,175,40,	-45,60,185,90}});
+		hitboxArchiver.add(new int[][]{new int[]{26,0,6,0,2},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	125,-5,80,40},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	125,-5,80,40},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	125,-5,80,40},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90}});
 		//CROUCHING HP
-		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
-			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,175,40,	-45,60,185,90}});
+		hitboxArchiver.add(new int[][]{new int[]{27,0,12,0,2},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-80,53,50,	-32,-45,150,40,	-32,0,135,55,	-45,60,185,90},
+			new int[]{8,-115,53,50,	-32,-85,135,40,	-32,-40,135,90,	-45,60,185,90},
+			new int[]{8,-115,53,50,	-32,-85,135,40,	-32,-40,135,90,	-45,60,185,90,	50,-180,70,100},
+			new int[]{8,-115,53,50,	-32,-85,135,40,	-32,-40,135,90,	-45,60,185,90,	50,-180,70,100},
+			new int[]{8,-115,53,50,	-32,-85,135,40,	-32,-40,135,90,	-45,60,185,90,	50,-180,70,100},
+			new int[]{8,-115,53,50,	-32,-85,135,40,	-32,-40,135,90,	-45,60,185,90},
+			new int[]{8,-115,53,50,	-32,-85,135,40,	-32,-40,135,90,	-45,60,185,90},
+			new int[]{24,-85,53,50,	-32,-55,150,40,	-32,-10,135,65,	-45,60,185,90},
+			new int[]{24,-85,53,50,	-32,-55,150,40,	-32,-10,135,65,	-45,60,185,90},
+			new int[]{32,-80,53,50,	-32,-45,150,40,	-32,0,135,55,	-45,60,185,90},
+			new int[]{32,-80,53,50,	-32,-45,150,40,	-32,0,135,55,	-45,60,185,90}});
 		//CROUCHING LK
-		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
-			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,175,40,	-45,60,185,90}});
+		hitboxArchiver.add(new int[][]{new int[]{28,0,6,0,2},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	150,105,100,45},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	150,105,100,45},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90}});
 		//CROUCHING MK
-		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
-			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,175,40,	-45,60,185,90}});
+		hitboxArchiver.add(new int[][]{new int[]{29,0,10,0,2},
+			new int[]{32,-40,53,50,	-16,-5,125,35,	-16,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-16,-5,125,35,	-16,25,135,40,	-30,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	130,90,100,60},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	130,90,100,60},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	130,90,100,60},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90}});
 		//CROUCHING HK
-		hitboxArchiver.add(new int[][]{new int[]{18,0,1,0,2},
-			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,175,40,	-45,60,185,90}});
+		hitboxArchiver.add(new int[][]{new int[]{30,0,33,0,2},
+			new int[]{32,-40,53,50,	-16,-5,125,35,	-16,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-16,-5,125,35,	-16,25,135,40,	-45,60,185,90,	150,80,100,70},
+			new int[]{32,-40,53,50,	-16,-5,125,35,	-16,25,135,40,	-45,60,185,90,	150,80,100,70},
+			new int[]{32,-40,53,50,	-16,-5,125,35,	-16,25,135,40,	-45,60,185,90,	150,80,100,70},
+			new int[]{32,-40,53,50,	-16,-5,125,35,	-16,25,135,40,	-45,60,185,90,	150,80,100,70},
+			new int[]{32,-40,53,50,	-16,-5,125,35,	-16,25,135,40,	-45,60,185,90,	150,80,100,70},
+			new int[]{32,-40,53,50,	-16,-5,125,35,	-16,25,135,40,	-45,60,185,90,	150,80,100,70},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
+			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90}});
 		
 		//JUMPING LP
 		hitboxArchiver.add(new int[][]{new int[]{18,0,0,0,2},
@@ -362,7 +428,7 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		
 		//FIREBALL LAUNCH
-		hitboxArchiver.add(new int[][]{new int[]{26,0,9,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{31,0,9,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -373,8 +439,8 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
-		//FIREBALL LAUNCH
-		hitboxArchiver.add(new int[][]{new int[]{27,0,2,0,2},
+		//FIREBALL RECOVER
+		hitboxArchiver.add(new int[][]{new int[]{32,0,2,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
@@ -393,10 +459,8 @@ public class Roo extends Player
 		{
 			try
 			{
-	//			fIndex = 2; fCounter = 1; currState = PlayerState.CROUCHING_LP; currAction = new LightPunch(this);	//TEST
-				
 				Image sheet = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/roo.png"));
-				int f = /*(hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal())[0][3] == 0)?*/ (int)fIndex;	//:hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal()).length-(int)fIndex-2;
+				int f = /*(hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal())[0][3] == 0)?*/ (int)sIndex;	//:hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal()).length-(int)sIndex-2;
 				s.read(g,i,xHosh,yHosh,width,800,490,f,hitboxArchiver.get(currState.getPosition())[0][0],spriteParams,!isFacingRight,sheet);
 			}
 			catch(java.lang.IndexOutOfBoundsException e)
@@ -520,7 +584,8 @@ public class Roo extends Player
 						}
 						else if(isCrouching)
 						{
-							frames = 1;
+							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+110,bounds.yCoord-10,200,35,8,roo.isFacingRight,true));
+							frames = 14;
 						}
 						else
 						{
@@ -528,6 +593,14 @@ public class Roo extends Player
 							frames = 18;
 						}
 						break;
+						
+					case 4:
+						if(!bounds.isGrounded){}
+						else if(isCrouching)
+							addPleb(roo,0,bounds.xCoord+110,bounds.yCoord+5,125,20,4,0,0,25,10,16,0,0.8,true,false,new int[]{});
+						else{}
+						break;
+						
 					case 5:
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
@@ -537,6 +610,7 @@ public class Roo extends Player
 							addPleb(roo,0,bounds.xCoord+200,bounds.yCoord+30,50,30,1,0,1,30,10,20,0,0.1,true,false,new int[]{});
 						}
 						break;
+						
 					case 6:
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
@@ -587,7 +661,10 @@ public class Roo extends Player
 						}
 						else if(isCrouching)
 						{
-							frames = 1;
+							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+70,bounds.yCoord-185,160,335,11,roo.isFacingRight,true));
+							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+70,bounds.yCoord-310,80,250,11,roo.isFacingRight,true));
+							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+110,bounds.yCoord-250,80,250,11,roo.isFacingRight,true));
+							frames = 26;
 						}
 						else
 						{
@@ -596,6 +673,7 @@ public class Roo extends Player
 							frames = 28;
 						}
 						break;
+						
 					case 3:
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
@@ -605,14 +683,46 @@ public class Roo extends Player
 							addPleb(roo,0,bounds.xCoord+142,bounds.yCoord+6,82,62,4,0,2,45,25,18,0,0.75,true,false,new int[]{});
 						}
 						break;
+						
+					case 4:
+						if(!bounds.isGrounded){}
+						else if(isCrouching)
+						{
+							addPleb(roo,0,bounds.xCoord+102,bounds.yCoord-35,95,70,2,0,2,45,25,18,0,0.75,true,false,new int[]{});
+							addPleb(roo,0,bounds.xCoord+90,bounds.yCoord+35,70,60,2,0,2,45,25,18,0,0.75,true,false,new int[]{});
+						}
+						else{}
+						break;
+						
 					case 5:
 						if(!bounds.isGrounded){}
-						else if(isCrouching){}
+						else if(isCrouching)
+						{
+							addPleb(roo,0,bounds.xCoord+103,bounds.yCoord-25,97,87,1,0,2,45,25,18,0,0.75,true,false,new int[]{});
+							addPleb(roo,0,bounds.xCoord+80,bounds.yCoord+45,87,72,1,0,2,45,25,18,0,0.75,true,false,new int[]{});
+						}
 						else
 						{
 							addPleb(roo,0,bounds.xCoord+148,bounds.yCoord-38,55,40,4,0,2,45,25,18,0,0.75,true,false,new int[]{});
 							addPleb(roo,0,bounds.xCoord+123,bounds.yCoord-73,55,40,4,0,2,45,25,18,0,0.75,true,false,new int[]{});
 						}
+						break;
+						
+					case 6:
+						if(!bounds.isGrounded){}
+						else if(isCrouching)
+						{
+							addPleb(roo,0,bounds.xCoord+88,bounds.yCoord-180,45,90,2,0,2,45,25,18,0,0.75,true,false,new int[]{});
+							addPleb(roo,0,bounds.xCoord+118,bounds.yCoord-105,45,90,2,0,2,45,25,18,0,0.75,true,false,new int[]{});
+						}
+						else{}
+						break;
+						
+					case 8:
+						if(!bounds.isGrounded){}
+						else if(isCrouching)
+							addPleb(roo,0,bounds.xCoord+78,bounds.yCoord-175,40,50,2,0,2,45,25,18,0,0.75,true,false,new int[]{});
+						else{}
 						break;
 				}
 			}
@@ -658,20 +768,22 @@ public class Roo extends Player
 						}
 						else if(isCrouching)
 						{
-							frames = 1;
+							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+130,bounds.yCoord+85,175,65,7,roo.isFacingRight,true));
+							frames = 14;
 						}
 						else
 						{
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+130,bounds.yCoord+175,195,75,7,roo.isFacingRight,true));
+							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+130,bounds.yCoord+165,195,75,7,roo.isFacingRight,true));
 							frames = 15;
 						}
 						break;
 						
 					case 4:
 						if(!bounds.isGrounded){}
-						else if(isCrouching){}
+						else if(isCrouching)
+							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+125,132,25,3,0,0,18,1,17,0,0.8,true,false,new int[]{});
 						else
-							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+185,118,35,3,0,1,18,1,17,0,0.8,true,false,new int[]{});
+							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+185,118,35,3,0,0,18,1,17,0,0.8,true,false,new int[]{});
 						break;
 				}
 			}
@@ -717,7 +829,8 @@ public class Roo extends Player
 						}
 						else if(isCrouching)
 						{
-							frames = 1;
+							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+130,bounds.yCoord+60,215,95,7,roo.isFacingRight,true));
+							frames = 22;
 						}
 						else
 						{
@@ -728,16 +841,16 @@ public class Roo extends Player
 						
 					case 2:
 						if(!bounds.isGrounded){}
-						else if(isCrouching){}
+						else if(isCrouching)
+							bounds.forceArchiver.add(new Force("mkStep",(isFacingRight)? 3:1,7,7));
 						else
-						{
 							bounds.forceArchiver.add(new Force("mkStep",(isFacingRight)? 3:1,15,15));
-						}
 						break;
 						
 					case 5:
 						if(!bounds.isGrounded){}
-						else if(isCrouching){}
+						else if(isCrouching)
+							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+120,148,30,3,0,1,18,1,17,0,0.8,true,false,new int[]{});
 						else
 						{
 							addPleb(roo,0,bounds.xCoord+176,bounds.yCoord+50,55,40,4,0,1,22,10,19,0,0.75,true,false,new int[]{});
@@ -788,7 +901,7 @@ public class Roo extends Player
 						}
 						else if(isCrouching)
 						{
-							frames = 1;
+							frames = 34;
 						}
 						else
 						{
@@ -796,6 +909,13 @@ public class Roo extends Player
 							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+125,bounds.yCoord-50,210,150,14,roo.isFacingRight,true));
 							frames = 26;
 						}
+						break;
+						
+					case 4:
+						if(!bounds.isGrounded){}
+						else if(isCrouching)
+							bounds.forceArchiver.add(new Force("hkStep",(isFacingRight)? 3:1,12,6));
+						else{}
 						break;
 						
 					case 8:
@@ -807,6 +927,13 @@ public class Roo extends Player
 							addPleb(roo,0,bounds.xCoord+160,bounds.yCoord-20,60,40,5,0,2,49,25,24,0,0.45,true,false,new int[]{});
 							addPleb(roo,0,bounds.xCoord+180,bounds.yCoord-50,60,40,5,0,2,49,25,24,0,0.45,true,false,new int[]{});
 						}
+						break;
+						
+					case 18:
+						if(!bounds.isGrounded){}
+						else if(isCrouching)
+							bounds.forceArchiver.add(new Force("hkStep",(isFacingRight)? 1:3,12,6));
+						else{}
 						break;
 				}
 			}
@@ -858,7 +985,7 @@ public class Roo extends Player
 					
 					case 29:
 			 			currState = RooState.FIREBALL_RECOVER;
-			 			fIndex = 0;
+			 			sIndex = 0;
 						break;
 				}
 			}

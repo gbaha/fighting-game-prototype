@@ -32,7 +32,7 @@ public class Floor
 	
 	public void draw(Graphics g, ImageObserver i, double w, double h, boolean d)
 	{
-		g.drawImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/fetusofgrah.jpg")),(int)((xHosh-50)*w/1280),(int)((yHosh+400)*h/720),(int)((width+100)*w/1280),(int)(height*h/720),i);
+	//	g.drawImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/fetusofgrah.jpg")),(int)((xHosh-50)*w/1280),(int)((yHosh+400)*h/720),(int)((width+100)*w/1280),(int)(height*h/720),i);
 		g.setColor(new Color(255,255,255,35));
 		g.fillRect((int)((xHosh-50)*w/1280),(int)((yHosh+400)*h/720),(int)((width+100)*w/1280),(int)(height*h/720));
 		
