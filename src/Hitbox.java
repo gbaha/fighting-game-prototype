@@ -2,7 +2,7 @@ abstract class Hitbox
 {
 	int /*group,*/ xCoord, yCoord, xHosh, yHosh, width, height;
 	int xVel, yVel, xDir, yDir, xDrag, yDrag, speed;
-	boolean isFloating, isGrounded, isMovable, isMoving, wasMoving;
+	boolean isFloating, wasFloating, isGrounded, isMovable, isMoving, wasMoving;
 	
 	public Hitbox()
 	{

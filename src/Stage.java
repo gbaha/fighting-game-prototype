@@ -42,9 +42,9 @@ public class Stage
 		openNav = new boolean[0];
 		
 		//TEST
-		floors.add(new Floor("",0,0,2000,1000));
-		player1 = new Roo(1000-200-100,750,true);
-		player2 = new Roo(1000+200,750,false);
+		floors.add(new Floor("",0,0,2000,5000));
+		player1 = new Roo(1000-200-100,4750,true);
+		player2 = new Roo(1000+200,4750,false);
 		puppets.add(player1);
 		puppets.add(player2);
 		

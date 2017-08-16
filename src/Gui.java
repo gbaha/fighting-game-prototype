@@ -48,7 +48,7 @@ public class Gui extends JPanel
 	//	splashes.add(new Splash("DESTROY THE ZHAOS!",5,3));	//TEST
 	}
 	
-	public void draw(Graphics2D g, ImageObserver i, Player p1, Player p2, double w, double h)
+	public void drawTop(Graphics2D g, ImageObserver i, Player p1, Player p2, double w, double h)
 	{
 		//HEALTH
 		g.setColor(Color.LIGHT_GRAY);
@@ -76,13 +76,17 @@ public class Gui extends JPanel
 			else if(p2.stamina > s*100)
 				g.fillRect((int)(((745+s*45)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)((40*((p2.stamina-s*100.0)/100)*w/1280)+0.5),(int)((20*h/720)+0.5));
 		}
-		
+	}
+	
+	public void drawBot(Graphics2D g, ImageObserver i, Player p1, Player p2, double w, double h)
+	{
 		//METER
 		g.setColor(Color.LIGHT_GRAY);
+		g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),200));
 		g.fillRect((int)((35*w/1280)+0.5),(int)((650*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
 		g.fillRect((int)((745*w/1280)+0.5),(int)((650*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
 		g.setColor(Color.CYAN);
-		g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),55));
+		g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50));
 		g.fillRect((int)(((35+500*((1000.0-(p1.meter-p1.meter/1000.0))/1000.0))*w/1280)+0.5),(int)((650*h/720)+0.5),(int)((500*((p1.meter-p1.meter/1000.0)/1000.0)*w/1280)+0.5),(int)((35*h/720)+0.5));
 		g.fillRect((int)((745*w/1280)+0.5),(int)((650*h/720)+0.5),(int)((-500*((-p2.meter+p2.meter/1000.0)/1000.0)*w/1280)+0.5),(int)((35*h/720)+0.5));
 		g.setColor(Color.BLUE);

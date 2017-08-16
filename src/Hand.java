@@ -82,10 +82,9 @@ public class Hand implements KeyListener	//, MouseListener
 				for(Force f: player.bounds.forceArchiver)
 				{
 					if(f.type.equals("yJump"))
-						f.magnitude = 0;
+						f.decay = f.magnitude;
 				}
 			}
-			player.bounds.isFloating = player.isDashing && !player.bounds.isGrounded; // || other isFloating checks;
 			currButton = -1;
 			if(fTimer < 1000)
 				fTimer++;
@@ -95,31 +94,32 @@ public class Hand implements KeyListener	//, MouseListener
 			{
 				if(player.currAction == null)
 				{
-					if(player.bounds.isGrounded)
+					if(player.jDirections[1] == 0 && player.airOptions > player.aDash+player.jCount && player.jCount < player.jumpLimit && !player.isBlocking[0] && !player.isBlocking[1])
 					{
 						if(stickArchiver[1])
-							player.bounds.forceArchiver.add(new Force("xJump",3,6,0));
-						if(stickArchiver[3])
-							player.bounds.forceArchiver.add(new Force("xJump",1,6,0));
+							player.jDirections[0] = 1;
+						else if(stickArchiver[3])
+							player.jDirections[0] = -1;
+						else
+							player.jDirections[0] = 0;
+						player.jDirections[1] = 1;
+						
+						if(player.bounds.isGrounded)
+							player.preFrames = 2;
 					}
 					
-					if(!player.isDashing && !player.isBlocking[0] && !player.isBlocking[1])
+				/*	if(player.bounds.isGrounded && !player.bounds.isFloating)
 					{
-						if(player.bounds.isGrounded && !player.bounds.isFloating)
-							player.bounds.forceArchiver.add(new Force("yJump",2,player.jump,1));
-					/*	else if(player.bounds.blocked[0] != player.bounds.yCoord+player.bounds.height/2 && player.bounds.forceArchiver.size() > 0)
+						if(stickArchiver[1])
+							player.jDirections[0] = 1;
+						if(stickArchiver[3])
+							player.jDirections[0] = -1;
+						if(!player.isDashing && !player.isBlocking[0] && !player.isBlocking[1])
 						{
-							boolean j = true;
-							for(Force f: player.bounds.forceArchiver)
-							{
-								if(f.type.equals("headhug"))
-									j = false;
-							}
-							
-							if(j)
-								player.bounds.forceArchiver.add(new Force("headhug",2,player.jump*0.75,0.8));
-						}*/
-					}
+							player.jDirections[1] = 1;
+							player.preFrames = 3;
+						}
+					}*/
 				}
 				
 				if(stickArchiver[1])
@@ -129,21 +129,27 @@ public class Hand implements KeyListener	//, MouseListener
 				else
 					addStickInput(8);
 			}
-			else if(stickArchiver[2])
+			else
 			{
-				if(player.bounds.isGrounded)
+				if(stickArchiver[2])
 				{
-					player.isCrouching = true;
-					player.bounds.xDir = 0;
-					player.bounds.xDrag = 0;
+					if(player.bounds.isGrounded)
+					{
+						player.isCrouching = true;
+						player.bounds.xDir = 0;
+						player.bounds.xDrag = 0;
+					}
+					
+					if(stickArchiver[1])
+						addStickInput(3);
+					else if(stickArchiver[3])
+						addStickInput(1);
+					else
+						addStickInput(2);
 				}
 				
-				if(stickArchiver[1])
-					addStickInput(3);
-				else if(stickArchiver[3])
-					addStickInput(1);
-				else
-					addStickInput(2);
+				if(player.jDirections[1] == -1)
+					player.jDirections[1] = 0;
 			}
 			
 			if(stickArchiver[1])
@@ -269,7 +275,7 @@ public class Hand implements KeyListener	//, MouseListener
 						else
 							c = false;
 					}
-					else if(order.getFirst())
+					else if(order.getFirst() && i == m[0].length-1)
 						c = false;
 					
 					if(m[1][i] != -1)
@@ -279,7 +285,7 @@ public class Hand implements KeyListener	//, MouseListener
 						else
 							c = false;
 					}
-					else if(!order.getFirst())
+					else if(!order.getFirst() && i == m[0].length-1)
 						c = false;
 					
 					sInputs.addLast(new int[]{5,1});

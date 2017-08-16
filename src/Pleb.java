@@ -4,9 +4,6 @@ import java.util.ArrayList;
 
 public class Pleb extends Hitbox
 {
-	public static final int KNOCKDOWN = 0;
-	public static final int LAUNCH = 1;
-	
 	ArrayList<Force> forceArchiver, appliedForces;
 	Puppet puppet;
 	Organ bounds;
@@ -15,9 +12,12 @@ public class Pleb extends Hitbox
 	int duration, direction, strength, hDamage, sDamage, xKnockback, yKnockback, xDist, yDist;
 	double hitstunDamp;	//decayRate, piercingRate;
 	boolean isAttached, isProjectile;
-	int[] properties;
+	int[][] properties;	//[[type, parameters], ...]
 	
-	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, int[] pr)
+	public static final int KNOCKDOWN = 0;	//[air only?, kd counter, upward force magnitude, upward force decay, down time]
+	public static final int LAUNCH = 1;		//[homing?, xforce magnitude, xforce decay, yforce magnitude, yforce decay, hitstun]
+	
+	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, int[][] pr)
 	{
 		super(x,y,w,h);
 		puppet = p;
@@ -71,7 +71,7 @@ public class Pleb extends Hitbox
 		hitstunDamp = 0;
 		isAttached = a;
 		isProjectile = false;
-		properties = new int[]{};
+		properties = new int[][]{};
 		
 		forceArchiver = new ArrayList<Force>();
 		appliedForces = new ArrayList<Force>();
@@ -84,7 +84,7 @@ public class Pleb extends Hitbox
 	}
 	
 	//MIGHT REMOVE LATER
-	public Pleb(Puppet p, Organ b, Action a, /*String f, String t,*/ String hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int kx, int ky, double hs, boolean ia, boolean ip, int[] pr)	//, int d2, int s, double d3, double p)
+	public Pleb(Puppet p, Organ b, Action a, /*String f, String t,*/ String hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int kx, int ky, double hs, boolean ia, boolean ip)	//, int d2, int s, double d3, double p)
 	{
 		super(x,y,w,h);
 		puppet = p;
@@ -103,7 +103,6 @@ public class Pleb extends Hitbox
 		hitstunDamp = hs;
 		isAttached = ia;
 		isProjectile = ip;
-		properties = pr;
 //		direction = d2;
 //		speed = s;
 //		decayRate = d3;

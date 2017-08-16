@@ -7,8 +7,8 @@ public class Player extends Puppet
 {
 	ArrayList<int[][]> movelist;	//[stick inputs, button inputs, input delay, move(int method?)]
 	Action[] actions;
-	int airDashLimit, aDash;
-	boolean isDashing;
+	int airOptions, airDashLimit, jumpLimit, aDash, jCount;
+	boolean isDashing, isJumping;
 	
 	public enum PlayerState implements State
 	{
@@ -28,14 +28,17 @@ public class Player extends Puppet
 		}
 	}
 	
-	public Player(int x, int y, int w, int h, int c, /*int e,*/ int s, int a, int j, boolean r)
+	public Player(int x, int y, int w, int h, int c, int k, /*int e,*/ int s, int a1, int a2, int j1, double j2, boolean r)
 	{
-		super(x,y,w,h,c,1000,600,5000,s,a,j,r,false);
+		super(x,y,w,h,c,k,1000,600,5000,s,j2,r,false);
 //		currState = PuppetState.IDLE;
 //		prevState = PuppetState.IDLE;
 		isDashing = false;
-		airDashLimit = a;
+		airOptions = a1;
+		airDashLimit = a2;
+		jumpLimit = j1;
 		aDash = 0;
+		jCount = 0;
 		meter = 1000;
 		
 		movelist = new ArrayList<int[][]>();	//PLACE MOVELIST ITEMS IN ORDER OF PRIORITY!!!!
@@ -64,6 +67,8 @@ public class Player extends Puppet
 		currState = PuppetState.IDLE;
 		isDashing = false;
 		aDash = 0;
+		jCount = 0;
+		meter = 1000;
 	}
 	
 	public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean d)
@@ -76,8 +81,9 @@ public class Player extends Puppet
 		g.setColor(Color.RED);
 		g.drawString(hitInfo[0]+"",(int)(bounds.xHosh*w/1280),(int)((bounds.yHosh+bounds.height+20)*h/720));
 		g.drawString(hitInfo[2]+"",(int)((bounds.xHosh+15)*w/1280),(int)((bounds.yHosh+bounds.height+20)*h/720));
-		g.setColor(Color.YELLOW);
+		g.setColor(Color.ORANGE);
 		g.drawString(hitInfo[1]+"",(int)((bounds.xHosh+50)*w/1280),(int)((bounds.yHosh+bounds.height+20)*h/720));
+		g.drawString(jDirections[1]+"",(int)((bounds.xHosh+bounds.width+2)*w/1280),(int)((bounds.yHosh+bounds.height+20)*h/720));
 		
 	}
 	
@@ -169,23 +175,30 @@ public class Player extends Puppet
 		
 		if(jDirections[1] == 1)
 		{
-			switch(jDirections[0])
+			if(preFrames > 0)
 			{
-				case 0:
-					currState = PuppetState.JUMP_NEUTRAL;
-					return;
-					
-				case 1:
-					currState = (isFacingRight)? PuppetState.JUMP_FORWARD:PuppetState.JUMP_BACKWARD;
-					return;
-					
-				case -1:
-					currState = (isFacingRight)? PuppetState.JUMP_BACKWARD:PuppetState.JUMP_FORWARD;
-					return;
+				currState = PuppetState.PREJUMP;
+				return;
+			}
+			else
+			{
+				isJumping = true;
+				switch(jDirections[0])
+				{
+					case 0:
+						currState = PuppetState.JUMP_NEUTRAL;
+						return;
+					case 1:
+						currState = (isFacingRight)? PuppetState.JUMP_FORWARD:PuppetState.JUMP_BACKWARD;
+						return;
+					case -1:
+						currState = (isFacingRight)? PuppetState.JUMP_BACKWARD:PuppetState.JUMP_FORWARD;
+						return;
+				}
 			}
 		}
 		
-		if((!bounds.isGrounded /*&& jDirections[0] == 0*/ && jDirections[1] == 0) /*!isJumping)*/ || currState == PuppetState.FALL_NEUTRAL || currState == PuppetState.FALL_FORWARD || currState == PuppetState.FALL_BACKWARD || currState == PuppetState.LANDING)
+		if((!bounds.isGrounded /*&& jDirections[0] == 0*/ && jDirections[1] < 1) /*!isJumping)*/ || currState == PuppetState.FALL_NEUTRAL || currState == PuppetState.FALL_FORWARD || currState == PuppetState.FALL_BACKWARD || currState == PuppetState.LANDING)
 		{
 			if(currState != PuppetState.LANDING)
 			{
@@ -249,19 +262,26 @@ public class Player extends Puppet
 		
 		if(jDirections[1] == 1)
 		{
-			switch(jDirections[0])
+			if(preFrames > 0)
 			{
-				case 0:
-					currState = PuppetState.JUMP_NEUTRAL;
-					return;
-					
-				case 1:
-					currState = (isFacingRight)? PuppetState.JUMP_FORWARD:PuppetState.JUMP_BACKWARD;
-					return;
-					
-				case -1:
-					currState = (isFacingRight)? PuppetState.JUMP_BACKWARD:PuppetState.JUMP_FORWARD;
-					return;
+				currState = PuppetState.PREJUMP;
+				return;
+			}
+			else
+			{
+				isJumping = true;
+				switch(jDirections[0])
+				{
+					case 0:
+						currState = PuppetState.JUMP_NEUTRAL;
+						return;
+					case 1:
+						currState = (isFacingRight)? PuppetState.JUMP_FORWARD:PuppetState.JUMP_BACKWARD;
+						return;
+					case -1:
+						currState = (isFacingRight)? PuppetState.JUMP_BACKWARD:PuppetState.JUMP_FORWARD;
+						return;
+				}
 			}
 		}
 		super.crouch();
@@ -287,19 +307,26 @@ public class Player extends Puppet
 		
 		if(jDirections[1] == 1)
 		{
-			switch(jDirections[0])
+			if(preFrames > 0)
 			{
-				case 0:
-					currState = PuppetState.JUMP_NEUTRAL;
-					return;
-					
-				case 1:
-					currState = (isFacingRight)? PuppetState.JUMP_FORWARD:PuppetState.JUMP_BACKWARD;
-					return;
-					
-				case -1:
-					currState = (isFacingRight)? PuppetState.JUMP_BACKWARD:PuppetState.JUMP_FORWARD;
-					return;
+				currState = PuppetState.PREJUMP;
+				return;
+			}
+			else
+			{
+				isJumping = true;
+				switch(jDirections[0])
+				{
+					case 0:
+						currState = PuppetState.JUMP_NEUTRAL;
+						return;
+					case 1:
+						currState = (isFacingRight)? PuppetState.JUMP_FORWARD:PuppetState.JUMP_BACKWARD;
+						return;
+					case -1:
+						currState = (isFacingRight)? PuppetState.JUMP_BACKWARD:PuppetState.JUMP_FORWARD;
+						return;
+				}
 			}
 		}
 		super.move();
@@ -333,31 +360,48 @@ public class Player extends Puppet
 			return;
 		}
 		
+		if(jCount < jumpLimit && airOptions > aDash+jCount && isJumping && !bounds.isFloating)
+		{
+			int fLimit = bounds.forceArchiver.size();
+			for(int f = 0; f < fLimit; f++)
+			{
+				if(bounds.forceArchiver.get(f).type.equals("yJump"))
+				{
+					bounds.forceArchiver.remove(f);
+					fLimit = bounds.forceArchiver.size();
+					f--;
+				}
+			}
+			
+			bounds.forceArchiver.add(new Force("yJump",2,jump,1));
+			jDirections[1] = 1;
+			isJumping = false;
+			jCount++;
+		}
+		
 		if(isBlocking[0] || isBlocking[1])
 		{
 			currState = (bounds.isGrounded)? ((isBlocking[0])? PuppetState.GUARD_STANDING:PuppetState.GUARD_CROUCHING):PuppetState.GUARD_JUMPING;
 			return;
 		}
 		
-		if(jDirections[1] == 1)
+/*		if(jDirections[1] == 1)
 		{
 			switch(jDirections[0])
 			{
 				case 0:
 					currState = PuppetState.JUMP_NEUTRAL;
 					return;
-					
 				case 1:
 					currState = (isFacingRight)? PuppetState.JUMP_FORWARD:PuppetState.JUMP_BACKWARD;
 					return;
-					
 				case -1:
 					currState = (isFacingRight)? PuppetState.JUMP_BACKWARD:PuppetState.JUMP_FORWARD;
 					return;
 			}
 		}
-		
-		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
+		else*/
+		if(jDirections[1] < 1)
 		{
 			switch(jDirections[0])
 			{
@@ -382,35 +426,36 @@ public class Player extends Puppet
 	public void update()
 	{
 	//	HITBOX FRAME TEST
-	//	isCrouching = true; currState = PlayerState.CROUCHING_MK; setAction(normals[4]); sIndex = 3; fCounter = 4;
-	
+	//	isCrouching = true; currState = PlayerState.CROUCHING_HK; setAction(normals[5]); sIndex = 3; fCounter = 6;
+		
 	//	super.update();
 		if(bounds.isGrounded)
 		{
-			int fLimit = bounds.forceArchiver.size();
-			for(int f = 0; f < fLimit; f++)
+	/*		for(Force f: bounds.forceArchiver)
 			{
-				if(bounds.forceArchiver.get(f).type.equals("xJump"))
-				{
-					bounds.forceArchiver.remove(f);
-					fLimit = bounds.forceArchiver.size();
-					f--;
-				}
-			}
+				if(f.type.equals("xJump"))
+					f.magnitude = 0;
+			}*/
+			if(jDirections[1] == 0)
+				jDirections[0] = 0;
+			
 			aDash = 0;
+			jCount = 0;
 		}
 		else
 		{
+			if(jDirections[0] != 0 && preFrames == 0)
+				bounds.forceArchiver.add(new Force("xJump",(jDirections[0] == 1)? 3:1,6,6));
 			bounds.xDir = 0;
 			bounds.xDrag = 0;
 		}
-		super.update();
 		
-	/*	if(!isCrouching)
-		{
-			bounds.yCoord = yCoord;
-			bounds.height = height;
-		}*/
+		bounds.wasFloating = false;
+		if(bounds.isFloating && !(!bounds.isGrounded && (isDashing)))
+			bounds.wasFloating = true;
+		bounds.isFloating = !bounds.isGrounded && (isDashing); // || other isFloating checks;
+		
+		super.update();
 		bounds.update();
 	}
 	
@@ -432,12 +477,15 @@ public class Player extends Puppet
 			isPerformingAction = true;
 			if(f >= frames)
 			{
+				if(!bounds.isGrounded)
+					jDirections[0] = (isFacingRight)? 1:-1;
+				jDirections[1] = -1;
 				isPerformingAction = false;
 				return;
 			}
 			else if(f == 0)
 			{
-				if(!isCrouching && aDash < airDashLimit)
+				if(!isCrouching && aDash < airDashLimit && airOptions > aDash+jCount)
 				{
 					int d = (isFacingRight)? 3:1;
 					currState = PlayerState.DASH_FORWARD;
@@ -455,7 +503,7 @@ public class Player extends Puppet
 							}
 						}
 						if(!j)
-							bounds.forceArchiver.add(new Force("xJump",d,6,0));
+							bounds.forceArchiver.add(new Force("xJump",d,6,6));
 						aDash++;
 					}
 				}
@@ -482,12 +530,15 @@ public class Player extends Puppet
 			isPerformingAction = true;
 			if(f >= frames)
 			{
+				if(!bounds.isGrounded)
+					jDirections[0] = (isFacingRight)? -1:1;
+				jDirections[1] = -1;
 				isPerformingAction = false;
 				return;
 			}
 			else if(f == 0)
 			{
-				if(!isCrouching && aDash < airDashLimit)
+				if(!isCrouching && aDash < airDashLimit && airOptions > aDash+jCount)
 				{
 					int d = (isFacingRight)? 1:3;
 					currState = PlayerState.DASH_BACKWARD;
@@ -505,10 +556,13 @@ public class Player extends Puppet
 							}
 						}
 						if(!j)
-							bounds.forceArchiver.add(new Force("xJump",d,4,0));
+							bounds.forceArchiver.add(new Force("xJump",d,4,4));
+						jDirections[1] = -1;
 						aDash++;
 					}
 				}
+				else
+					isPerformingAction = false;
 			}
 		}
 	}

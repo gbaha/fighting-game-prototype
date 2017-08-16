@@ -54,7 +54,7 @@ public class Hoshua extends JPanel
 		try
 		{
 			Graphics2D g2 = (Graphics2D) g;
-			gui.draw(g2,this,canvas.player1,canvas.player2,width,height);
+			gui.drawTop(g2,this,canvas.player1,canvas.player2,width,height);
 			
 			ArrayList<Puppet> puppets = new ArrayList<Puppet>();
 			ArrayList<Puppet> players = new ArrayList<Puppet>();
@@ -106,6 +106,8 @@ public class Hoshua extends JPanel
 				p.draw(g2,this,sReader,width,height,debugging);
 			for(Prop p: canvas.props)
 				p.draw(g2,this,sReader,width,height,debugging);
+			
+			gui.drawBot(g2,this,canvas.player1,canvas.player2,width,height);
 			
 			for(Pleb p: canvas.plebs)
 			{

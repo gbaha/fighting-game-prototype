@@ -127,7 +127,9 @@ public class Organ extends Hitbox
 		xDrift = xVel*xDrag;
 		yDrift = yVel*yDrag;
 		
+	//	blocked[0] = yCoord+height/2;
 		blocked[1] = xCoord+width/2;
+	//	blocked[2] = yCoord+height/2;
 		blocked[3] = xCoord+width/2;
 	}
 }

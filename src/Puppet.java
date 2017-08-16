@@ -20,10 +20,11 @@ abstract class Puppet
 	Organ bounds, grabBox;	//Name subject to change, could use bounds as throwable hitbox
 	State currState, prevState;
 	Action currAction;
-	int id, xCoord, yCoord, xHosh, yHosh, width, height, crHeight;
+	int id, xCoord, yCoord, xHosh, yHosh, width, height, crHeight, kdHeight;
 	int maxHp, maxSp, maxMp, maxSpd;
 	int health, stamina, meter, speed;
 	int preFrames, fCounter, hitStun, hitStop, sCooldown;
+	int kdCounter, kdLimit, kdStun;
 	double sIndex, jForce, jump, hitstunDamp;
 	boolean isFacingRight, isPerformingAction, isCrouching, canBlock, isGuardBroken;	//, isJumping;
 	int[] hitInfo, flinchPoints, jDirections, spriteParams;	//Add tint later
@@ -31,8 +32,8 @@ abstract class Puppet
 	
 	public enum PuppetState implements State
 	{
-		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD, 	//, PERFORM_ACTION
-		GUARD_STANDING, GUARD_CROUCHING, GUARD_JUMPING, FLINCH_STANDING0, FLINCH_STANDING1, FLINCH_STANDING2, FLINCH_CROUCHING, FLINCH_AERIAL0, FLINCH_AERIAL1, FLINCH_AERIAL2, FALLING, BREAK_GROUND, BREAK_AIR;
+		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, PREJUMP, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD, 	//, PERFORM_ACTION
+		GUARD_STANDING, GUARD_CROUCHING, GUARD_JUMPING, FLINCH_STANDING0, FLINCH_STANDING1, FLINCH_STANDING2, FLINCH_CROUCHING, FLINCH_TRIP, KNOCKDOWN, FLINCH_AERIAL0, FLINCH_AERIAL1, FLINCH_AERIAL2, FALLING, BREAK_GROUND, BREAK_AIR;
 		
 		public String getState()
 		{
@@ -45,7 +46,7 @@ abstract class Puppet
 		}
 	}
 	
-	public Puppet(int x, int y, int w, int h, int c, int hp, int sp, int mp, int s, int a, double j, boolean r, boolean f2)
+	public Puppet(int x, int y, int w, int h, int c, int k, int hp, int sp, int mp, int s, double j, boolean r, boolean f2)
 	{
 		anatomy = new ArrayList<Organ>();
 	//	plebArchiver = new ArrayList<Pleb>();
@@ -72,6 +73,7 @@ abstract class Puppet
 		width = w;
 		height = h;
 		crHeight = c;
+		kdHeight = k;
 		isFacingRight = r;
 		isPerformingAction = false;
 		canBlock = false;
@@ -79,7 +81,7 @@ abstract class Puppet
 	//	isJumping = false;
 		
 		hitInfo = new int[]{0,0,0};	//[type, counter, hitstun]
-		flinchPoints = new int[]{0,0,0,0,0,0,0};
+		flinchPoints = new int[]{0,0,0,0,0,0,0,0}; 	//marks points where sprite freezes during hitstun
 		jDirections = new int[]{0,0};
 		isBlocking = new boolean[]{false,false};
 		
@@ -102,6 +104,10 @@ abstract class Puppet
 		hitStop = 0;
 		hitstunDamp = 0;
 		sCooldown = 0;		//999999;
+		
+		kdCounter = 0;
+		kdLimit = 2;	// if counter >= limit, cannot be knocked down in combo
+		kdStun = 0;
 		
 		bounds =  new Organ(x,y,w,h,speed);
 		bounds.isFloating = f2;
@@ -126,6 +132,7 @@ abstract class Puppet
 					g.drawLine((int)((bounds.xHosh+bounds.width-15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720),(int)((bounds.xHosh+bounds.width+15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720));
 				else
 					g.drawLine((int)((bounds.xHosh-15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720),(int)((bounds.xHosh+15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720));
+				g.fillRect((int)(xHosh*w/1280),(int)(yHosh*h/720),(int)(10*w/1280),(int)(10*h/720));
 				
 				for(Hitbox a: anatomy)
 				{
@@ -146,12 +153,13 @@ abstract class Puppet
 	public void checkState()
 	{
 		switch(currState.getState())
-		{//ADD CASE FALLING SOMEWHERE
+		{
 			case "IDLE":
 			case "FALL_NEUTRAL":
 			case "FALL_FORWARD":
 			case "FALL_BACKWARD":
 			case "LANDING":
+			case "PREJUMP":
 				idle();
 				break;
 				
@@ -176,6 +184,7 @@ abstract class Puppet
 			case "FLINCH_STANDING1":
 			case "FLINCH_STANDING2":
 			case "FLINCH_CROUCHING":
+			case "FLINCH_TRIP":
 			case "FLINCH_AERIAL0":
 			case "FLINCH_AERIAL1":
 			case "FLINCH_AERIAL2":
@@ -183,10 +192,14 @@ abstract class Puppet
 			case "BREAK_AIR":
 				flinch();
 				break;
+				
+			case "KNOCKDOWN":
+				knockdown();
+				break;
 		}
 		
 		xCoord = bounds.xCoord;
-		if((!bounds.isGrounded || currState == PuppetState.LANDING) && currState != PuppetState.GUARD_CROUCHING && currState != PuppetState.FLINCH_CROUCHING)	//!isCrouching || currState != PuppetState.STANDING || currState != PuppetState.GUARD_CROUCHING)
+		if(bounds.height == height)	//((!bounds.isGrounded || currState == PuppetState.LANDING) && currState != PuppetState.GUARD_CROUCHING && currState != PuppetState.FLINCH_CROUCHING)
 			yCoord = bounds.yCoord;
 		
 		if(currState.getPosition() < hitboxArchiver.size())
@@ -236,6 +249,31 @@ abstract class Puppet
 			currState = (bounds.isGrounded)? ((isBlocking[0])? PuppetState.GUARD_STANDING:PuppetState.GUARD_CROUCHING):PuppetState.GUARD_JUMPING;
 			return;
 		}
+		
+		if(jDirections[1] == 1)
+		{
+			if(preFrames > 0)
+			{
+				currState = PuppetState.PREJUMP;
+				return;
+			}
+			else
+			{
+				switch(jDirections[0])
+				{
+					case 0:
+						currState = PuppetState.JUMP_NEUTRAL;
+						return;
+					case 1:
+						currState = (isFacingRight)? PuppetState.JUMP_FORWARD:PuppetState.JUMP_BACKWARD;
+						return;
+					case -1:
+						currState = (isFacingRight)? PuppetState.JUMP_BACKWARD:PuppetState.JUMP_FORWARD;
+						return;
+				}
+			}
+		}
+		
 		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
 		{
 			switch(jDirections[0])
@@ -339,7 +377,7 @@ abstract class Puppet
 				break;
 		}
 		
-		if(hitSuccessful)
+		if(hitSuccessful && kdCounter < kdLimit)
 		{
 			health -= (!isGuardBroken)? p.hDamage:(int)((double)p.hDamage*2.5+0.5);
 			if(health < 0)
@@ -362,6 +400,31 @@ abstract class Puppet
 					case 2:
 						currState = PuppetState.FLINCH_STANDING2;
 						break;
+				}
+			}
+			
+			if(p.properties.length > 0)
+			{
+				for(int[] t: p.properties)
+				{
+					switch(t[0])
+					{
+						case Pleb.KNOCKDOWN:
+							if(t[1] == 0 || !bounds.isGrounded)
+							{System.out.println(kdCounter+" "+kdLimit);
+								currState = PuppetState.FLINCH_TRIP;
+								p.appliedForces.add(new Force("knockdown",2,t[3],t[4]));
+								bounds.yCoord = yCoord;
+								bounds.height = height;
+								kdCounter += t[2];
+								kdStun = t[5];
+								isCrouching = false;
+							}
+							break;
+							
+						case Pleb.LAUNCH:
+							break;
+					}
 				}
 			}
 			sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
@@ -449,23 +512,45 @@ abstract class Puppet
 		}
 	}
 	
-	public void flinch()
-	{
-		if(hitStun > 0)
-			hitStun--;
-		else
-		{
-			plebArchiver.clear();
-			currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
-		}
-	}
-	
 	public void guard()
 	{
 		if(hitStun > 0)
 			hitStun--;
 		else if(!isBlocking[0] && !isBlocking[1] && hitStun == 0)
 		{
+			plebArchiver.clear();
+			currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
+		}
+	}
+	
+	public void flinch()
+	{
+		if(hitStun > 0)
+			hitStun--;
+		else
+		{
+			if(kdStun > 0)
+			{
+				if(bounds.isGrounded)
+					currState = PuppetState.KNOCKDOWN;
+			}
+			else
+			{
+				kdCounter = 0;
+				plebArchiver.clear();
+				currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
+			}
+		}
+		jDirections = new int[]{0,0};
+	}
+	
+	public void knockdown()
+	{
+		if(kdStun > 0)
+			kdStun--;
+		else
+		{
+			kdCounter = 0;
 			plebArchiver.clear();
 			currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
 		}
@@ -478,29 +563,17 @@ abstract class Puppet
 	
 	public void update()
 	{
-		if((isCrouching && currState != PuppetState.LANDING) || currState == PuppetState.CROUCHING)
+		bounds.yCoord = yCoord;
+		bounds.height = height;
+		if(currState == PuppetState.KNOCKDOWN && bounds.isGrounded)
 		{
-			bounds.yCoord = yCoord+height-crHeight;
+			bounds.yCoord += height-kdHeight;
+			bounds.height = kdHeight;
+		}
+		else if((isCrouching && jDirections[0] == 0 && jDirections[1] == 0 && currState != PuppetState.LANDING && currState != PuppetState.PREJUMP && currState != PuppetState.FLINCH_TRIP) || currState == PuppetState.CROUCHING)
+		{
+			bounds.yCoord += height-crHeight;
 			bounds.height = crHeight;
-		}
-		else
-		{
-			bounds.yCoord = yCoord;
-			bounds.height = height;
-		}
-		
-		if(bounds.isGrounded)
-		{
-			int fLimit = bounds.forceArchiver.size();
-			for(int f = 0; f < fLimit; f++)
-			{
-				if(bounds.forceArchiver.get(f).type.equals("yJump"))
-				{
-					bounds.forceArchiver.remove(f);
-					fLimit = bounds.forceArchiver.size();
-					f--;
-				}
-			}
 		}
 		bounds.update();
 		

@@ -9,7 +9,7 @@ public class Logic
 	Cricket cricket;
 	Force gravity;
 	int[] focusWidth;
-	int xWindow, yWindow, /*winWidth, winHeight,*/ xFocus, yFocus, hitStop;
+	int xWindow, yWindow, /*winWidth, winHeight,*/ focusHeight, xFocus, yFocus, hitStop;
 	boolean gamePaused;
 	
 	int[][] recovery;	//TEST
@@ -19,7 +19,7 @@ public class Logic
 		stage = s;
 		hands = new Hand[]{h1,h2};
 		cricket = new Cricket(s);
-		gravity = new Force("gravity",0,15.68,0);
+		gravity = new Force("gravity",0,24.5,0);
 //		collisionPriority = new ArrayList<Hitbox>();
 		
 		xWindow = x;
@@ -29,6 +29,7 @@ public class Logic
 		xFocus = 0;
 		yFocus = 0;
 		focusWidth = new int[]{50,250};
+		focusHeight = 4450;
 		hitStop = 0;
 		gamePaused = p;
 		
@@ -86,14 +87,12 @@ public class Logic
 				if(players[p].xCoord+players[p].width > 1280-xFocus-focusWidth[0] && players[p].xCoord+players[p].width < stage.floors.get(0).xCoord+stage.floors.get(0).width)
 					xFocus = 1280-(players[p].xCoord+players[p].width)-focusWidth[0];
 				
-				if(players[p].yCoord < -yFocus)
+				if(players[p].yCoord < focusHeight && (yFocus < focusHeight-players[p].yCoord-4355 || !y))
 				{
-					yFocus = -players[p].yCoord;
+					yFocus = focusHeight-players[p].yCoord-4355;
 					y = true;
 				}
 			}
-			if(!y && yFocus > -400)
-				yFocus = (stage.player1.bounds.yCoord < stage.player2.bounds.yCoord)? -stage.player1.bounds.yCoord:-stage.player2.bounds.yCoord;
 		}
 	}
 	
@@ -106,7 +105,7 @@ public class Logic
 	public void setFocusTo(Hitbox h)
 	{
 		xFocus = 640-(h.xCoord+h.width/2);
-		yFocus = 600-(h.yCoord+h.height);
+		yFocus = 400-(h.yCoord+h.height);
 	}
 	
 	public void resetFocus()
@@ -122,6 +121,8 @@ public class Logic
 			int fLimit = p.bounds.forceArchiver.size();
 			if(!p.bounds.isGrounded && !p.bounds.isFloating)
 				p.bounds.forceArchiver.add(gravity);
+			if(p.bounds.wasFloating)
+				p.bounds.forceArchiver.add(new Force("postFloat",2,gravity.magnitude,gravity.magnitude/10));
 		/*	else
 			{
 				for(int f = 0; f < fLimit; f++)
@@ -135,18 +136,17 @@ public class Logic
 				}
 			}*/
 			
-			//p.isJumping = false;
-			p.jDirections = new int[]{0,0};
+		//	p.jDirections = new int[]{0,0};
 			fLimit = p.bounds.forceArchiver.size();
 			for(int f = 0; f < fLimit; f++)
 			{
 				String t = p.bounds.forceArchiver.get(f).type;
 				int d = p.bounds.forceArchiver.get(f).direction;
 				
-				if((p.bounds.forceArchiver.get(f).type.equals("yJump") || p.bounds.forceArchiver.get(f).type.equals("headhug")) && p.bounds.forceArchiver.get(f).magnitude >= gravity.magnitude)
-					p.jDirections[1] = 1;	//p.isJumping = true;
+			/*	if((p.bounds.forceArchiver.get(f).type.equals("yJump") || p.bounds.forceArchiver.get(f).type.equals("headhug")) && p.bounds.forceArchiver.get(f).magnitude >= gravity.magnitude)
+					p.jDirections[1] = 1;
 				else if(p.bounds.forceArchiver.get(f).type.equals("xJump"))
-					p.jDirections[0] = (p.bounds.forceArchiver.get(f).direction == 1)? -1:1;
+					p.jDirections[0] = (p.bounds.forceArchiver.get(f).direction == 1)? -1:1;*/
 				
 				if(f+1 < fLimit)
 				{
@@ -1039,7 +1039,7 @@ public class Logic
 												stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.isGrounded = true;
 											}
 											h1.yVel = 0;
-										
+											
 											if(h1.blocked[2] > f.yCoord+f.height || h1.yCoord+h1.height > f.yCoord+f.height || h1.blocked[2] == h1.yCoord+h1.height/2)
 												h1.yCoord = f.yCoord+f.height-h1.height;	//f.yCoord+f.height-h1.yCoord-h1.height+stage.puppets.get(hitboxes.indexOf(h1)).bounds.yCoord;
 											y = y1;
@@ -1765,6 +1765,21 @@ public class Logic
 											p1.duration = 0;
 											recovery = new int[][]{new int[]{0,p1.puppet.currState.getPosition()}, new int[]{0,p2.currState.getPosition()}};	//TEST
 											
+									/*		for(int[] p3: p1.properties)
+											{
+												switch(p3[0])
+												{
+													case Pleb.KNOCKDOWN:
+														break;
+													
+													case Pleb.AIR_KNOCKDOWN:
+														break;
+													
+													case Pleb.LAUNCH:
+														break;
+												}
+											}*/
+											
 											for(Prop p3: stage.props)
 											{
 												if(p1.bounds == p3.bounds)
@@ -1825,6 +1840,7 @@ public class Logic
 					p.propArchiver.remove(0);
 				}
 				p.canBlock = false;
+		//		p.updateBounds();
 			}
 			
 			applyForces();
@@ -1867,6 +1883,17 @@ public class Logic
 			{
 				stage.puppets.get(p).checkState();
 				stage.puppets.get(p).update();
+				
+				if(stage.puppets.get(p).jDirections[1] == 1 && !stage.puppets.get(p).bounds.isGrounded)
+				{
+					for(Force f: stage.puppets.get(p).bounds.forceArchiver)
+					{
+						if(f.type.equals("yJump") && f.magnitude*9/10 < gravity.magnitude)
+							stage.puppets.get(p).jDirections[1] = -1;
+					}
+				}
+				else if(stage.puppets.get(p).jDirections[1] == -1 && stage.puppets.get(p).bounds.isGrounded)
+					stage.puppets.get(p).jDirections[1] = 0;
 				
 				if(stage.puppets.get(p).health == 0)
 				{
