@@ -12,7 +12,7 @@ public class Logic
 	int xWindow, yWindow, /*winWidth, winHeight,*/ focusHeight, xFocus, yFocus, hitStop;
 	boolean gamePaused;
 	
-	int[][] recovery;	//TEST
+	int[] recovery;	//TEST
 	
 	public Logic(Stage s, /*Curtains c,*/ Hand h1, Hand h2, int x, int y, boolean p/*, int w, int h2*/)
 	{
@@ -33,7 +33,7 @@ public class Logic
 		hitStop = 0;
 		gamePaused = p;
 		
-		recovery = new int[][]{new int[]{-1,-1}, new int[]{-1,-1}};	//TEST
+		recovery = new int[]{-1,-1,-1};	//TEST
 	}
 	
 	public void focus()
@@ -306,13 +306,21 @@ public class Logic
 					case 0:
 						if(!h.forceArchiver.get(f).type.equals("gravity") || (h.forceArchiver.get(f).type.equals("gravity") && !h.isFloating))
 							forces[hitboxes.indexOf(h)][0] += h.forceArchiver.get(f).magnitude*hDamp;
-						h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+						if(h.forceArchiver.get(f).decay > 0)
+							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+						else if(h.forceArchiver.get(f).decay < 0)
+							h.forceArchiver.get(f).decay++;
 						break;
 						
 					case 1:
 						forces[hitboxes.indexOf(h)][1] += h.forceArchiver.get(f).magnitude*hDamp;
 						if(!h.forceArchiver.get(f).type.equals("xKnockback") || h.isGrounded || hDamp < 1)
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+						{
+							if(h.forceArchiver.get(f).decay > 0)
+								h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+							else if(h.forceArchiver.get(f).decay < 0)
+								h.forceArchiver.get(f).decay++;
+						}
 						else
 						{
 							h.forceArchiver.get(f).magnitude = 8;
@@ -322,13 +330,21 @@ public class Logic
 						
 					case 2:
 						forces[hitboxes.indexOf(h)][2] += h.forceArchiver.get(f).magnitude*hDamp;
-						h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+						if(h.forceArchiver.get(f).decay > 0)
+							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+						else if(h.forceArchiver.get(f).decay < 0)
+							h.forceArchiver.get(f).decay++;
 						break;
 						
 					case 3:
 						forces[hitboxes.indexOf(h)][3] += h.forceArchiver.get(f).magnitude*hDamp;
 						if(!h.forceArchiver.get(f).type.equals("xKnockback") || h.isGrounded || hDamp < 1)
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+						{
+							if(h.forceArchiver.get(f).decay > 0)
+								h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+							else if(h.forceArchiver.get(f).decay < 0)
+								h.forceArchiver.get(f).decay++;
+						}
 						else
 						{
 							h.forceArchiver.get(f).magnitude = 8;
@@ -345,7 +361,7 @@ public class Logic
 						stage.puppets.get(hitboxes.indexOf(h)).hitstunDamp = 1;
 				}
 				
-				if(h.forceArchiver.get(f).magnitude <= 0)
+				if(h.forceArchiver.get(f).magnitude <= 0 || (!h.forceArchiver.get(f).type.equals("gravity") && h.forceArchiver.get(f).decay == 0))
 				{
 					h.forceArchiver.remove(f);
 					fLimit = h.forceArchiver.size();
@@ -1763,7 +1779,7 @@ public class Logic
 											p2.plebArchiver.add(p1.hash);
 											p2.hitstunDamp = p1.hitstunDamp;
 											p1.duration = 0;
-											recovery = new int[][]{new int[]{0,p1.puppet.currState.getPosition()}, new int[]{0,p2.currState.getPosition()}};	//TEST
+											recovery = new int[]{(p2 == stage.player1)? 0:1,0,0};	//TEST
 											
 									/*		for(int[] p3: p1.properties)
 											{
@@ -1806,24 +1822,6 @@ public class Logic
 		
 		if(!gamePaused)
 		{
-			//TEST
-			if(recovery[0][0] >= 0)
-			{
-				if(stage.player1.currState.getPosition() == recovery[0][1])
-					recovery[0][0]++;
-				else
-					recovery[0][1] = -1;
-				if(stage.player2.currState.getPosition() == recovery[1][1])
-					recovery[1][0]++;
-				else
-					recovery[1][1] = -1;
-				if(recovery[0][1] == -1 && recovery[1][1] == -1)
-				{
-					System.out.println((recovery[1][0]-recovery[0][0])+" ("+recovery[0][0]+" "+recovery[1][0]+")");
-					recovery = new int[][]{new int[]{-1,-1}, new int[]{-1,-1}};;
-				}
-			}
-			
 			for(Floor f: stage.floors)
 				f.update(stage.floors);
 			for(Puppet p: stage.puppets)
@@ -1894,13 +1892,6 @@ public class Logic
 				}
 				else if(stage.puppets.get(p).jDirections[1] == -1 && stage.puppets.get(p).bounds.isGrounded)
 					stage.puppets.get(p).jDirections[1] = 0;
-				
-				if(stage.puppets.get(p).health == 0)
-				{
-					stage.puppets.remove(p);
-					pLimit = stage.puppets.size();
-					p--;
-				}
 			}
 			
 			pLimit = stage.plebs.size();
@@ -1950,5 +1941,33 @@ public class Logic
 		}
 		if(p)
 			gamePaused = !gamePaused;
+		
+		//TEST
+		if(recovery[0] == 0)
+		{
+			if(stage.player1.hitStun > 0)
+				recovery[2]++;
+			if(stage.player2.currAction != null)
+				recovery[1]++;
+			
+			if(stage.player1.hitStun <= 0 && stage.player2.currAction == null)
+			{
+				System.out.println((recovery[2]-recovery[1])+" ("+recovery[1]+" "+recovery[2]+")");
+				recovery = new int[]{-1,-1,-1};
+			}
+		}
+		else if(recovery[0] == 1)
+		{
+			if(stage.player1.currAction != null)
+				recovery[1]++;
+			if(stage.player2.hitStun > 0)
+				recovery[2]++;
+			
+			if(stage.player1.currAction == null && stage.player2.hitStun <= 0)
+			{
+				System.out.println((recovery[2]-recovery[1])+" ("+recovery[1]+" "+recovery[2]+")");
+				recovery = new int[]{-1,-1,-1};
+			}
+		}
 	}
 }

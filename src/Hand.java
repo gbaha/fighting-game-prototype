@@ -304,12 +304,27 @@ public class Hand implements KeyListener	//, MouseListener
 			if(c && ((player.bounds.isGrounded && player.actions[player.movelist.indexOf(m)].groundOk) || (!player.bounds.isGrounded && player.actions[player.movelist.indexOf(m)].airOk)))
 			{//System.out.println(">> "+player.movelist.indexOf(m));
 				if(player.currAction == null)
-					player.setAction(player.actions[player.movelist.indexOf(m)]);
-				else if(player.currAction.isCancelable(player.hitInfo[0],player.fCounter,player.actions[player.movelist.indexOf(m)].type,currButton))
 				{
-					player.setAction(player.actions[player.movelist.indexOf(m)]);
-					player.fCounter = 0;
-					player.sIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
+					if(m.length < 4)
+						player.setAction(player.actions[player.movelist.indexOf(m)]);
+				}
+				else if(player.currAction.isCancelable(player.hitInfo[0],player.fCounter,player.actions[player.movelist.indexOf(m)].type,currButton,player.bounds.isGrounded))
+				{
+					boolean n = (m.length < 4);
+					if(!n)
+					{
+						boolean[] o = new boolean[]{(player.bounds.isGrounded && !player.currAction.cLock),player.currAction.cLock,!player.bounds.isGrounded};
+						if(((m[3][0] < player.normals.length && player.currAction == player.normals[m[3][0]]) || (m[3][0] >= player.normals.length && player.currAction == player.actions[m[3][0]])) && o[m[3][1]])
+							n = true;
+					}
+					if(n)
+					{
+						Puppet t = player.currAction.target;
+						player.setAction(player.actions[player.movelist.indexOf(m)]);
+						player.currAction.target = t;
+						player.fCounter = 0;
+						player.sIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
+					}
 				}
 				player.actions[player.movelist.indexOf(m)].button = currButton;
 			}
@@ -319,9 +334,11 @@ public class Hand implements KeyListener	//, MouseListener
 		{//System.out.println("@  "+currButton);
 			if(player.currAction == null)
 				player.setAction(player.normals[currButton]);
-			else if(player.currAction.isCancelable(player.hitInfo[0],player.fCounter,player.normals[currButton].type,currButton))
+			else if(player.currAction.isCancelable(player.hitInfo[0],player.fCounter,player.normals[currButton].type,currButton,player.bounds.isGrounded))
 			{
+				Puppet t = player.currAction.target;
 				player.setAction(player.normals[currButton]);
+				player.currAction.target = t;
 				player.fCounter = 0;
 				player.sIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
 			}

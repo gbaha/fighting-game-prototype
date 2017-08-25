@@ -18,7 +18,8 @@ public class Gui extends JPanel
 	private final Font FONT;
 	ArrayList<Splash> splashes;
 	Hand hand1, hand2;
-	double hTick, eTick;
+	int[][] hitCounter;
+//	double hTick, eTick;
 	long pTick;
 	boolean gamePaused;
 	
@@ -28,8 +29,9 @@ public class Gui extends JPanel
 		splashes = new ArrayList<Splash>();
 		hand1 = h1;
 		hand2 = h2;
-		hTick = 0;
-		eTick = 0;
+		hitCounter = new int[2][2];	//[[hits, timer], ...]
+//		hTick = 0;
+//		eTick = 0;
 		pTick = 0;
 		gamePaused = p;
 		
@@ -76,6 +78,26 @@ public class Gui extends JPanel
 			else if(p2.stamina > s*100)
 				g.fillRect((int)(((745+s*45)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)((40*((p2.stamina-s*100.0)/100)*w/1280)+0.5),(int)((20*h/720)+0.5));
 		}
+		
+		//HIT COUNTER
+		if(p1.hitStun > 0)
+		{
+			if(p2.hitInfo[1] > hitCounter[1][0])
+				hitCounter[1][0] = p2.hitInfo[1];
+			hitCounter[1][1] = 60;
+		}
+		if(p2.hitStun > 0)
+		{
+			if(p1.hitInfo[1] > hitCounter[0][0])
+				hitCounter[0][0] = p1.hitInfo[1];
+			hitCounter[0][1] = 60;
+		}
+		
+		g.setColor(Color.RED);
+		if(hitCounter[0][0] > 1 && hitCounter[0][1] > 0)
+			g.drawString(hitCounter[0][0]+" HITS",(int)((52*w/1280)+0.5),(int)((166*h/720)+0.5));
+		if(hitCounter[1][0] > 1 && hitCounter[1][1] > 0)
+			g.drawString(hitCounter[1][0]+" HITS",(int)(((1184-g.getFontMetrics().stringWidth(p2.hitInfo[1]+" HITS"))*w/1280)+0.5),(int)((166*h/720)+0.5));
 	}
 	
 	public void drawBot(Graphics2D g, ImageObserver i, Player p1, Player p2, double w, double h)
@@ -136,17 +158,17 @@ public class Gui extends JPanel
 	public void drawInputs(Graphics2D g, Hand h1, double w, double h2, boolean d)
 	{
 		g.setStroke(new BasicStroke((int)(5*w/1280)));
-		for(int i = 0; i < 12; i++)
+		for(int i = 0; i < 9; i++)
 		{
 			int c = (i%2 == 0)? 120:200;
 			g.setColor(new Color(c,c,c,50));
-			g.fillRect((d)? 0:(int)(1120*w/1280+0.5),(int)((120+i*40)*h2/720+0.5),(int)(160*w/1280+0.5),(int)(40*h2/720+0.5));
+			g.fillRect((d)? 0:(int)(1120*w/1280+0.5),(int)((240+i*40)*h2/720+0.5),(int)(160*w/1280+0.5),(int)(40*h2/720+0.5));
 		}
 		
 		LinkedList<Boolean> order = (LinkedList<Boolean>)h1.inputOrder.clone();
 		int j = 0;
 		int k = 0;
-		for(int i = 0; i < 12; i++)
+		for(int i = 0; i < 9; i++)
 		{
 			boolean hasDrawn = false;
 			boolean hasButtons = false;
@@ -161,39 +183,39 @@ public class Gui extends JPanel
 							if(!hasButtons)
 							{
 								g.setColor(new Color(0,0,0,50));
-								g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((126+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
-								g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((126+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
-								g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((126+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
-								g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
-								g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
-								g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+								g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((246+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+								g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((246+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+								g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((246+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+								g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+								g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+								g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 							}
 							
 							g.setColor(Color.RED);
 							switch(h1.buttonInputs.get(k)[0])
 							{
 								case 0:
-									g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((126+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+									g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((246+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 									break;
 									
 								case 1:
-									g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((126+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+									g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((246+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 									break;
 									
 								case 2:
-									g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((126+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+									g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((246+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 									break;
 									
 								case 3:
-									g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+									g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 									break;
 									
 								case 4:
-									g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+									g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 									break;
 									
 								case 5:
-									g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+									g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 									break;
 							}
 							
@@ -211,56 +233,56 @@ public class Gui extends JPanel
 							if(h1.stickInputs.get(j)[0] != 5)
 							{
 								g.setColor(Color.RED);
-								g.drawString(((h1.stickInputs.get(j)[1] < 1000)? h1.stickInputs.get(j)[1]:999)+"",(int)(((d)? 115:1130)*w/1280+0.5),(int)((145+i*40)*h2/720+0.5));
+								g.drawString(((h1.stickInputs.get(j)[1] < 1000)? h1.stickInputs.get(j)[1]:999)+"",(int)(((d)? 115:1130)*w/1280+0.5),(int)((265+i*40)*h2/720+0.5));
 								
 								switch(h1.stickInputs.get(j)[0])
 								{
 									case 1:
-										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5),(int)(((d)? 5:1247)*w/1280+0.5),(int)((135+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5),(int)(((d)? 23:1265)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5),(int)(((d)? 5:1247)*w/1280+0.5),(int)((255+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5),(int)(((d)? 23:1265)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5));
 										break;
 										
 									case 2:
-										g.drawLine((int)(((d)? 19:1261)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5),(int)(((d)? 19:1261)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 5:1275)*w/1280+0.5),(int)((143+i*40)*h2/720+0.5),(int)(((d)? 19:1261)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 33:1247)*w/1280+0.5),(int)((143+i*40)*h2/720+0.5),(int)(((d)? 19:1261)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 19:1261)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5),(int)(((d)? 19:1261)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1275)*w/1280+0.5),(int)((263+i*40)*h2/720+0.5),(int)(((d)? 19:1261)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 33:1247)*w/1280+0.5),(int)((263+i*40)*h2/720+0.5),(int)(((d)? 19:1261)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5));
 										break;
 										
 									case 3:
-										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 15:1257)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 33:1275)*w/1280+0.5),(int)((135+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 15:1257)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 33:1275)*w/1280+0.5),(int)((255+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5));
 										break;
 										
 									case 4:
-										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((138+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((138+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((138+i*40)*h2/720+0.5),(int)(((d)? 14:1256)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((138+i*40)*h2/720+0.5),(int)(((d)? 14:1256)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((258+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((258+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((258+i*40)*h2/720+0.5),(int)(((d)? 14:1256)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((258+i*40)*h2/720+0.5),(int)(((d)? 14:1256)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5));
 										break;
 										
 									case 6:
-										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((138+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((138+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 33:1275)*w/1280+0.5),(int)((138+i*40)*h2/720+0.5),(int)(((d)? 24:1266)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 33:1275)*w/1280+0.5),(int)((138+i*40)*h2/720+0.5),(int)(((d)? 24:1266)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((258+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((258+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 33:1275)*w/1280+0.5),(int)((258+i*40)*h2/720+0.5),(int)(((d)? 24:1266)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 33:1275)*w/1280+0.5),(int)((258+i*40)*h2/720+0.5),(int)(((d)? 24:1266)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5));
 										break;
 										
 									case 7:
-										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5),(int)(((d)? 5:1247)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5),(int)(((d)? 23:1265)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5),(int)(((d)? 5:1247)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5),(int)(((d)? 23:1265)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5));
 										break;
 										
 									case 8:
-										g.drawLine((int)(((d)? 19:1261)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5),(int)(((d)? 19:1261)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 5:1275)*w/1280+0.5),(int)((134+i*40)*h2/720+0.5),(int)(((d)? 19:1261)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 33:1247)*w/1280+0.5),(int)((134+i*40)*h2/720+0.5),(int)(((d)? 19:1261)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 19:1261)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5),(int)(((d)? 19:1261)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1275)*w/1280+0.5),(int)((254+i*40)*h2/720+0.5),(int)(((d)? 19:1261)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 33:1247)*w/1280+0.5),(int)((254+i*40)*h2/720+0.5),(int)(((d)? 19:1261)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5));
 										break;
 										
 									case 9:
-										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((152+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 33:1275)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5));
-										g.drawLine((int)(((d)? 15:1257)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((125+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 5:1247)*w/1280+0.5),(int)((272+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 33:1275)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5));
+										g.drawLine((int)(((d)? 15:1257)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5),(int)(((d)? 33:1275)*w/1280+0.5),(int)((245+i*40)*h2/720+0.5));
 										break;
 								}
 								hasDrawn = true;
@@ -274,44 +296,44 @@ public class Gui extends JPanel
 						if(k < h1.buttonInputs.size())
 						{
 							g.setColor(Color.RED);
-							g.drawString(((h1.buttonInputs.get(k)[1] < 1000)? h1.buttonInputs.get(k)[1]:999)+"",(int)(((d)? 115:1130)*w/1280+0.5),(int)((145+i*40)*h2/720+0.5));
+							g.drawString(((h1.buttonInputs.get(k)[1] < 1000)? h1.buttonInputs.get(k)[1]:999)+"",(int)(((d)? 115:1130)*w/1280+0.5),(int)((265+i*40)*h2/720+0.5));
 							
 							if(!hasButtons)
 							{
 								g.setColor(new Color(0,0,0,50));
-								g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((126+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
-								g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((126+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
-								g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((126+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
-								g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
-								g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
-								g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+								g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((246+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+								g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((246+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+								g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((246+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+								g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+								g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+								g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 							}
 							
 							g.setColor(Color.RED);
 							switch(h1.buttonInputs.get(k)[0])
 							{
 								case 0:
-									g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((126+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+									g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((246+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 									break;
 									
 								case 1:
-									g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((126+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+									g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((246+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 									break;
 									
 								case 2:
-									g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((126+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+									g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((246+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 									break;
 									
 								case 3:
-									g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+									g.fillOval((int)(((d)? 52:1184)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 									break;
 									
 								case 4:
-									g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+									g.fillOval((int)(((d)? 68:1200)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 									break;
 									
 								case 5:
-									g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((142+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
+									g.fillOval((int)(((d)? 84:1216)*w/1280+0.5),(int)((262+i*40)*h2/720+0.5),(int)(12*w/1280+0.5),(int)(12*h2/720+0.5));
 									break;
 							}
 							
@@ -346,7 +368,7 @@ public class Gui extends JPanel
 			if(!hasDrawn)
 				i--;
 			if((j >= h1.stickInputs.size() && k >= h1.buttonInputs.size())/* || order.size() == 0*/)
-				i = 12;
+				i = 9;
 		}
 		g.setStroke(new BasicStroke((int)(1*w/1280)));
 	}
@@ -363,10 +385,18 @@ public class Gui extends JPanel
 		
 		if(!gamePaused)
 		{
-			if(eTick == 0)
+			for(int[] i: hitCounter)
+			{System.out.println(i[1]);
+				if(i[1] > 0)
+					i[1]--;
+				else
+					i[0] = 0;
+			}System.out.println();
+			
+/*			if(eTick == 0)
 				eTick = 20;
 			else
-				eTick--;
+				eTick--;*/
 			
 			for(Splash s: splashes)
 			{

@@ -6,8 +6,8 @@ public class Main
 	JFrame window;
 	Stage stage;
 //	Curtains curtains;
-	Beaman geebs;
-	Director director;
+//	Beaman geebs;
+//	Director director;
 	Hand p1, p2;
 	Gui gui;
 	Logic logic;
@@ -31,8 +31,8 @@ public class Main
 		debugging = false;
 		
 		stage = new Stage();
-		geebs = new Beaman(stage);
-		director = new Director(stage,geebs);
+//		geebs = new Beaman(stage);
+//		director = new Director(stage,geebs);
 		p1 = new Hand(xCoord,yCoord,width,height,new int[]{87,68,83,65},new int[]{85,73,79,74,75,76,80,59,10,27});
 		p2 = new Hand(xCoord,yCoord,width,height,new int[]{38,39,40,37},new int[]{90,88,67,86,66,78,999,999,999,8});
 		gui = new Gui(p1,p2,gamePaused);
@@ -60,9 +60,9 @@ public class Main
 			if(p1.buttonArchiver[8])
 			{
 				//RESET TEST
-		/*		logic.setFocusTo(1000,800);
-				stage.player1.reset(1000-200-100,750);
-				stage.player2.reset(1000+200,750);
+		/*		logic.setFocusTo(1000,4750);
+				stage.player1.reset(1000-200-100,4750);
+				stage.player2.reset(1000+200,4750);
 				stage.plebs.clear();
 				p1.buttonInputs.clear();
 				p2.buttonInputs.clear();
@@ -73,8 +73,14 @@ public class Main
 				fpsLimit = 6;
 			}
 			
+			//TRAINING MODE HEALTH RESET TEST
+			if(stage.player1.health < stage.player1.maxHp && gui.hitCounter[1][1] == 0)	// Probably dont want health reset to be relying on gui
+				stage.player1.health = stage.player1.maxHp;
+			if(stage.player2.health < stage.player2.maxHp && gui.hitCounter[0][1] == 0)	// Probably dont want health reset to be relying on gui
+				stage.player2.health = stage.player2.maxHp;
 			
-			director.update();
+			
+		//	director.update();
 			gui.update(width,height,gamePaused);
 			
 			if(logic.hitStop == 0)
@@ -83,7 +89,7 @@ public class Main
 				logic.hitStop--;
 			gamePaused = logic.gamePaused;
 			
-			geebs.defyLogic();
+		//	geebs.defyLogic();
 			jas.update(xCoord,yCoord+window.getInsets().top,width,height,fps,gamePaused,debugging);
 			
 			double end = System.currentTimeMillis();

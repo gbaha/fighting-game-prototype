@@ -12,12 +12,12 @@ public class Pleb extends Hitbox
 	int duration, direction, strength, hDamage, sDamage, xKnockback, yKnockback, xDist, yDist;
 	double hitstunDamp;	//decayRate, piercingRate;
 	boolean isAttached, isProjectile;
-	int[][] properties;	//[[type, parameters], ...]
+	double[][] properties;	//[[type, parameters], ...]
 	
 	public static final int KNOCKDOWN = 0;	//[air only?, kd counter, upward force magnitude, upward force decay, down time]
-	public static final int LAUNCH = 1;		//[homing?, xforce magnitude, xforce decay, yforce magnitude, yforce decay, hitstun]
+	public static final int LAUNCH = 1;		//[homing?, interruptible?, xforce magnitude, xforce decay, yforce magnitude, yforce decay, hitstun]
 	
-	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, int[][] pr)
+	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, double[][] pr)
 	{
 		super(x,y,w,h);
 		puppet = p;
@@ -71,7 +71,7 @@ public class Pleb extends Hitbox
 		hitstunDamp = 0;
 		isAttached = a;
 		isProjectile = false;
-		properties = new int[][]{};
+		properties = new double[][]{};
 		
 		forceArchiver = new ArrayList<Force>();
 		appliedForces = new ArrayList<Force>();
