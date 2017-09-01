@@ -135,6 +135,7 @@ abstract class Puppet
 				else
 					g.drawLine((int)((bounds.xHosh-15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720),(int)((bounds.xHosh+15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720));
 				g.fillRect((int)(xHosh*w/1280),(int)(yHosh*h/720),(int)(10*w/1280),(int)(10*h/720));
+				g.fillRect((int)((xHosh+bounds.width-10)*w/1280),(int)((yHosh+bounds.height+bounds.botOffset-10)*h/720),(int)(10*w/1280),(int)(10*h/720));
 				
 				for(Hitbox a: anatomy)
 				{
@@ -233,7 +234,8 @@ abstract class Puppet
 	
 	public void performAction()
 	{
-		currAction.perform(fCounter);
+		if(currAction != null)
+			currAction.perform(fCounter);
 		bounds.xDir = 0;
 		bounds.xDrag = 0;
 		
@@ -242,6 +244,15 @@ abstract class Puppet
 			currAction = null;
 			currState = (isCrouching)? PuppetState.CROUCH:PuppetState.IDLE;
 			fCounter = 0;
+		}
+		
+		if(bounds.isGrounded && bounds.botOffset != 0)
+		{
+			currAction = null;
+			currState = PuppetState.LANDING;
+			isPerformingAction = false;
+			preFrames = 3;
+			bounds.botOffset = 0;
 		}
 	}
 	

@@ -1,6 +1,6 @@
 abstract class Hitbox
 {
-	int /*group,*/ xCoord, yCoord, xHosh, yHosh, width, height;
+	int /*group,*/ xCoord, yCoord, xHosh, yHosh, width, height, botOffset;
 	int xVel, yVel, xDir, yDir, xDrag, yDrag, speed;
 	boolean isFloating, wasFloating, isGrounded, isMovable, isMoving, wasMoving;
 	
@@ -13,6 +13,7 @@ abstract class Hitbox
 		yHosh = yCoord;
 		width = 0;
 		height = 0;
+		botOffset = 0;
 		
 		xVel = 0;
 		yVel = 0;

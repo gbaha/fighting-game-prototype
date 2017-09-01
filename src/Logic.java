@@ -395,7 +395,7 @@ public class Logic
 				{
 					if(f.cornered[0] == null)
 						f.cornered[0] = h1;
-					else if(h1 != f.cornered[0] && y1+h1.height > f.cornered[0].yCoord && h1.yCoord <= f.cornered[0].yCoord)
+					else if(h1 != f.cornered[0] && y1+h1.height+h1.botOffset > f.cornered[0].yCoord && h1.yCoord <= f.cornered[0].yCoord)
 					{
 						h1.xCoord = f.cornered[0].xCoord+f.cornered[0].width;
 						h1.blocked[1] = f.cornered[0].xCoord+f.cornered[0].width;
@@ -406,7 +406,7 @@ public class Logic
 				{
 					if(f.cornered[1] == null)
 						f.cornered[1] = h1;
-					else if(h1 != f.cornered[1] && y1+h1.height > f.cornered[1].yCoord && h1.yCoord <= f.cornered[1].yCoord)
+					else if(h1 != f.cornered[1] && y1+h1.height+h1.botOffset > f.cornered[1].yCoord && h1.yCoord <= f.cornered[1].yCoord)
 					{
 						h1.xCoord = f.cornered[1].xCoord-h1.width;
 						h1.blocked[1] = f.cornered[1].xCoord-h1.width;
@@ -494,7 +494,7 @@ public class Logic
 					if(h2.yDrag != 0)
 						y2 -= h2.yDrift;
 					
-					if(h1.xCoord != h2.xCoord+h2.width && h1.xCoord+h1.width != h2.xCoord && ((h1.xCoord >= h2.xCoord && h1.xCoord < h2.xCoord+h2.width) || (h1.xCoord+h1.width > h2.xCoord && h1.xCoord+h1.width <= h2.xCoord+h2.width) || (h1.xCoord <= h2.xCoord && h1.xCoord+h1.width >= h2.xCoord+h2.width) /*|| (x1 == x2 || x1+h1.height == x2+h2.height)*/))
+					if(h1.xCoord != h2.xCoord+h2.width && h1.xCoord+h1.width != h2.xCoord && ((h1.xCoord >= h2.xCoord && h1.xCoord < h2.xCoord+h2.width) || (h1.xCoord+h1.width > h2.xCoord && h1.xCoord+h1.width <= h2.xCoord+h2.width) || (h1.xCoord <= h2.xCoord && h1.xCoord+h1.width >= h2.xCoord+h2.width) /*|| (x1 == x2 || x1+h1.height+h1.botOffset == x2+h2.height+h2.botOffset)*/))
 					{
 				/*		if(y1 < h1.yCoord || h1.yDir < 0 || h1.yDrag < 0)
 						{
@@ -502,7 +502,7 @@ public class Logic
 							{
 								for(int y = h1.yCoord; y >= y1; y--)
 								{
-									if(y < y2+h2.height && h1.yCoord+h1.height >= y2+h2.height)
+									if(y < y2+h2.height+h2.botOffset && h1.yCoord+h1.height >= y2+h2.height+h2.botOffset)
 									{
 										if(hitboxes.indexOf(h1) < stage.puppets.size())
 										{
@@ -528,15 +528,15 @@ public class Logic
 										else
 											stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.yVel = 0;
 										
-										if(h1.blocked[0] < y2+h2.height || h1.yCoord < y2+h2.height || h1.blocked[0] == h1.yCoord+h1.height/2)
-											h1.yCoord = y2+h2.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
+										if(h1.blocked[0] < y2+h2.height+h2.botOffset || h1.yCoord < y2+h2.height+h2.botOffset || h1.blocked[0] == h1.yCoord+h1.height/2)
+											h1.yCoord = y2+h2.height+h2.botOffset-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
 										y = y1;
 									}
 								}
 								
-								if(h1.yCoord == y2+h2.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1))
+								if(h1.yCoord == y2+h2.height+h2.botOffset-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1))
 								{
-									h1.blocked[0] = y2+h2.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
+									h1.blocked[0] = y2+h2.height+h2.botOffset-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
 									yBlocked = true;
 								}
 							}
@@ -547,7 +547,7 @@ public class Logic
 							{
 								for(int y = h1.yCoord; y <= y1; y++)
 								{
-									if(y+h1.height >= y2 && h1.yCoord <= y2)
+									if(y+h1.height+h1.botOffset >= y2 && h1.yCoord <= y2)
 									{
 									/*	if(hitboxes.indexOf(h1) < stage.puppets.size())
 										{ 
@@ -574,13 +574,13 @@ public class Logic
 												h1.xCoord = x2-h1.width;
 										}
 										
-								/*		if(h1.blocked[2] > y2 || h1.yCoord+h1.height > y2 || h1.blocked[2] == h1.yCoord+h1.height/2)
-											h1.yCoord = y2-h1.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
+								/*		if(h1.blocked[2] > y2 || h1.yCoord+h1.height+h1.botOffset > y2 || h1.blocked[2] == h1.yCoord+h1.height/2)
+											h1.yCoord = y2-h1.height+h1.botOffset-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
 								*/		y = y1;
 									}
 								}
 								
-								if(h1.yCoord == y2-h1.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1))
+								if(h1.yCoord == y2-h1.height+h1.botOffset-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1))
 								{
 							//		h1.blocked[2] = y2-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
 									yBlocked = true;
@@ -593,7 +593,7 @@ public class Logic
 							{
 								for(int y = h2.yCoord; y <= y2; y++)
 								{
-									if(y+h2.height >= y1 && h2.yCoord <= y1)
+									if(y+h2.height+h2.botOffset >= y1 && h2.yCoord <= y1)
 									{
 										if(stage.floors.get(0).cornered[0] == h2)
 											h1.xCoord = h2.xCoord+h2.width;
@@ -607,13 +607,13 @@ public class Logic
 												h2.xCoord = x1-h2.width;
 										}
 										
-								/*		if(h1.blocked[2] > y2 || h1.yCoord+h1.height > y2 || h1.blocked[2] == h1.yCoord+h1.height/2)
-											h1.yCoord = y2-h1.height-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
+								/*		if(h1.blocked[2] > y2 || h1.yCoord+h1.height+h1.botOffset > y2 || h1.blocked[2] == h1.yCoord+h1.height/2)
+											h1.yCoord = y2-h1.height+h1.botOffset-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
 								*/		y = y2;
 									}
 								}
 								
-								if(h2.yCoord == y1-h2.height-(int)(gravity.magnitude+0.5)*((h1.isGrounded)? 0:1))
+								if(h2.yCoord == y1-h2.height+h2.botOffset-(int)(gravity.magnitude+0.5)*((h1.isGrounded)? 0:1))
 								{
 							//		h1.blocked[2] = y2-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
 									yBlocked = true;
@@ -622,7 +622,7 @@ public class Logic
 						}
 					}
 					
-					if(h1.yCoord != h2.yCoord+h2.height && h1.yCoord+h1.height != h2.yCoord && ((h1.yCoord >= h2.yCoord && h1.yCoord < h2.yCoord+h2.height) || (h1.yCoord+h1.height > h2.yCoord && h1.yCoord+h1.height <= h2.yCoord+h2.height) || (h1.yCoord <= h2.yCoord && h1.yCoord+h1.height >= h2.yCoord+h2.height) /*|| (y1 == y2 || y1+h1.height == y2+h2.height)*/))
+					if(h1.yCoord != h2.yCoord+h2.height+h2.botOffset && h1.yCoord+h1.height+h1.botOffset != h2.yCoord && ((h1.yCoord >= h2.yCoord && h1.yCoord < h2.yCoord+h2.height+h2.height) || (h1.yCoord+h1.height+h1.botOffset > h2.yCoord && h1.yCoord+h1.height <= h2.yCoord+h2.height) || (h1.yCoord <= h2.yCoord && h1.yCoord+h1.height+h1.botOffset >= h2.yCoord+h2.height+h2.botOffset) /*|| (y1 == y2 || y1+h1.height+h1.botOffset == y2+h2.height+h2.botOffset)*/))
 					{
 						if(x1 > h1.xCoord || h1.xDir > 0 || h1.xDrag > 0)
 						{
@@ -847,7 +847,7 @@ public class Logic
 					
 				/*	if((h1.xCoord >= h2.xCoord && h1.xCoord <= h2.xCoord+h2.width) || (h1.xCoord+h1.width >= h2.xCoord && h1.xCoord+h1.width <= h2.xCoord+h2.width) || (h1.xCoord <= h2.xCoord && h1.xCoord+h1.width >= h2.xCoord+h2.width))
 					{
-						if((h1.yCoord >= h2.yCoord && h1.yCoord <= h2.yCoord+h2.height) || (h1.yCoord+h1.height >= h2.yCoord && h1.yCoord+h1.height <= h2.yCoord+h2.height) || (h1.yCoord <= h2.yCoord && h1.yCoord+h1.height >= h2.yCoord+h2.height))
+						if((h1.yCoord >= h2.yCoord && h1.yCoord <= h2.yCoord+h2.height+h2.botOffset) || (h1.yCoord+h1.height+h1.botOffset >= h2.yCoord && h1.yCoord+h1.height+h1.botOffset <= h2.yCoord+h2.height+h2.botOffset) || (h1.yCoord <= h2.yCoord && h1.yCoord+h1.height+h1.botOffset >= h2.yCoord+h2.height+h2.botOffset))
 						{
 							int[] t = new int[]{-1,-1};
 							if(hitboxes.indexOf(h2) < stage.puppets.size())
@@ -884,10 +884,10 @@ public class Logic
 			
 			for(Floor f: stage.floors)
 			{
-		//		if(h1.yCoord != f.yCoord+f.height && h1.yCoord+h1.height != f.yCoord && ((x1 > f.xCoord && x1 < f.xCoord+f.width) || (x1+h1.width > f.xCoord && x1+h1.width < x1+f.width)) && ((y1 > f.yCoord && y1 < f.yCoord+f.height) || (y1+h1.height >= f.yCoord && y1+h1.height < f.yCoord+f.height)))
+		//		if(h1.yCoord != f.yCoord+f.height && h1.yCoord+h1.height+h1.botOffset != f.yCoord && ((x1 > f.xCoord && x1 < f.xCoord+f.width) || (x1+h1.width > f.xCoord && x1+h1.width < x1+f.width)) && ((y1 > f.yCoord && y1 < f.yCoord+f.height) || (y1+h1.height+h1.botOffset >= f.yCoord && y1+h1.height+h1.botOffset < f.yCoord+f.height)))
 				if(/*h1.xCoord != f.xCoord+f.width && h1.xCoord+h1.width != f.xCoord &&*/ ((x1+h1.width > f.xCoord && x1 < f.xCoord+f.width) || (h1.xCoord+h1.width > f.xCoord && h1.xCoord < f.xCoord+f.width) /*|| (x1+h1.width > f.xCoord && x1+h1.width < f.xCoord+f.width) /*|| (x1 == f.xCoord || x1+h1.width == f.xCoord+f.width)*/))
 				{
-					if(/*h1.yCoord != f.yCoord+f.height && h1.yCoord+h1.height != f.yCoord &&*/ ((y1+h1.height > f.yCoord && y1 < f.yCoord+f.height) || (h1.yCoord+h1.height > f.yCoord && h1.yCoord < f.yCoord+f.height) /*|| (y1+h1.height > f.yCoord && y1+h1.height < f.yCoord+f.height) /*|| (y1 == f.yCoord || y1+h1.height == f.yCoord+f.height)*/))
+					if(/*h1.yCoord != f.yCoord+f.height && h1.yCoord+h1.height+h1.botOffset != f.yCoord &&*/ ((y1+h1.height+h1.botOffset > f.yCoord && y1 < f.yCoord+f.height) || (h1.yCoord+h1.height+h1.botOffset > f.yCoord && h1.yCoord < f.yCoord+f.height) /*|| (y1+h1.height+h1.botOffset > f.yCoord && y1+h1.height+h1.botOffset < f.yCoord+f.height) /*|| (y1 == f.yCoord || y1+h1.height+h1.botOffset == f.yCoord+f.height)*/))
 					{
 						if(x1 > h1.xCoord || h1.xDir > 0 || h1.xDrag > 0 || h1.blocked[1] != h1.xCoord+h1.width/2)
 						{
@@ -895,7 +895,7 @@ public class Logic
 							{
 								for(int[] w: f.walls[1])
 								{
-									if((y1 > w[0] && y1 < w[1] && (h1.yCoord < w[1] || h1.blocked[0] != w[1])) || (y1+h1.height > w[0] && y1+h1.height <= w[1] && (h1.yCoord+h1.height > w[0] || h1.blocked[2] != w[0])))
+									if((y1 > w[0] && y1 < w[1] && (h1.yCoord < w[1] || h1.blocked[0] != w[1])) || (y1+h1.height+h1.botOffset > w[0] && y1+h1.height+h1.botOffset <= w[1] && (h1.yCoord+h1.height+h1.botOffset > w[0] || h1.blocked[2] != w[0])))
 									{
 										if(x+h1.width >= f.xCoord+f.width && h1.xCoord <= f.xCoord+f.width /*&& !xBlocked*/)
 										{
@@ -937,7 +937,7 @@ public class Logic
 							{
 								for(int[] w: f.walls[3])
 								{
-									if((y1 > w[0] && y1 < w[1] && (h1.yCoord < w[1] || h1.blocked[0] != w[1])) || (y1+h1.height > w[0] && y1+h1.height <= w[1] && h1.blocked[2] != w[0]))
+									if((y1 > w[0] && y1 < w[1] && (h1.yCoord < w[1] || h1.blocked[0] != w[1])) || (y1+h1.height > w[0] && y1+h1.height+h1.botOffset <= w[1] && h1.blocked[2] != w[0]))
 									{
 										if(x < f.xCoord && h1.xCoord+h1.width >= f.xCoord /*&& !xBlocked*/)
 										{
@@ -982,7 +982,7 @@ public class Logic
 								{
 									if((x1 > w[0] && x1 < w[1] && (h1.xCoord < w[1] || h1.blocked[3] != w[1])) || (x1+h1.width > w[0] && x1+h1.width < w[1] && (h1.xCoord+h1.width > w[0] || h1.blocked[1] != w[0])))
 									{
-										if(y < f.yCoord && h1.yCoord+h1.height >= f.yCoord /*&& !yBlocked*/)
+										if(y < f.yCoord && h1.yCoord+h1.height+h1.botOffset >= f.yCoord /*&& !yBlocked*/)
 										{
 											if(hitboxes.indexOf(h1) < stage.puppets.size())
 											{
@@ -1039,7 +1039,7 @@ public class Logic
 								{
 									if((x1 > w[0] && x1 < w[1] && (h1.xCoord < w[1] || h1.blocked[3] != w[1])) || (x1+h1.width > w[0] && x1+h1.width < w[1] && (h1.xCoord+h1.width > w[0] || h1.blocked[1] != w[0])))
 									{
-										if(y+h1.height >= f.yCoord+f.height && h1.yCoord <= f.yCoord+f.height /*&& !yBlocked*/)
+										if(y+h1.height+h1.botOffset >= f.yCoord+f.height && h1.yCoord <= f.yCoord+f.height /*&& !yBlocked*/)
 										{
 											if(hitboxes.indexOf(h1) < stage.puppets.size())
 											{
@@ -1056,12 +1056,15 @@ public class Logic
 											}
 											h1.yVel = 0;
 											
-											if(h1.blocked[2] > f.yCoord+f.height || h1.yCoord+h1.height > f.yCoord+f.height || h1.blocked[2] == h1.yCoord+h1.height/2)
+											if(h1.blocked[2] > f.yCoord+f.height || h1.yCoord+h1.height+h1.botOffset > f.yCoord+f.height || h1.blocked[2] == h1.yCoord+h1.height/2)
+											{
 												h1.yCoord = f.yCoord+f.height-h1.height;	//f.yCoord+f.height-h1.yCoord-h1.height+stage.puppets.get(hitboxes.indexOf(h1)).bounds.yCoord;
+									//			h1.botOffset = 0;
+											}
 											y = y1;
 										}
 										
-										if(h1.yCoord == f.yCoord+f.height-h1.height)
+										if(h1.yCoord == f.yCoord+f.height-h1.height-h1.botOffset)
 										{
 											h1.blocked[2] = f.yCoord+f.height;
 											yBlocked = true;
@@ -1202,7 +1205,7 @@ public class Logic
 					else if(h.bounds.yDrag != 0)
 						y2 -= h.bounds.yDrift;
 					
-					if(p.yCoord != h.bounds.yCoord+h.height && p.yCoord+p.height != h.bounds.yCoord && ((p.yCoord >= h.bounds.yCoord && p.yCoord < h.bounds.yCoord+h.height) || (p.yCoord+p.height > h.bounds.yCoord && p.yCoord+p.height <= h.bounds.yCoord+h.height) || (p.yCoord <= h.bounds.yCoord && p.yCoord+p.height >= h.bounds.yCoord+h.height)))
+					if(p.yCoord != h.bounds.yCoord+h.height+h.botOffset && p.yCoord+p.height != h.bounds.yCoord && ((p.yCoord >= h.bounds.yCoord && p.yCoord < h.bounds.yCoord+h.height+h.botOffset) || (p.yCoord+p.height > h.bounds.yCoord && p.yCoord+p.height <= h.bounds.yCoord+h.height+h.botOffset) || (p.yCoord <= h.bounds.yCoord && p.yCoord+p.height >= h.bounds.yCoord+h.height+h.botOffset)))
 					{
 						int x = p.xCoord;
 						if(p.xCoord < x1)
@@ -1240,7 +1243,7 @@ public class Logic
 						{
 							for(int y0 = p.yCoord; y0 >= y1; y0--)
 							{
-								if(y0 < y2+h.height && ((p.yCoord >= y2 && p.yCoord <= y2+h.height) || p.yCoord+p.height >= y2+h.height) && (y == p.yCoord || y > y2+h.height))
+								if(y0 < y2+h.height+h.botOffset && ((p.yCoord >= y2 && p.yCoord <= y2+h.height+h.botOffset) || p.yCoord+p.height >= y2+h.height+h.botOffset) && (y == p.yCoord || y > y2+h.height+h.botOffset))
 								{
 									y = y2+h.height;
 									z = stage.props.indexOf(h)+stage.puppets.size();
@@ -1251,7 +1254,7 @@ public class Logic
 						{
 							for(int y0 = p.yCoord; y0 <= y1; y0++)
 							{
-								if(y1+p.height > y2 && (p.yCoord <= y2 || (p.yCoord+p.height >= y2 && p.yCoord+p.height <= y2+h.height)) && (y == p.yCoord || y > y2))
+								if(y1+p.height > y2 && (p.yCoord <= y2 || (p.yCoord+p.height >= y2 && p.yCoord+p.height <= y2+h.height+h.botOffset)) && (y == p.yCoord || y > y2))
 								{
 									y = y2;
 									z = stage.props.indexOf(h)+stage.puppets.size();
@@ -1260,7 +1263,7 @@ public class Logic
 						}
 						else
 						{
-							if((y1+p.height > y2 && p.yCoord <= y2) || (y1 < y2+h.height && p.yCoord+p.height >= y2+h.height))
+							if((y1+p.height > y2 && p.yCoord <= y2) || (y1 < y2+h.height && p.yCoord+p.height >= y2+h.height+h.botOffset))
 								z = stage.props.indexOf(h)+stage.puppets.size();
 						}
 					}
@@ -1285,7 +1288,7 @@ public class Logic
 						else if(o.yDrag != 0)
 							y2 -= o.yDrift;
 						
-						if(p.yCoord != o.yCoord+h.height && p.yCoord+p.height != o.yCoord && ((p.yCoord >= o.yCoord && p.yCoord < o.yCoord+h.height) || (p.yCoord+p.height > o.yCoord && p.yCoord+p.height <= o.yCoord+h.height) || (p.yCoord <= o.yCoord && p.yCoord+p.height >= o.yCoord+h.height)))
+						if(p.yCoord != o.yCoord+h.height+h.botOffset && p.yCoord+p.height != o.yCoord && ((p.yCoord >= o.yCoord && p.yCoord < o.yCoord+h.height+h.botOffset) || (p.yCoord+p.height > o.yCoord && p.yCoord+p.height <= o.yCoord+h.height+h.botOffset) || (p.yCoord <= o.yCoord && p.yCoord+p.height >= o.yCoord+h.height+h.botOffset)))
 						{
 							int x = p.xCoord;
 							if(p.xCoord < x1)
@@ -1323,7 +1326,7 @@ public class Logic
 							{
 								for(int y0 = p.yCoord; y0 >= y1; y0--)
 								{
-									if(y0 < y2+h.height && ((p.yCoord >= y2 && p.yCoord <= y2+h.height) || p.yCoord+p.height >= y2+h.height) && (y == p.yCoord || y > y2+h.height))
+									if(y0 < y2+h.height+h.botOffset && ((p.yCoord >= y2 && p.yCoord <= y2+h.height+h.botOffset) || p.yCoord+p.height >= y2+h.height+h.botOffset) && (y == p.yCoord || y > y2+h.height+h.botOffset))
 									{
 										y = y2+h.height;
 										z = stage.puppets.indexOf(h);
@@ -1334,7 +1337,7 @@ public class Logic
 							{
 								for(int y0 = p.yCoord; y0 <= y1; y0++)
 								{
-									if(y1+p.height > y2 && (p.yCoord <= y2 || (p.yCoord+p.height >= y2 && p.yCoord+p.height <= y2+h.height)) && (y == p.yCoord || y > y2))
+									if(y1+p.height > y2 && (p.yCoord <= y2 || (p.yCoord+p.height >= y2 && p.yCoord+p.height <= y2+h.height+h.botOffset)) && (y == p.yCoord || y > y2))
 									{
 										y = y2;
 										z = stage.puppets.indexOf(h);
@@ -1343,7 +1346,7 @@ public class Logic
 							}
 							else
 							{
-								if((y1+p.height > y2 && p.yCoord <= y2) || (y1 < y2+h.height && p.yCoord+p.height >= y2+h.height))
+								if((y1+p.height > y2 && p.yCoord <= y2) || (y1 < y2+h.height+h.botOffset && p.yCoord+p.height >= y2+h.height+h.botOffset))
 									z = stage.puppets.indexOf(h);
 							}
 						}
@@ -1401,14 +1404,14 @@ public class Logic
 					hIndex = h.indexOf(i);
 				}
 				
-				if(y > 0 && j.yCoord+j.height+y >= i.yCoord && j.yCoord < i.yCoord && (yClosest == 0 || Math.abs(yClosest) > Math.abs(j.yCoord+j.height+y-i.height)))
+				if(y > 0 && j.yCoord+j.height+j.botOffset+y >= i.yCoord && j.yCoord < i.yCoord && (yClosest == 0 || Math.abs(yClosest) > Math.abs(j.yCoord+j.height+j.botOffset+y-(i.height+i.botOffset))))
 				{
-					yClosest = j.yCoord+j.height+y-i.height;
+					yClosest = j.yCoord+j.height+j.botOffset+y-(i.height+i.botOffset);
 					hIndex = h.indexOf(i);
 				}
-				else if(y < 0 && j.yCoord+y <= i.yCoord+i.height && j.yCoord > i.yCoord && (yClosest == 0 || Math.abs(yClosest) > Math.abs(j.yCoord+y-(i.yCoord+i.height))))
+				else if(y < 0 && j.yCoord+y <= i.yCoord+i.height+i.botOffset && j.yCoord > i.yCoord && (yClosest == 0 || Math.abs(yClosest) > Math.abs(j.yCoord+y-(i.yCoord+i.height+i.botOffset))))
 				{
-					yClosest = j.yCoord+y-(i.yCoord+i.height);
+					yClosest = j.yCoord+y-(i.yCoord+i.height+i.botOffset);
 					hIndex = h.indexOf(i);
 				}
 			}
@@ -1422,7 +1425,7 @@ public class Logic
 			{
 				if(o != j)
 				{
-					if(j.yCoord != o.yCoord+o.height && j.yCoord+j.height != o.yCoord && ((j.yCoord >= o.yCoord && j.yCoord < o.yCoord+o.height) || (j.yCoord+j.height > o.yCoord && j.yCoord+j.height <= o.yCoord+o.height) || (j.yCoord <= o.yCoord && j.yCoord+j.height >= o.yCoord+o.height) /*|| (y1 == y2 || y1+j.height == y2+o.height)*/))
+					if(j.yCoord != o.yCoord+o.height+o.botOffset && j.yCoord+j.height+j.botOffset != o.yCoord && ((j.yCoord >= o.yCoord && j.yCoord < o.yCoord+o.height+o.botOffset) || (j.yCoord+j.height+j.botOffset > o.yCoord && j.yCoord+j.height+j.botOffset <= o.yCoord+o.height+o.botOffset) || (j.yCoord <= o.yCoord && j.yCoord+j.height+j.botOffset >= o.yCoord+o.height+o.botOffset) /*|| (y1 == y2 || y1+j.height+j.botOffset == y2+o.height+o.botOffset)*/))
 					{
 						if(x > 0)
 						{
@@ -1469,7 +1472,7 @@ public class Logic
 						j.blocked[3] = j.xCoord+j.width/2;
 					}*/
 					
-					if(j.xCoord != o.xCoord+o.width && j.xCoord+j.width != o.xCoord && ((j.xCoord >= o.xCoord && j.xCoord < o.xCoord+o.width) || (j.xCoord+j.width > o.xCoord && j.xCoord+j.width <= o.xCoord+o.width) || (j.xCoord <= o.xCoord && j.xCoord+j.width >= o.xCoord+o.width) /*|| (x1 == x2 || x1+j.height == x2+o.height)*/))
+					if(j.xCoord != o.xCoord+o.width && j.xCoord+j.width != o.xCoord && ((j.xCoord >= o.xCoord && j.xCoord < o.xCoord+o.width) || (j.xCoord+j.width > o.xCoord && j.xCoord+j.width <= o.xCoord+o.width) || (j.xCoord <= o.xCoord && j.xCoord+j.width >= o.xCoord+o.width) /*|| (x1 == x2 || x1+j.width == x2+o.width)*/))
 					{
 						if(y < 0)
 						{
@@ -1477,15 +1480,15 @@ public class Logic
 							{
 								for(int z = j.yCoord; z >= y; z--)
 								{
-									if(z < o.yCoord+o.height && j.yCoord+j.height >= o.yCoord+o.height)
+									if(z < o.yCoord+o.height+o.botOffset && j.yCoord+j.height+j.botOffset >= o.yCoord+o.height+o.botOffset)
 									{
-										if(j.blocked[0] < o.yCoord+o.height || j.yCoord < o.yCoord+o.height || j.blocked[0] == j.yCoord+j.height/2)
+										if(j.blocked[0] < o.yCoord+o.height+o.botOffset || j.yCoord < o.yCoord+o.height+o.botOffset || j.blocked[0] == j.yCoord+j.height/2)
 											j.yCoord = o.yCoord+o.height-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1);
 										z = y;
 									}
 								}
 								
-								if(j.yCoord == o.yCoord+o.height-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1))
+								if(j.yCoord == o.yCoord+o.height+o.botOffset-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1))
 								{
 									j.blocked[0] = o.yCoord+o.height-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1);
 									yBlocked = true;
@@ -1498,15 +1501,15 @@ public class Logic
 							{
 								for(int z = j.yCoord; z <= y; z++)
 								{
-									if(z+j.height >= o.yCoord && j.yCoord <= o.yCoord)
+									if(z+j.height+j.botOffset >= o.yCoord && j.yCoord <= o.yCoord)
 									{
-										if(j.blocked[2] > o.yCoord || j.yCoord+j.height > o.yCoord || j.blocked[2] == j.yCoord+j.height/2)
+										if(j.blocked[2] > o.yCoord || j.yCoord+j.height+j.botOffset > o.yCoord || j.blocked[2] == j.yCoord+j.height/2)
 											j.yCoord = o.yCoord-j.height-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1);
 										z = y;
 									}
 								}
 								
-								if(j.yCoord == o.yCoord-j.height-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1))
+								if(j.yCoord == o.yCoord-j.height-j.botOffset-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1))
 								{
 									j.blocked[2] = o.yCoord-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1);
 									yBlocked = true;
@@ -1517,7 +1520,7 @@ public class Logic
 					
 				/*	if((j.xCoord >= o.xCoord && j.xCoord <= o.xCoord+o.width) || (j.xCoord+j.width >= o.xCoord && j.xCoord+j.width <= o.xCoord+o.width) || (j.xCoord <= o.xCoord && j.xCoord+j.width >= o.xCoord+o.width))
 					{
-						if((j.yCoord >= o.yCoord && j.yCoord <= o.yCoord+o.height) || (j.yCoord+j.height >= o.yCoord && j.yCoord+j.height <= o.yCoord+o.height) || (j.yCoord <= o.yCoord && j.yCoord+j.height >= o.yCoord+o.height))
+						if((j.yCoord >= o.yCoord && j.yCoord <= o.yCoord+o.height+o.botOffset) || (j.yCoord+j.height+j.botOffset >= o.yCoord && j.yCoord+j.height+j.botOffset <= o.yCoord+o.height+o.botOffset) || (j.yCoord <= o.yCoord && j.yCoord+j.height+j.botOffset >= o.yCoord+o.height+o.botOffset))
 						{
 							int[] t = new int[]{-1,-1};
 							if(h.indexOf(o) < stage.puppets.size())
@@ -1556,7 +1559,7 @@ public class Logic
 			{
 				if((j.xCoord+j.width+x > f.xCoord && j.xCoord+x < f.xCoord+f.width) || (j.xCoord+j.width > f.xCoord && j.xCoord < f.xCoord+f.width))
 				{
-					if((j.yCoord+j.height+y > f.yCoord && j.yCoord+y < f.yCoord+f.height) || (j.yCoord+j.height > f.yCoord && j.yCoord < f.yCoord+f.height))
+					if((j.yCoord+j.height+j.botOffset+y > f.yCoord && j.yCoord+y < f.yCoord+f.height) || (j.yCoord+j.height+j.botOffset > f.yCoord && j.yCoord < f.yCoord+f.height))
 					{
 						if(x > 0)
 						{
@@ -1564,7 +1567,7 @@ public class Logic
 							{
 								for(int[] w: f.walls[1])
 								{
-									if((j.yCoord+y > w[0] && j.yCoord+y < w[1] && (j.yCoord < w[1] || j.blocked[0] != w[1])) || (j.yCoord+j.height+y > w[0] && j.yCoord+j.height+y <= w[1] && (j.yCoord+j.height > w[0] || j.blocked[2] != w[0])))
+									if((j.yCoord+y > w[0] && j.yCoord+y < w[1] && (j.yCoord < w[1] || j.blocked[0] != w[1])) || (j.yCoord+j.height+j.botOffset+y > w[0] && j.yCoord+j.height+j.botOffset+y <= w[1] && (j.yCoord+j.height+j.botOffset > w[0] || j.blocked[2] != w[0])))
 									{
 										if(z+j.width >= f.xCoord+f.width && j.xCoord <= f.xCoord+f.width /*&& !xBlocked*/)
 										{
@@ -1595,7 +1598,7 @@ public class Logic
 							{
 								for(int[] w: f.walls[3])
 								{
-									if((j.yCoord+y > w[0] && j.yCoord+y < w[1] && (j.yCoord < w[1] || j.blocked[0] != w[1])) || (j.yCoord+j.height+y > w[0] && j.yCoord+j.height+y <= w[1] && j.blocked[2] != w[0]))
+									if((j.yCoord+y > w[0] && j.yCoord+y < w[1] && (j.yCoord < w[1] || j.blocked[0] != w[1])) || (j.yCoord+j.height+j.botOffset+y > w[0] && j.yCoord+j.height+j.botOffset+y <= w[1] && j.blocked[2] != w[0]))
 									{
 										if(z < f.xCoord && j.xCoord+j.width >= f.xCoord /*&& !xBlocked*/)
 										{
@@ -1628,7 +1631,7 @@ public class Logic
 								{
 									if((j.xCoord+x > w[0] && j.xCoord+x < w[1] && (j.xCoord < w[1] || j.blocked[3] != w[1])) || (j.xCoord+j.width+x > w[0] && j.xCoord+j.width+x < w[1] && (j.xCoord+j.width > w[0] || j.blocked[1] != w[0])))
 									{
-										if(z < f.yCoord && j.yCoord+j.height >= f.yCoord /*&& !yBlocked*/)
+										if(z < f.yCoord && j.yCoord+j.height+j.botOffset >= f.yCoord /*&& !yBlocked*/)
 										{
 											if(j.blocked[0] < f.yCoord  || j.yCoord < f.yCoord || j.blocked[0] == j.yCoord+j.height/2)
 												j.yCoord = f.yCoord;	//f.yCoord-j.yCoord+j.yCoord;
@@ -1659,15 +1662,15 @@ public class Logic
 								{
 									if((j.xCoord+x > w[0] && j.xCoord+x < w[1] && (j.xCoord < w[1] || j.blocked[3] != w[1])) || (j.xCoord+j.width+x > w[0] && j.xCoord+j.width+x < w[1] && (j.xCoord+j.width > w[0] || j.blocked[1] != w[0])))
 									{
-										if(z+j.height >= f.yCoord+f.height && j.yCoord <= f.yCoord+f.height /*&& !yBlocked*/)
+										if(z+j.height+j.botOffset >= f.yCoord+f.height && j.yCoord <= f.yCoord+f.height /*&& !yBlocked*/)
 										{
-											if(j.blocked[2] > f.yCoord+f.height || j.yCoord+j.height > f.yCoord+f.height || j.blocked[2] == j.yCoord+j.height/2)
+											if(j.blocked[2] > f.yCoord+f.height || j.yCoord+j.height+j.botOffset > f.yCoord+f.height || j.blocked[2] == j.yCoord+j.height/2)
 												j.yCoord = f.yCoord+f.height-j.height;	//f.yCoord+f.height-j.yCoord-j.height+stage.puppets.get(h.indexOf(j)).bounds.yCoord;
 											j.yVel = 0;
 											z = j.yCoord+y;
 										}
 										
-										if(j.yCoord == f.yCoord+f.height-j.height)
+										if(j.yCoord == f.yCoord+f.height-j.height-j.botOffset)
 										{
 											j.blocked[2] = f.yCoord+f.height;
 											yBlocked = true;
@@ -1716,9 +1719,9 @@ public class Logic
 			{
 				applyNewtonsThird(0,yClosest,h.get(hIndex),h);
 				if(yClosest > 0)
-					j.yCoord = h.get(hIndex).yCoord-j.height;
+					j.yCoord = h.get(hIndex).yCoord-j.height-j.botOffset;
 				else
-					j.yCoord = h.get(hIndex).yCoord+h.get(hIndex).height;
+					j.yCoord = h.get(hIndex).yCoord+h.get(hIndex).height+h.get(hIndex).botOffset;
 			}
 		}
 	}

@@ -386,12 +386,12 @@ public class Gui extends JPanel
 		if(!gamePaused)
 		{
 			for(int[] i: hitCounter)
-			{System.out.println(i[1]);
+			{
 				if(i[1] > 0)
 					i[1]--;
 				else
 					i[0] = 0;
-			}System.out.println();
+			}
 			
 /*			if(eTick == 0)
 				eTick = 20;

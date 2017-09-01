@@ -135,6 +135,9 @@ public class Player extends Puppet
 			{
 				currAction = a;
 				a.button = -1;
+				
+				jDirections[1] = 0;
+				isHoming = false;
 			}
 		}
 		else //if(currAction.isCancelable(hitInfo[0],fCounter,currAction.type,currAction.button))
@@ -143,6 +146,9 @@ public class Player extends Puppet
 			a.button = -1;
 			fCounter = 0;
 	//		sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+			
+			jDirections[1] = 0;
+			isHoming = false;
 		}
 	}
 	
@@ -470,7 +476,7 @@ public class Player extends Puppet
 		
 		public FrontDash()
 		{
-			super(Action.DASH,0,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{false,false,false},new int[]{10,99,-1,-1,10,99},new boolean[]{true,true});
+			super(Action.DASH,0,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{true,true,true},new int[]{8,99,-1,-1,8,99},new boolean[]{true,true});
 			magnitude = 35;
 			decay = 2;
 			frames = (int)(magnitude/decay)+((magnitude/decay == (int)(magnitude/decay))? 0:1)+1;
@@ -481,8 +487,7 @@ public class Player extends Puppet
 			isPerformingAction = true;
 			if(f >= frames)
 			{
-				if(!bounds.isGrounded)
-					jDirections[0] = (isFacingRight)? 1:-1;
+				jDirections[0] = (isFacingRight && jDirections[0] != -1)? 1:-1;
 				jDirections[1] = -1;
 				isPerformingAction = false;
 				target = null;
@@ -509,6 +514,7 @@ public class Player extends Puppet
 						}
 						if(!j)
 							bounds.forceArchiver.add(new Force("xJump",d,6,6));
+						jDirections[0] = (isFacingRight)? 1:-1;
 						aDash++;
 					}
 				}
@@ -524,7 +530,7 @@ public class Player extends Puppet
 		
 		public BackDash()
 		{
-			super(Action.DASH,0,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{false,false,false},new int[]{10,99,-1,-1,10,99},new boolean[]{true,true});
+			super(Action.DASH,0,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{true,true,true},new int[]{8,99,-1,-1,8,99},new boolean[]{true,true});
 			magnitude = 28;
 			decay = 2;
 			frames = (int)(magnitude/decay)+((magnitude/decay == (int)(magnitude/decay))? 0:1)+1;
@@ -535,8 +541,7 @@ public class Player extends Puppet
 			isPerformingAction = true;
 			if(f >= frames)
 			{
-				if(!bounds.isGrounded)
-					jDirections[0] = (isFacingRight)? -1:1;
+				jDirections[0] = (isFacingRight && jDirections[0] != 1)? -1:1;
 				jDirections[1] = -1;
 				isPerformingAction = false;
 				target = null;
@@ -563,7 +568,7 @@ public class Player extends Puppet
 						}
 						if(!j)
 							bounds.forceArchiver.add(new Force("xJump",d,4,4));
-						jDirections[1] = -1;
+						jDirections[0] = (isFacingRight)? -1:1;
 						aDash++;
 					}
 				}
@@ -577,12 +582,12 @@ public class Player extends Puppet
 	{
 		public HomingJump()
 		{
-			super(Action.JUMP,0,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{true,true,true},new int[]{-1,-1,-1,-1,1,99},new boolean[]{true,true});
+			super(Action.SPECIAL,0,new int[]{0,1,2,3,4,5},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{false,false,false},new int[]{-1,-1,-1,-1,12,99},new boolean[]{true,true});
 			frames = 30;
 		}
 		
 		public void perform(int f)
-		{
+		{System.out.println(f);
 			isPerformingAction = true;
 			if(f >= frames)
 			{
@@ -603,7 +608,7 @@ public class Player extends Puppet
 					else
 					{
 						double x = (target.bounds.xCoord-bounds.xCoord)*0.1;
-						double y = (target.bounds.yCoord-bounds.yCoord)*0.2;
+						double y = (target.bounds.yCoord-bounds.yCoord)*0.9;	//*0.2;
 						bounds.isGrounded = false;
 						isHoming = true;
 						

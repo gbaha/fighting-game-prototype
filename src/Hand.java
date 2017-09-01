@@ -92,7 +92,21 @@ public class Hand implements KeyListener	//, MouseListener
 			//INPUT CHECKS
 			if(stickArchiver[0])
 			{
-				if(player.currAction == null)
+				boolean j = (player.currAction == null);
+				if(!j)
+				{
+					if(player.currAction.isCancelable(player.hitInfo[0],player.fCounter,Action.JUMP,currButton,player.bounds.isGrounded))
+					{
+						player.currAction = null;
+						player.isPerformingAction = false;
+						
+						if(player.bounds.isGrounded)
+							player.bounds.botOffset = 0;
+						j = true;
+					}
+				}
+				
+				if(j)
 				{
 					if(player.jDirections[1] == 0 && player.airOptions > player.aDash+player.jCount && player.jCount < player.jumpLimit && !player.isBlocking[0] && !player.isBlocking[1])
 					{
@@ -108,7 +122,17 @@ public class Hand implements KeyListener	//, MouseListener
 							player.preFrames = 2;
 					}
 					
-				/*	if(player.bounds.isGrounded && !player.bounds.isFloating)
+					for(Force f: player.bounds.forceArchiver)
+					{
+						if(f.type.equals("dash"))
+						{
+							f.decay = f.magnitude;
+							if(j && player.jDirections[0] == 0)
+								player.jDirections[0] = (f.direction == 3)? 1:-1;
+						}
+					}
+					
+					/*	if(player.bounds.isGrounded && !player.bounds.isFloating)
 					{
 						if(stickArchiver[1])
 							player.jDirections[0] = 1;
@@ -133,7 +157,7 @@ public class Hand implements KeyListener	//, MouseListener
 			{
 				if(stickArchiver[2])
 				{
-					if(player.bounds.isGrounded)
+					if(player.bounds.isGrounded && !player.isDashing)
 					{
 						player.isCrouching = true;
 						player.bounds.xDir = 0;
@@ -324,6 +348,9 @@ public class Hand implements KeyListener	//, MouseListener
 						player.currAction.target = t;
 						player.fCounter = 0;
 						player.sIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
+						
+						if(player.bounds.isGrounded)
+							player.bounds.botOffset = 0;
 					}
 				}
 				player.actions[player.movelist.indexOf(m)].button = currButton;
@@ -341,6 +368,9 @@ public class Hand implements KeyListener	//, MouseListener
 				player.currAction.target = t;
 				player.fCounter = 0;
 				player.sIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
+				
+				if(player.bounds.isGrounded)
+					player.bounds.botOffset = 0;
 			}
 			player.currAction.button = currButton;
 		}
