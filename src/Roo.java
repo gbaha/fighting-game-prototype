@@ -452,32 +452,32 @@ public class Roo extends Player
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90}});
 		
 		//JUMPING LP
-		hitboxArchiver.add(new int[][]{new int[]{32,0,5,0,2},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		hitboxArchiver.add(new int[][]{new int[]{32,0,3,0,2},
+			new int[]{96,-42,53,50,	0,0,150,55,	-56,36,160,125,	56,-100,100,100},
+			new int[]{96,-42,53,50,	0,0,150,55,	-56,36,145,125,	80,-70,100,125},
+			new int[]{96,-42,53,50,	0,0,185,50,	-32,32,120,125},
+			new int[]{96,-42,53,50,	0,0,185,50,	-32,32,120,125},
+			new int[]{96,-42,53,50,	0,0,185,50,	-32,32,120,125},
+			new int[]{96,-42,53,50,	0,0,185,50,	-32,32,120,125}});
 		//JUMPING MP
 		hitboxArchiver.add(new int[][]{new int[]{33,0,7,0,2},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+			new int[]{24,-62,53,50,	-32,-30,135,35,	-24,5,185,50,	-24,60,170,55,	-24,120,110,65},
+			new int[]{48,-45,53,50,	-72,-30,180,55,	-24,30,130,65, -42,100,180,60},
+			new int[]{48,-45,53,50,	0,-30,120,55,	0,30,100,35, -42,70,180,60, 0,135,100,35, 140,-60,60,85},
+			new int[]{48,-45,53,50,	0,-30,120,55,	0,30,100,35, -42,70,180,60, 0,135,100,35, 140,-60,60,85},
+			new int[]{48,-45,53,50,	0,-30,120,55,	0,30,100,35, -42,70,180,60, 0,135,100,35, 140,-60,60,85},
+			new int[]{48,-45,53,50,	0,-30,120,55,	0,30,100,35, -42,70,180,60, 0,135,100,35, 140,-60,60,85},
+			new int[]{22,-45,53,50,	-32,-20,150,40,	-32,20,190,50,	-32,75,170,60,	-32,140,135,65},
+			new int[]{35,-56,53,50,	-48,-25,136,80,	-10,38,150,80,	-10,118,103,125}});
 		//JUMPING HP
 		hitboxArchiver.add(new int[][]{new int[]{34,0,6,0,2},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+			new int[]{40,-62,53,50,	-72,-25,175,35,	0,15,175,35,	-42,55,185,95},
+			new int[]{64,-48,53,50,	-32,-25,130,35,	0,20,100,50,	-75,75,215,70},
+			new int[]{64,-48,53,50,	-16,-25,130,35,	0,20,100,50,	-75,75,200,70,	105,-10,100,80},
+			new int[]{64,-48,53,50,	-16,-25,130,35,	0,20,100,50,	-75,75,200,70,	105,-10,100,80},
+			new int[]{64,-48,53,50,	-16,-25,130,35,	0,20,100,50,	-75,75,200,70,	105,-10,100,80},
+			new int[]{64,-48,53,50,	-16,-25,130,35,	0,20,100,50,	-75,75,200,70,	105,-10,100,80},
+			new int[]{48,-48,53,50,	-16,-25,130,35,	0,20,180,50,	-50,75,175,80}});
 		//JUMPING LK
 		hitboxArchiver.add(new int[][]{new int[]{19,0,1,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
@@ -551,7 +551,14 @@ public class Roo extends Player
 		
 		public LightPunch(Roo r)
 		{
-			super(Action.NORMAL,1,new int[]{0,1,3,4},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{3,10,3,10,-1,-1},new boolean[]{true,true});
+			super(Action.NORMAL,1,
+				new int[][]{new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}, new int[]{1,2,4,5}},
+				new boolean[]{true,true,true},
+				new boolean[]{true,true,true},
+				new boolean[]{false,false,false},
+				new boolean[]{false,false,true},
+				new int[]{5,10,5,10,7,30},	//new int[]{3,10,3,10,4,30},
+				new boolean[]{true,true,true});
 			roo = r;
 		}
 		
@@ -581,16 +588,18 @@ public class Roo extends Player
 						if(!bounds.isGrounded)
 						{
 							bounds.botOffset = -95;
-							frames = 14;
+							isAirLocked = true;
+							addGuardTrigger(roo,bounds.xCoord+100,bounds.yCoord-10,150,160,30,roo.isFacingRight,true,true);
+							frames = 30;
 						}
 						else if(isCrouching)
 						{
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+110,bounds.yCoord-10,200,35,5,roo.isFacingRight,true));
+							addGuardTrigger(roo,bounds.xCoord+110,bounds.yCoord-10,200,35,5,roo.isFacingRight,true,true);
 							frames = 10;
 						}
 						else
 						{
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+130,bounds.yCoord+10,180,35,5,roo.isFacingRight,true));
+							addGuardTrigger(roo,bounds.xCoord+130,bounds.yCoord+10,180,35,5,roo.isFacingRight,true,true);
 							frames = 10;
 						}
 						break;
@@ -598,14 +607,14 @@ public class Roo extends Player
 					case 2:
 						if(!bounds.isGrounded){}
 						else if(isCrouching)
-							addPleb(roo,0,bounds.xCoord+110,bounds.yCoord+5,125,20,3,0,0,12,1,16,0,0.8,true,false,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+110,bounds.yCoord+5,125,20,3,0,0,12,1,16,0,0.8,true,false,true,new double[][]{});
 						else
-							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+25,140,20,3,0,0,12,1,16,0,0.8,true,false,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+25,140,20,3,0,0,12,1,16,0,0.8,true,false,true,new double[][]{});
 						break;
 						
 					case 3:
 						if(!bounds.isGrounded)
-							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+25,140,20,3,0,0,12,1,16,0,0.8,true,false,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+120,bounds.yCoord+53,65,30,27,2,1,12,1,16,0,0.8,true,false,true,new double[][]{});
 						else if(isCrouching){}
 						else{}
 						break;
@@ -620,7 +629,14 @@ public class Roo extends Player
 		
 		public MediumPunch(Roo r)
 		{
-			super(Action.NORMAL,1,new int[]{2,5},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{6,18,5,14,-1,-1},new boolean[]{true,true});
+			super(Action.NORMAL,1,
+				new int[][]{new int[]{2,5}, new int[]{2,5}, new int[]{1,2,4,5}},
+				new boolean[]{true,true,true},
+				new boolean[]{true,true,true},
+				new boolean[]{false,false,false},
+				new boolean[]{false,false,false},
+				new int[]{8,18,8,14,8,30},	//new int[]{6,18,5,14,4,30},
+				new boolean[]{true,true,true});
 			roo = r;
 		}
 		
@@ -641,6 +657,10 @@ public class Roo extends Player
 				else
 					isCrouching = cLock;
 				
+				boolean j = false;
+				if(target != null)
+					j = target.bounds.isGrounded;
+				
 				switch(f)
 				{
 					case 0:
@@ -650,34 +670,54 @@ public class Roo extends Player
 						if(!bounds.isGrounded)
 						{
 							bounds.botOffset = -95;
-							frames = 12;
+							addGuardTrigger(roo,bounds.xCoord+90,bounds.yCoord-130,175,280,13,roo.isFacingRight,true,true);
+							frames = 30;
 						}
 						else if(isCrouching)
 						{
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+110,bounds.yCoord-10,200,35,8,roo.isFacingRight,true));
+							addGuardTrigger(roo,bounds.xCoord+110,bounds.yCoord-10,200,35,8,roo.isFacingRight,true,true);
 							frames = 14;
 						}
 						else
 						{
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+130,bounds.yCoord+10,210,35,9,roo.isFacingRight,true));
+							addGuardTrigger(roo,bounds.xCoord+130,bounds.yCoord+10,210,35,9,roo.isFacingRight,true,true);
 							frames = 18;
 						}
 						break;
+					
+					case 3:
+						if(!bounds.isGrounded)
+							addPleb(roo,0,bounds.xCoord+110,bounds.yCoord+25,70,75,1,2,1,25,10,8,0,0.8,true,false,true,new double[][]{});
+						else if(isCrouching){}
+						else{}
+						break;
 						
 					case 4:
-						if(!bounds.isGrounded){}
+						if(!bounds.isGrounded)
+						{
+							if(j)
+								addPleb(roo,1,bounds.xCoord+110,bounds.yCoord-85,100,135,2,2,1,25,10,2,0,0.8,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,0,1,2,1,28,1,15}});
+							else
+								addPleb(roo,1,bounds.xCoord+110,bounds.yCoord-85,100,135,2,2,1,25,10,4,-8,0.8,true,false,true,new double[][]{});
+						}
 						else if(isCrouching)
-							addPleb(roo,0,bounds.xCoord+110,bounds.yCoord+5,125,20,4,0,0,25,10,16,0,0.8,true,false,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+110,bounds.yCoord+5,125,20,4,0,1,25,10,16,0,0.8,true,false,true,new double[][]{});
 						else{}
 						break;
 						
 					case 5:
-						if(!bounds.isGrounded){}
+						if(!bounds.isGrounded)
+						{
+							if(j)
+								addPleb(roo,1,bounds.xCoord+150,bounds.yCoord-70,60,80,6,2,1,25,10,2,0,0.8,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,0,1,2,1,28,1,15}});
+							else
+								addPleb(roo,1,bounds.xCoord+150,bounds.yCoord-70,60,80,6,2,1,25,10,4,-8,0.8,true,false,true,new double[][]{});
+						}
 						else if(isCrouching){}
 						else
 						{
-							addPleb(roo,0,bounds.xCoord+110,bounds.yCoord+30,85,20,1,0,1,30,10,20,0,0.1,true,false,new double[][]{});
-							addPleb(roo,0,bounds.xCoord+200,bounds.yCoord+30,50,30,1,0,1,30,10,20,0,0.1,true,false,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+110,bounds.yCoord+30,85,20,1,0,1,30,10,20,0,0.1,true,false,true,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+200,bounds.yCoord+30,50,30,1,0,1,30,10,20,0,0.1,true,false,true,new double[][]{});
 						}
 						break;
 						
@@ -685,7 +725,7 @@ public class Roo extends Player
 						if(!bounds.isGrounded){}
 						else if(isCrouching){}
 						else
-							addPleb(roo,0,bounds.xCoord+125,bounds.yCoord+30,130,20,3,0,1,30,10,20,0,0.1,true,false,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+125,bounds.yCoord+30,130,20,3,0,1,30,10,20,0,0.1,true,false,true,new double[][]{});
 						break;
 				}
 			}
@@ -698,7 +738,14 @@ public class Roo extends Player
 		
 		public HeavyPunch(Roo r)
 		{
-			super(Action.NORMAL,1,new int[]{},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{4,28,5,26,-1,-1},new boolean[]{true,true});
+			super(Action.NORMAL,1,
+				new int[][]{new int[]{}, new int[]{}, new int[]{2,5}},
+				new boolean[]{true,true,true},
+				new boolean[]{true,true,true},
+				new boolean[]{false,false,false},
+				new boolean[]{false,false,false},
+				new int[]{6,28,6,26,-1,-1},	//new int[]{4,28,5,26,-1,-1},
+				new boolean[]{true,true,true});
 			roo = r;
 		}
 		
@@ -728,19 +775,20 @@ public class Roo extends Player
 						if(!bounds.isGrounded)
 						{
 							bounds.botOffset = -95;
-							frames = 10;
+							addGuardTrigger(roo,bounds.xCoord+115,bounds.yCoord,225,175,12,roo.isFacingRight,true,true);
+							frames = 14;
 						}
 						else if(isCrouching)
 						{
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+70,bounds.yCoord-185,160,335,11,roo.isFacingRight,true));
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+70,bounds.yCoord-310,80,250,11,roo.isFacingRight,true));
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+110,bounds.yCoord-250,80,250,11,roo.isFacingRight,true));
+							addGuardTrigger(roo,bounds.xCoord+70,bounds.yCoord-185,160,335,11,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,bounds.xCoord+70,bounds.yCoord-310,80,250,11,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,bounds.xCoord+110,bounds.yCoord-250,80,250,11,roo.isFacingRight,true,true);
 							frames = 26;
 						}
 						else
 						{
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+130,bounds.yCoord+6,165,135,10,roo.isFacingRight,true));
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+150,bounds.yCoord-150,80,195,10,roo.isFacingRight,true));
+							addGuardTrigger(roo,bounds.xCoord+130,bounds.yCoord+6,165,135,10,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,bounds.xCoord+150,bounds.yCoord-150,80,195,10,roo.isFacingRight,true,true);
 							frames = 28;
 						}
 						break;
@@ -750,17 +798,21 @@ public class Roo extends Player
 						else if(isCrouching){}
 						else
 						{
-							addPleb(roo,0,bounds.xCoord+138,bounds.yCoord+62,72,52,4,0,2,45,25,18,0,0.75,true,false,new double[][]{});
-							addPleb(roo,0,bounds.xCoord+142,bounds.yCoord+6,82,62,4,0,2,45,25,18,0,0.75,true,false,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+138,bounds.yCoord+62,72,52,4,0,2,45,25,18,0,0.75,true,false,true,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+142,bounds.yCoord+6,82,62,4,0,2,45,25,18,0,0.75,true,false,true,new double[][]{});
 						}
 						break;
 						
 					case 4:
-						if(!bounds.isGrounded){}
+						if(!bounds.isGrounded)
+						{
+							addPleb(roo,0,bounds.xCoord+160,bounds.yCoord+30,50,40,8,2,2,45,25,18,0,0.75,true,false,true,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+200,bounds.yCoord+60,50,40,8,2,2,45,25,18,0,0.75,true,false,true,new double[][]{});
+						}
 						else if(isCrouching)
 						{
-							addPleb(roo,0,bounds.xCoord+102,bounds.yCoord-35,95,70,2,0,2,45,25,18,0,0.75,true,false,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,60,1,50}});
-							addPleb(roo,0,bounds.xCoord+90,bounds.yCoord+35,70,60,2,0,2,45,25,18,0,0.75,true,false,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,60,1,50}});
+							addPleb(roo,0,bounds.xCoord+102,bounds.yCoord-35,95,70,2,0,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,35,1,50}});
+							addPleb(roo,0,bounds.xCoord+90,bounds.yCoord+35,70,60,2,0,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,35,1,50}});
 						}
 						else{}
 						break;
@@ -769,13 +821,13 @@ public class Roo extends Player
 						if(!bounds.isGrounded){}
 						else if(isCrouching)
 						{
-							addPleb(roo,0,bounds.xCoord+103,bounds.yCoord-25,97,87,1,0,2,45,25,18,0,0.75,true,false,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,60,1,50}});
-							addPleb(roo,0,bounds.xCoord+80,bounds.yCoord+45,87,72,1,0,2,45,25,18,0,0.75,true,false,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,60,1,50}});
+							addPleb(roo,0,bounds.xCoord+103,bounds.yCoord-25,97,87,1,0,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,35,1,50}});
+							addPleb(roo,0,bounds.xCoord+80,bounds.yCoord+45,87,72,1,0,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,35,1,50}});
 						}
 						else
 						{
-							addPleb(roo,0,bounds.xCoord+148,bounds.yCoord-38,55,40,4,0,2,45,25,18,0,0.75,true,false,new double[][]{});
-							addPleb(roo,0,bounds.xCoord+123,bounds.yCoord-73,55,40,4,0,2,45,25,18,0,0.75,true,false,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+148,bounds.yCoord-38,55,40,4,0,2,45,25,18,0,0.75,true,false,true,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+123,bounds.yCoord-73,55,40,4,0,2,45,25,18,0,0.75,true,false,true,new double[][]{});
 						}
 						break;
 						
@@ -783,8 +835,8 @@ public class Roo extends Player
 						if(!bounds.isGrounded){}
 						else if(isCrouching)
 						{
-							addPleb(roo,0,bounds.xCoord+88,bounds.yCoord-180,45,90,2,0,2,45,25,18,0,0.75,true,false,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,60,1,50}});
-							addPleb(roo,0,bounds.xCoord+118,bounds.yCoord-105,45,90,2,0,2,45,25,18,0,0.75,true,false,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,60,1,50}});
+							addPleb(roo,0,bounds.xCoord+88,bounds.yCoord-180,45,90,2,0,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,35,1,50}});
+							addPleb(roo,0,bounds.xCoord+118,bounds.yCoord-105,45,90,2,0,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,35,1,50}});
 						}
 						else{}
 						break;
@@ -792,7 +844,7 @@ public class Roo extends Player
 					case 8:
 						if(!bounds.isGrounded){}
 						else if(isCrouching)
-							addPleb(roo,0,bounds.xCoord+78,bounds.yCoord-175,40,50,2,0,2,45,25,18,0,0.75,true,false,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,60,1,50}});
+							addPleb(roo,0,bounds.xCoord+78,bounds.yCoord-175,40,50,2,0,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,1,7,-70,35,1,50}});
 						else{}
 						break;
 				}
@@ -806,7 +858,14 @@ public class Roo extends Player
 		
 		public LightKick(Roo r)
 		{
-			super(Action.NORMAL,1,new int[]{0,1,3,4},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{5,15,5,14,-1,-1},new boolean[]{true,true});
+			super(Action.NORMAL,1,
+				new int[][]{new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}, new int[]{1,2,4,5}},
+				new boolean[]{true,true,true},
+				new boolean[]{true,true,true},
+				new boolean[]{false,false,false},
+				new boolean[]{false,false,false},
+				new int[]{5,15,5,14,-1,-1},
+				new boolean[]{true,true,true});
 			roo = r;
 		}
 		
@@ -838,12 +897,12 @@ public class Roo extends Player
 						}
 						else if(isCrouching)
 						{
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+130,bounds.yCoord+85,175,65,7,roo.isFacingRight,true));
+							addGuardTrigger(roo,bounds.xCoord+130,bounds.yCoord+85,175,65,7,roo.isFacingRight,true,true);
 							frames = 14;
 						}
 						else
 						{
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+130,bounds.yCoord+165,195,75,7,roo.isFacingRight,true));
+							addGuardTrigger(roo,bounds.xCoord+130,bounds.yCoord+165,195,75,7,roo.isFacingRight,true,true);
 							frames = 15;
 						}
 						break;
@@ -851,9 +910,9 @@ public class Roo extends Player
 					case 4:
 						if(!bounds.isGrounded){}
 						else if(isCrouching)
-							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+125,132,25,3,0,0,18,1,17,0,0.8,true,false,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+125,132,25,3,0,0,18,1,17,0,0.8,true,false,true,new double[][]{});
 						else
-							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+185,118,35,3,0,0,18,1,17,0,0.8,true,false,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+185,118,35,3,0,0,18,1,17,0,0.8,true,false,true,new double[][]{});
 						break;
 				}
 			}
@@ -866,7 +925,14 @@ public class Roo extends Player
 		
 		public MediumKick(Roo r)
 		{
-			super(Action.NORMAL,1,new int[]{2,5},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{6,20,6,22,-1,-1},new boolean[]{true,true});
+			super(Action.NORMAL,1,
+				new int[][]{new int[]{2,5}, new int[]{2,5}, new int[]{1,2,4,5}},
+				new boolean[]{true,true,true},
+				new boolean[]{true,true,true},
+				new boolean[]{false,false,false},
+				new boolean[]{false,false,false},
+				new int[]{6,20,6,22,-1,-1},
+				new boolean[]{true,true,true});
 			roo = r;
 		}
 		
@@ -898,12 +964,12 @@ public class Roo extends Player
 						}
 						else if(isCrouching)
 						{
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+130,bounds.yCoord+60,215,95,7,roo.isFacingRight,true));
+							addGuardTrigger(roo,bounds.xCoord+130,bounds.yCoord+60,215,95,7,roo.isFacingRight,true,true);
 							frames = 22;
 						}
 						else
 						{
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+153,bounds.yCoord+10,168,135,10,roo.isFacingRight,true));
+							addGuardTrigger(roo,bounds.xCoord+153,bounds.yCoord+10,168,135,10,roo.isFacingRight,true,true);
 							frames = 20;
 						}
 						break;
@@ -919,11 +985,11 @@ public class Roo extends Player
 					case 5:
 						if(!bounds.isGrounded){}
 						else if(isCrouching)
-							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+120,148,30,3,1,1,18,1,17,0,0.8,true,false,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+120,148,30,3,1,1,18,1,17,0,0.8,true,false,true,new double[][]{});
 						else
 						{
-							addPleb(roo,0,bounds.xCoord+176,bounds.yCoord+50,55,40,4,0,1,22,10,19,0,0.75,true,false,new double[][]{});
-							addPleb(roo,0,bounds.xCoord+153,bounds.yCoord+90,55,40,4,0,1,22,10,19,0,0.75,true,false,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+176,bounds.yCoord+50,55,40,4,0,1,22,10,19,0,0.75,true,false,true,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+153,bounds.yCoord+90,55,40,4,0,1,22,10,19,0,0.75,true,false,true,new double[][]{});
 						}
 						break;
 				}
@@ -937,7 +1003,14 @@ public class Roo extends Player
 		
 		public HeavyKick(Roo r)
 		{
-			super(Action.NORMAL,1,new int[]{},new boolean[]{true,true,true},new boolean[]{true,true,true},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{-1,-1,-1,-1,-1,-1},new boolean[]{true,true});
+			super(Action.NORMAL,1,
+				new int[][]{new int[]{}, new int[]{}, new int[]{2,5}},
+				new boolean[]{true,true,true},
+				new boolean[]{true,true,true},
+				new boolean[]{false,false,false},
+				new boolean[]{false,false,false},
+				new int[]{-1,-1,-1,-1,-1,-1},
+				new boolean[]{true,true,true});
 			roo = r;
 		}
 		
@@ -969,13 +1042,13 @@ public class Roo extends Player
 						}
 						else if(isCrouching)
 						{
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+145,bounds.yCoord+60,215,95,7,roo.isFacingRight,true));
+							addGuardTrigger(roo,bounds.xCoord+145,bounds.yCoord+60,215,95,7,roo.isFacingRight,true,true);
 							frames = 34;
 						}
 						else
 						{
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+125,bounds.yCoord-130,130,210,14,roo.isFacingRight,true));
-							plebsOut.add(new Pleb(roo,roo.bounds,bounds.xCoord+125,bounds.yCoord-50,210,150,14,roo.isFacingRight,true));
+							addGuardTrigger(roo,bounds.xCoord+125,bounds.yCoord-130,130,210,14,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,bounds.xCoord+125,bounds.yCoord-50,210,150,14,roo.isFacingRight,true,true);
 							frames = 26;
 						}
 						break;
@@ -990,7 +1063,7 @@ public class Roo extends Player
 					case 7:
 						if(!bounds.isGrounded){}
 						else if(isCrouching)
-							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+115,152,35,5,1,1,18,1,22,0,0.8,true,false,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,35,7,60}});
+							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+115,152,35,5,1,1,18,1,22,0,0.8,true,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,35,7,60}});
 						else{}
 						break;	
 					
@@ -999,9 +1072,9 @@ public class Roo extends Player
 						else if(isCrouching){}
 						else
 						{
-							addPleb(roo,0,bounds.xCoord+140,bounds.yCoord+10,60,40,5,0,2,49,25,24,0,0.45,true,false,new double[][]{});
-							addPleb(roo,0,bounds.xCoord+160,bounds.yCoord-20,60,40,5,0,2,49,25,24,0,0.45,true,false,new double[][]{});
-							addPleb(roo,0,bounds.xCoord+180,bounds.yCoord-50,60,40,5,0,2,49,25,24,0,0.45,true,false,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+140,bounds.yCoord+10,60,40,5,0,2,49,25,24,0,0.45,true,false,true,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+160,bounds.yCoord-20,60,40,5,0,2,49,25,24,0,0.45,true,false,true,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+180,bounds.yCoord-50,60,40,5,0,2,49,25,24,0,0.45,true,false,true,new double[][]{});
 						}
 						break;
 						
@@ -1023,7 +1096,14 @@ public class Roo extends Player
 		
 		public FireBall(Roo r, int s)
 		{
-			super(Action.SPECIAL,1,new int[]{},new boolean[]{false,false,false},new boolean[]{true,true,true},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{-1,-1,-1,-1,-1,-1},new boolean[]{true,false});
+			super(Action.SPECIAL,1,
+				new int[][]{new int[]{}, new int[]{}, new int[]{}},
+				new boolean[]{false,false,false},
+				new boolean[]{true,true,true},
+				new boolean[]{false,false,false},
+				new boolean[]{false,false,false},
+				new int[]{-1,-1,-1,-1,-1,-1},
+				new boolean[]{true,false,false});
 			roo = r;
 			strength = s;
 		}
@@ -1104,7 +1184,7 @@ public class Roo extends Player
 		{
 			if(fCounter == 0)
 			{
-				plebsOut.add(new Pleb(puppet,bounds,bounds.xCoord-155,bounds.yCoord-35,365,120,3,roo.isFacingRight,true));
+				addGuardTrigger(bounds.xCoord-155,bounds.yCoord-35,365,120,3,roo.isFacingRight,true);
 				addPleb(0,bounds.xCoord-155,bounds.yCoord-20,260,90,2,0,1,40,40,20,0,1,true,false,new double[][]{new double[]{Pleb.KNOCKDOWN,1,1,21,7,60}});
 			}
 			else if(fCounter > 1)
@@ -1114,7 +1194,7 @@ public class Roo extends Player
 				else
 					bounds.xCoord -= speed;
 				if(fCounter >= 2)
-					plebsOut.add(new Pleb(puppet,bounds,bounds.xCoord+25,bounds.yCoord-35,130,120,2,roo.isFacingRight,true));
+					addGuardTrigger(bounds.xCoord+25,bounds.yCoord-35,130,120,2,roo.isFacingRight,true);
 				if(fCounter == 2)
 					addPleb(0,bounds.xCoord+25,bounds.yCoord-20,85,90,999,0,1,40,40,20,0,1,true,true,new double[][]{new double[]{Pleb.KNOCKDOWN,1,1,21,7,60}});
 			}

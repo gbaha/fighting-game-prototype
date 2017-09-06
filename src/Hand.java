@@ -92,58 +92,61 @@ public class Hand implements KeyListener	//, MouseListener
 			//INPUT CHECKS
 			if(stickArchiver[0])
 			{
-				boolean j = (player.currAction == null);
-				if(!j)
+				if(inputOrder.getFirst() && !player.isAirLocked)
 				{
-					if(player.currAction.isCancelable(player.hitInfo[0],player.fCounter,Action.JUMP,currButton,player.bounds.isGrounded))
+					boolean j = (player.currAction == null);
+					if(!j)
 					{
-						player.currAction = null;
-						player.isPerformingAction = false;
-						
-						if(player.bounds.isGrounded)
-							player.bounds.botOffset = 0;
-						j = true;
-					}
-				}
-				
-				if(j)
-				{
-					if(player.jDirections[1] == 0 && player.airOptions > player.aDash+player.jCount && player.jCount < player.jumpLimit && !player.isBlocking[0] && !player.isBlocking[1])
-					{
-						if(stickArchiver[1])
-							player.jDirections[0] = 1;
-						else if(stickArchiver[3])
-							player.jDirections[0] = -1;
-						else
-							player.jDirections[0] = 0;
-						player.jDirections[1] = 1;
-						
-						if(player.bounds.isGrounded)
-							player.preFrames = 2;
-					}
-					
-					for(Force f: player.bounds.forceArchiver)
-					{
-						if(f.type.equals("dash"))
+						if(player.currAction.isCancelable(player.hitInfo[0],player.fCounter,Action.JUMP,currButton,player.bounds.isGrounded))
 						{
-							f.decay = f.magnitude;
-							if(j && player.jDirections[0] == 0)
-								player.jDirections[0] = (f.direction == 3)? 1:-1;
+							player.currAction = null;
+							player.isPerformingAction = false;
+							
+							if(player.bounds.isGrounded)
+								player.bounds.botOffset = 0;
+							j = true;
 						}
 					}
 					
-					/*	if(player.bounds.isGrounded && !player.bounds.isFloating)
+					if(j)
 					{
-						if(stickArchiver[1])
-							player.jDirections[0] = 1;
-						if(stickArchiver[3])
-							player.jDirections[0] = -1;
-						if(!player.isDashing && !player.isBlocking[0] && !player.isBlocking[1])
+						if(player.jDirections[1] == 0 && player.airOptions > player.aDash+player.jCount && player.jCount < player.jumpLimit && !player.isBlocking[0] && !player.isBlocking[1])
 						{
+							if(stickArchiver[1])
+								player.jDirections[0] = 1;
+							else if(stickArchiver[3])
+								player.jDirections[0] = -1;
+							else
+								player.jDirections[0] = 0;
 							player.jDirections[1] = 1;
-							player.preFrames = 3;
+							
+							if(player.bounds.isGrounded)
+								player.preFrames = 2;
 						}
-					}*/
+						
+						for(Force f: player.bounds.forceArchiver)
+						{
+							if(f.type.equals("dash"))
+							{
+								f.decay = f.magnitude;
+						/*		if(j && player.jDirections[0] == 0)
+									player.jDirections[0] = (f.direction == 3)? 1:-1;*/
+							}
+						}
+						
+						/*	if(player.bounds.isGrounded && !player.bounds.isFloating)
+						{
+							if(stickArchiver[1])
+								player.jDirections[0] = 1;
+							if(stickArchiver[3])
+								player.jDirections[0] = -1;
+							if(!player.isDashing && !player.isBlocking[0] && !player.isBlocking[1])
+							{
+								player.jDirections[1] = 1;
+								player.preFrames = 3;
+							}
+						}*/
+					}
 				}
 				
 				if(stickArchiver[1])

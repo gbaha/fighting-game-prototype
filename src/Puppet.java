@@ -25,8 +25,9 @@ abstract class Puppet
 	int health, stamina, meter, speed;
 	int preFrames, fCounter, hitStun, hitStop, sCooldown;
 	int kdCounter, kdLimit, kdStun;
-	double sIndex, jForce, jump, hitstunDamp;
-	boolean isFacingRight, isPerformingAction, isCrouching, canBlock, isGuardBroken, isLaunched, isUnstoppable;	//, isJumping;
+	double sIndex, jForce, jump, juggleDamp, hitstunDamp;
+	boolean isFacingRight, isPerformingAction, isCrouching, canBlock, isGuardBroken;
+	boolean isJuggled, isUnstoppable, isAirLocked;	//, isJumping;
 	int[] hitInfo, flinchPoints, jDirections, spriteParams;	//Add tint later
 	boolean[] isBlocking;
 	
@@ -78,7 +79,7 @@ abstract class Puppet
 		isPerformingAction = false;
 		canBlock = false;
 		isGuardBroken = false;
-		isLaunched = false;
+		isJuggled = false;
 		isUnstoppable = false;	// Unaffected by new forces through damage?
 	//	isJumping = false;
 		
@@ -105,6 +106,7 @@ abstract class Puppet
 		hitStun = 0;
 		hitStop = 0;
 		hitstunDamp = 0;
+		juggleDamp = 0;
 		sCooldown = 0;		//999999;
 		
 		kdCounter = 0;
@@ -235,7 +237,11 @@ abstract class Puppet
 	public void performAction()
 	{
 		if(currAction != null)
+		{
+			if(fCounter == 0)
+				bounds.botOffset = 0;
 			currAction.perform(fCounter);
+		}
 		bounds.xDir = 0;
 		bounds.xDrag = 0;
 		
@@ -250,8 +256,10 @@ abstract class Puppet
 		{
 			currAction = null;
 			currState = PuppetState.LANDING;
+			fCounter = 0;
+			
 			isPerformingAction = false;
-			preFrames = 3;
+	//		preFrames = 3;
 			bounds.botOffset = 0;
 		}
 	}
@@ -425,11 +433,11 @@ abstract class Puppet
 					break;
 				case 1:
 					hitStun = 15;
-					hitStop = 6;
+					hitStop = 7;
 					break;
 				case 2:
 					hitStun = 22;
-					hitStop = 7;
+					hitStop = 9;
 					break;
 				case 3:	//Change later
 					hitStun = 10;
@@ -438,6 +446,7 @@ abstract class Puppet
 			}
 			bounds.forceArchiver.clear();
 			
+			isUnstoppable = false;
 			if(p.properties.length > 0)
 			{
 				for(double[] t: p.properties)
@@ -466,7 +475,7 @@ abstract class Puppet
 							bounds.forceArchiver.add(new Force("xLaunch",(p.puppet.isFacingRight)? 3:1,t[3],t[4]));
 							bounds.forceArchiver.add(new Force("yLaunch",2,t[5],t[6]));
 							hitStun = (int)t[7];
-				//			isLaunched = true;
+							isJuggled = true;
 							isUnstoppable = (t[1] == 0)? false:true;
 							break;
 					}
@@ -502,11 +511,11 @@ abstract class Puppet
 						break;
 					case 1:
 						hitStun = 10;
-						hitStop = 6;
+						hitStop = 7;
 						break;
 					case 2:
 						hitStun = 10;
-						hitStop = 7;
+						hitStop = 9;
 						break;
 					case 3:
 						hitStun = 10;
@@ -525,28 +534,39 @@ abstract class Puppet
 		{
 			for(Force f: p.appliedForces)
 			{
-				if(f.type.equals("xKnockback") && !p.isProjectile && ((f.direction == 1 && bounds == c[0]) || (f.direction == 3 && bounds == c[1])))
+				if(f.type.equals("xKnockback") && p.puppet.bounds.isGrounded && !p.isProjectile && ((f.direction == 1 && bounds == c[0]) || (f.direction == 3 && bounds == c[1])))
 				{
 					f.direction = (f.direction+2)%4;
 					p.puppet.bounds.forceArchiver.add(f);
 				}
-				else
+				else if(!f.type.equals("yKnockback") || hitSuccessful)
 					bounds.forceArchiver.add(f);
-				
-				if(!bounds.isGrounded)
-					bounds.forceArchiver.add(new Force("juggle",2,24,2));
 			}
-			
-			if(p.puppet.hitInfo[0] == 2)
-				p.puppet.stamina = p.puppet.maxSp;
 		}
+		
+		if(!bounds.isGrounded)
+			juggleCheck(p.puppet,hitSuccessful);
+		if(isJuggled)
+		{
+			currState = PuppetState.FLINCH_AERIAL1;
+			bounds.isGrounded = false;
+		}
+		if(p.action != null)
+		{
+			if(p.action.aLock)
+				p.puppet.isAirLocked = false;
+		}
+		
+		if(p.puppet.hitInfo[0] == 2)
+			p.puppet.stamina = p.puppet.maxSp;
 	}
 	
 	public void guard()
 	{
-		if(hitStun > 0)
+	/*	if(hitStun > 0)
 			hitStun--;
-		else if(!isBlocking[0] && !isBlocking[1] && hitStun == 0)
+		else */
+		if(!isBlocking[0] && !isBlocking[1] && hitStun <= 0)
 		{
 			plebArchiver.clear();
 			currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
@@ -612,6 +632,8 @@ abstract class Puppet
 			bounds.yCoord += height-crHeight;
 			bounds.height = crHeight;
 		}
+		if(bounds.isGrounded)
+			isAirLocked = false;
 		bounds.update();
 		
 		for(Organ o: anatomy)
@@ -648,6 +670,12 @@ abstract class Puppet
 		
 		if(hitStun > 0)
 			hitStun--;
+		else
+		{
+			isJuggled = false;
+			juggleDamp = 0;
+		}
+		
 		if(hitInfo[2] > 0)
 			hitInfo[2]--;
 		else
@@ -667,6 +695,7 @@ abstract class Puppet
 		else
 			sCooldown--;
 	}
+	
 	
 	protected void getHitboxes(int h)
 	{
@@ -716,12 +745,78 @@ abstract class Puppet
 		}
 	}
 	
+	private void juggleCheck(Puppet p, boolean h)
+	{
+
+		double[] y = new double[]{(h)? ((p.bounds.isGrounded)? 50:50):25,2};
+		for(Force j: p.bounds.forceArchiver)
+		{
+			if(j.direction == 0 && !p.bounds.isGrounded)
+			{
+				y[0] -= j.magnitude;
+				y[1] -= j.decay;
+			}
+			if(j.direction == 2 && !j.type.equals("yPursuit"))
+			{
+				y[0] += j.magnitude;
+				y[1] += j.decay;
+			}
+		}//System.out.println(p.hash+"	"+y[0]);
+		
+		if(y[0] > 0 && y[1] > 0)
+		{
+			double[] x = new double[]{0,0,0};
+			boolean yExists = false;
+			for(Force j: bounds.forceArchiver)
+			{
+				if(j.type.equals("xKnockback"))
+				{
+					x[0] = j.magnitude*0.8;
+					x[1] = j.decay;
+					x[2] = j.direction;
+				}
+				if(j.type.equals("juggle"))
+				{
+					j.magnitude = y[0]*(1-juggleDamp);
+					j.decay = y[1];
+					yExists = true;
+				}
+			}
+			if(!yExists)
+				bounds.forceArchiver.add(new Force("juggle",2,y[0]*(1-juggleDamp),y[1]));
+			
+			if(!p.bounds.isGrounded && p.hitInfo[1] > 1)
+			{
+				isJuggled = true;
+				yExists = false;
+				for(Force j: p.bounds.forceArchiver)
+				{
+					if((j.direction == 1 || j.direction == 2) && x[2] != -1)
+						j.magnitude = 0;
+					if(j.type.equals("yPursuit"))
+					{
+						j.magnitude = ((h)? 50:25);
+						yExists = true;
+					}
+				}
+				if(x[2] != -1 && ((p.isFacingRight && p.jDirections[0] == 1) || (!p.isFacingRight && p.jDirections[0] == -1)))
+					p.bounds.forceArchiver.add(new Force("xPursuit",(int)x[2],x[0],x[1]));
+				if(!yExists && p.bounds.yCoord+p.bounds.height >= bounds.yCoord)
+					p.bounds.forceArchiver.add(new Force("yPursuit",2,((h)? 50:25),2));
+				
+				juggleDamp += 0.04;
+				if(juggleDamp > 1)
+					juggleDamp = 1;
+			}
+		}
+	}
+	
 	
 	public class LightPunch extends Action
 	{
 		public LightPunch()
 		{
-			super(Action.NORMAL,1,new int[]{},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true});
+			super(Action.NORMAL,1,new int[][]{new int[]{},new int[]{},new int[]{}},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true,true});
 		}
 		
 		public void perform(int f){}
@@ -731,7 +826,7 @@ abstract class Puppet
 	{
 		public MediumPunch()
 		{
-			super(Action.NORMAL,1,new int[]{},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true});
+			super(Action.NORMAL,1,new int[][]{new int[]{},new int[]{},new int[]{}},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true,true});
 		}
 		
 		public void perform(int f){}
@@ -741,7 +836,7 @@ abstract class Puppet
 	{
 		public HeavyPunch()
 		{
-			super(Action.NORMAL,1,new int[]{},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true});
+			super(Action.NORMAL,1,new int[][]{new int[]{},new int[]{},new int[]{}},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true,true});
 		}
 		
 		public void perform(int f){}
@@ -751,7 +846,7 @@ abstract class Puppet
 	{
 		public LightKick()
 		{
-			super(Action.NORMAL,1,new int[]{},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true});
+			super(Action.NORMAL,1,new int[][]{new int[]{},new int[]{},new int[]{}},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true,true});
 		}
 		
 		public void perform(int f){}
@@ -761,7 +856,7 @@ abstract class Puppet
 	{
 		public MediumKick()
 		{
-			super(Action.NORMAL,1,new int[]{},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true});
+			super(Action.NORMAL,1,new int[][]{new int[]{},new int[]{},new int[]{}},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true,true});
 		}
 		
 		public void perform(int f){}
@@ -771,7 +866,7 @@ abstract class Puppet
 	{
 		public HeavyKick()
 		{
-			super(Action.NORMAL,1,new int[]{},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true});
+			super(Action.NORMAL,1,new int[][]{new int[]{},new int[]{},new int[]{}},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true,true});
 		}
 		
 		public void perform(int f){}

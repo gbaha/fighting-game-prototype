@@ -7,13 +7,14 @@ abstract class Action
 	public static final int JUMP = 4;
 	
 	Puppet target;
-	int[] buttonPath, cancelWindow;
+	int[][] buttonPath;
+	int[] cancelWindow;
 	int button, type, cancelType, frames;
 	boolean[] isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable;
-	boolean groundOk, airOk, cLock;
+	boolean groundOk, airOk, aLock, cLock;
 	String hashCounter;
 	
-	public Action(int t, int ct, int[] b, boolean[] c1, boolean[] c2, boolean[] c3, boolean[] c4, int[] cw, boolean[] ok)
+	public Action(int t, int ct, int[][] b, boolean[] c1, boolean[] c2, boolean[] c3, boolean[] c4, int[] cw, boolean[] ok)
 	{
 		target = null;
 		hashCounter = "";
@@ -29,6 +30,7 @@ abstract class Action
 		
 		groundOk = ok[0];
 		airOk = ok[1];
+		aLock = ok[2];
 		cLock = false;
 		
 		buttonPath = b;
@@ -42,9 +44,10 @@ abstract class Action
 		{
 			if((g && (!cLock && f >= cancelWindow[0] && f < cancelWindow[1]) || (cLock && f >= cancelWindow[2] && f < cancelWindow[3])) || (!g && f >= cancelWindow[4] && f < cancelWindow[5]))
 			{
+				int i = (!g)? 2:((!cLock)? 0:1);
 				if(t == Action.NORMAL)
 				{
-					for(int p: buttonPath)
+					for(int p: buttonPath[i])
 					{
 						if(p == b)
 							return true;
@@ -52,7 +55,6 @@ abstract class Action
 				}
 				else
 				{
-					int i = (!g)? 2:((!cLock)? 0:1);
 					boolean[][] cancel = new boolean[][]{isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable};
 					if(cancel[t-1][i])
 						return true;
@@ -62,9 +64,9 @@ abstract class Action
 		return false;
 	}
 	
-	protected void addPleb(Puppet pu, int hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, double[][] pr)
+	protected void addPleb(Puppet pu, int hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, boolean a, double[][] pr)
 	{
-		Pleb p = new Pleb(pu,pu.bounds,this,x,y,w,h,d1,d2,s,hd,sd,kx,ky,hs,ia,ip,pr);
+		Pleb p = new Pleb(pu,pu.bounds,(a)? this:null,x,y,w,h,d1,d2,s,hd,sd,kx,ky,hs,ia,ip,pr);
 		
 		if(hashCounter.equals(""))
 			hashCounter = p.toString()+hc;
@@ -72,6 +74,12 @@ abstract class Action
 			hashCounter = p.toString()+hc;
 		p.hash = hashCounter;
 		
+		pu.plebsOut.add(p);
+	}
+	
+	protected void addGuardTrigger(Puppet pu, int x, int y, int w, int h, int d, boolean r, boolean ia, boolean a)
+	{
+		Pleb p = new Pleb(pu,pu.bounds,(a)? this:null,x,y,w,h,d,r,ia);
 		pu.plebsOut.add(p);
 	}
 	

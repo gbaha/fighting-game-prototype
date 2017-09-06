@@ -59,4 +59,10 @@ abstract class Projectile extends Prop
 		
 		plebsOut.add(p);
 	}
+	
+	protected void addGuardTrigger(int x, int y, int w, int h, int d, boolean r, boolean ia)
+	{
+		Pleb p = new Pleb(puppet,bounds,null,x,y,w,h,d,r,ia);
+		plebsOut.add(p);
+	}
 }

@@ -98,6 +98,14 @@ public class Gui extends JPanel
 			g.drawString(hitCounter[0][0]+" HITS",(int)((52*w/1280)+0.5),(int)((166*h/720)+0.5));
 		if(hitCounter[1][0] > 1 && hitCounter[1][1] > 0)
 			g.drawString(hitCounter[1][0]+" HITS",(int)(((1184-g.getFontMetrics().stringWidth(p2.hitInfo[1]+" HITS"))*w/1280)+0.5),(int)((166*h/720)+0.5));
+	
+		
+		//FORCE ARCHIVER (TEST)
+		g.setColor(Color.BLUE);
+		for(Force f: p1.bounds.forceArchiver)
+			g.drawString(f.type+"    "+f.direction+"   "+f.magnitude,(int)((12*w/1280)+0.5),(int)(((100+p1.bounds.forceArchiver.indexOf(f)*25)*h/720)+0.5));
+		for(Force f: p2.bounds.forceArchiver)
+			g.drawString(f.magnitude+"   "+f.direction+"   "+f.type,(int)(((1188-g.getFontMetrics().stringWidth(f.magnitude+"   "+f.direction+"   "+f.type))*w/1280)+0.5),(int)(((100+p2.bounds.forceArchiver.indexOf(f)*25)*h/720)+0.5));
 	}
 	
 	public void drawBot(Graphics2D g, ImageObserver i, Player p1, Player p2, double w, double h)

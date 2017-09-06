@@ -44,7 +44,7 @@ public class Pleb extends Hitbox
 			if(xKnockback != 0)
 				appliedForces.add(new Force("xKnockback",((xKnockback > 0 && puppet.isFacingRight) || (xKnockback < 0 && !puppet.isFacingRight))? 3:1,Math.abs(xKnockback),(Math.abs(xKnockback)/5 > 0)? Math.abs(xKnockback)/5:1));
 			if(yKnockback != 0)
-				appliedForces.add(new Force("yKnockback",(yKnockback > 0)? 0:2,Math.abs(yKnockback),(Math.abs(yKnockback)/5 > 0)? Math.abs(yKnockback)/5:1));
+				appliedForces.add(new Force("yKnockback",(yKnockback > 0)? 0:2,Math.abs(yKnockback),2));	//(Math.abs(yKnockback)/10 > 0)? Math.abs(yKnockback)/10:1));
 			
 			xDist = xCoord-bounds.xCoord;
 			yDist = yCoord-bounds.yCoord;
@@ -54,12 +54,12 @@ public class Pleb extends Hitbox
 	}
 	
 	//FOR GUARD TRIGGER
-	public Pleb(Puppet p, Organ b, int x, int y, int w, int h, int d, boolean r, boolean a)
+	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d, boolean r, boolean ia)
 	{
 		super(x,y,w,h);
 		puppet = p;
 		bounds = b;
-		action = null;
+		action = a;
 		hash = "";
 		duration = d;
 		direction = -1;
@@ -69,7 +69,7 @@ public class Pleb extends Hitbox
 		xKnockback = 0;
 		yKnockback = 0;
 		hitstunDamp = 0;
-		isAttached = a;
+		isAttached = ia;
 		isProjectile = false;
 		properties = new double[][]{};
 		

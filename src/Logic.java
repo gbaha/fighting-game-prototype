@@ -7,9 +7,9 @@ public class Logic
 	Stage stage;
 	Hand[] hands;
 	Cricket cricket;
-	Force gravity;
 	int[] focusWidth;
 	int xWindow, yWindow, /*winWidth, winHeight,*/ focusHeight, xFocus, yFocus, hitStop;
+	double gravity;
 	boolean gamePaused;
 	
 	int[] recovery;	//TEST
@@ -19,7 +19,6 @@ public class Logic
 		stage = s;
 		hands = new Hand[]{h1,h2};
 		cricket = new Cricket(s);
-		gravity = new Force("gravity",0,24.5,0);
 //		collisionPriority = new ArrayList<Hitbox>();
 		
 		xWindow = x;
@@ -31,6 +30,7 @@ public class Logic
 		focusWidth = new int[]{50,250};
 		focusHeight = 4450;
 		hitStop = 0;
+		gravity = 24.5;
 		gamePaused = p;
 		
 		recovery = new int[]{-1,-1,-1};	//TEST
@@ -119,10 +119,10 @@ public class Logic
 		for(Puppet p: stage.puppets)
 		{
 			int fLimit = p.bounds.forceArchiver.size();
-			if(!p.bounds.isGrounded && !p.bounds.isFloating)
-				p.bounds.forceArchiver.add(gravity);
+			if(/*!p.bounds.isGrounded &&*/ !p.bounds.isFloating)
+				p.bounds.forceArchiver.add(new Force("gravity",0,gravity,0));
 			if(p.bounds.wasFloating)
-				p.bounds.forceArchiver.add(new Force("postFloat",2,gravity.magnitude,gravity.magnitude/10));
+				p.bounds.forceArchiver.add(new Force("postFloat",2,gravity,gravity/10));
 		/*	else
 			{
 				for(int f = 0; f < fLimit; f++)
@@ -314,10 +314,14 @@ public class Logic
 						
 					case 1:
 						forces[hitboxes.indexOf(h)][1] += h.forceArchiver.get(f).magnitude*hDamp;
-						if(!h.forceArchiver.get(f).type.equals("xKnockback") || h.isGrounded || hDamp < 1)
+						if((!h.forceArchiver.get(f).type.equals("xKnockback") && !h.forceArchiver.get(f).type.equals("xPursuit")) || h.isGrounded || hDamp < 1)
 						{
 							if(h.forceArchiver.get(f).decay > 0)
+							{
 								h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+								if((h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("xPursuit")) && h.forceArchiver.get(f).magnitude < 1 && !h.isGrounded)
+									h.forceArchiver.get(f).magnitude = 1;
+							}
 							else if(h.forceArchiver.get(f).decay < 0)
 								h.forceArchiver.get(f).decay++;
 						}
@@ -341,7 +345,11 @@ public class Logic
 						if(!h.forceArchiver.get(f).type.equals("xKnockback") || h.isGrounded || hDamp < 1)
 						{
 							if(h.forceArchiver.get(f).decay > 0)
+							{
 								h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+								if((h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("xPursuit")) && h.forceArchiver.get(f).magnitude < 1 && !h.isGrounded)
+									h.forceArchiver.get(f).magnitude = 1;
+							}
 							else if(h.forceArchiver.get(f).decay < 0)
 								h.forceArchiver.get(f).decay++;
 						}
@@ -549,19 +557,6 @@ public class Logic
 								{
 									if(y+h1.height+h1.botOffset >= y2 && h1.yCoord <= y2)
 									{
-									/*	if(hitboxes.indexOf(h1) < stage.puppets.size())
-										{ 
-											for(Organ h3: stage.puppets.get(hitboxes.indexOf(h1)).anatomy)
-												h3.yVel = 0;
-											stage.puppets.get(hitboxes.indexOf(h1)).bounds.yVel = 0;
-											stage.puppets.get(hitboxes.indexOf(h1)).bounds.isGrounded = true;
-										}
-										else
-										{
-											stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.yVel = 0;
-											stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.isGrounded = true;
-										}*/
-										
 										if(stage.floors.get(0).cornered[0] == h1)
 											h2.xCoord = h1.xCoord+h1.width;
 										else if(stage.floors.get(0).cornered[1] == h1)
@@ -580,7 +575,7 @@ public class Logic
 									}
 								}
 								
-								if(h1.yCoord == y2-h1.height+h1.botOffset-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1))
+								if(h1.yCoord == y2-h1.height+h1.botOffset-(int)(gravity+0.5)*((h2.isGrounded)? 0:1))
 								{
 							//		h1.blocked[2] = y2-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
 									yBlocked = true;
@@ -613,7 +608,7 @@ public class Logic
 									}
 								}
 								
-								if(h2.yCoord == y1-h2.height+h2.botOffset-(int)(gravity.magnitude+0.5)*((h1.isGrounded)? 0:1))
+								if(h2.yCoord == y1-h2.height+h2.botOffset-(int)(gravity+0.5)*((h1.isGrounded)? 0:1))
 								{
 							//		h1.blocked[2] = y2-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
 									yBlocked = true;
@@ -622,7 +617,7 @@ public class Logic
 						}
 					}
 					
-					if(h1.yCoord != h2.yCoord+h2.height+h2.botOffset && h1.yCoord+h1.height+h1.botOffset != h2.yCoord && ((h1.yCoord >= h2.yCoord && h1.yCoord < h2.yCoord+h2.height+h2.height) || (h1.yCoord+h1.height+h1.botOffset > h2.yCoord && h1.yCoord+h1.height <= h2.yCoord+h2.height) || (h1.yCoord <= h2.yCoord && h1.yCoord+h1.height+h1.botOffset >= h2.yCoord+h2.height+h2.botOffset) /*|| (y1 == y2 || y1+h1.height+h1.botOffset == y2+h2.height+h2.botOffset)*/))
+					if(h1.yCoord != h2.yCoord+h2.height+h2.botOffset && h1.yCoord+h1.height+h1.botOffset != h2.yCoord && ((h1.yCoord >= h2.yCoord && h1.yCoord < h2.yCoord+h2.height+h2.botOffset) || (h1.yCoord+h1.height+h1.botOffset > h2.yCoord && h1.yCoord+h1.height <= h2.yCoord+h2.height) || (h1.yCoord <= h2.yCoord && h1.yCoord+h1.height+h1.botOffset >= h2.yCoord+h2.height+h2.botOffset) /*|| (y1 == y2 || y1+h1.height+h1.botOffset == y2+h2.height+h2.botOffset)*/))
 					{
 						if(x1 > h1.xCoord || h1.xDir > 0 || h1.xDrag > 0)
 						{
@@ -1483,14 +1478,14 @@ public class Logic
 									if(z < o.yCoord+o.height+o.botOffset && j.yCoord+j.height+j.botOffset >= o.yCoord+o.height+o.botOffset)
 									{
 										if(j.blocked[0] < o.yCoord+o.height+o.botOffset || j.yCoord < o.yCoord+o.height+o.botOffset || j.blocked[0] == j.yCoord+j.height/2)
-											j.yCoord = o.yCoord+o.height-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1);
+											j.yCoord = o.yCoord+o.height-(int)(gravity+0.5)*((o.isGrounded)? 0:1);
 										z = y;
 									}
 								}
 								
-								if(j.yCoord == o.yCoord+o.height+o.botOffset-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1))
+								if(j.yCoord == o.yCoord+o.height+o.botOffset-(int)(gravity+0.5)*((o.isGrounded)? 0:1))
 								{
-									j.blocked[0] = o.yCoord+o.height-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1);
+									j.blocked[0] = o.yCoord+o.height-(int)(gravity+0.5)*((o.isGrounded)? 0:1);
 									yBlocked = true;
 								}
 							}
@@ -1504,14 +1499,14 @@ public class Logic
 									if(z+j.height+j.botOffset >= o.yCoord && j.yCoord <= o.yCoord)
 									{
 										if(j.blocked[2] > o.yCoord || j.yCoord+j.height+j.botOffset > o.yCoord || j.blocked[2] == j.yCoord+j.height/2)
-											j.yCoord = o.yCoord-j.height-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1);
+											j.yCoord = o.yCoord-j.height-(int)(gravity+0.5)*((o.isGrounded)? 0:1);
 										z = y;
 									}
 								}
 								
-								if(j.yCoord == o.yCoord-j.height-j.botOffset-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1))
+								if(j.yCoord == o.yCoord-j.height-j.botOffset-(int)(gravity+0.5)*((o.isGrounded)? 0:1))
 								{
-									j.blocked[2] = o.yCoord-(int)(gravity.magnitude+0.5)*((o.isGrounded)? 0:1);
+									j.blocked[2] = o.yCoord-(int)(gravity+0.5)*((o.isGrounded)? 0:1);
 									yBlocked = true;
 								}
 							}
@@ -1728,6 +1723,20 @@ public class Logic
 	
 	public void checkDamage()
 	{
+		int pLimit = stage.plebs.size();
+		for(int p = 0; p < pLimit; p++)
+		{
+			if(stage.plebs.get(p).puppet != null && stage.plebs.get(p).action != null)
+			{
+				if(stage.plebs.get(p).puppet.currAction != stage.plebs.get(p).action)
+				{
+					stage.plebs.remove(p);
+					pLimit = stage.plebs.size();
+					p--;
+				}
+			}
+		}
+			
 		for(Pleb p1: stage.plebs)
 		{
 			for(Puppet p2: stage.puppets)
@@ -1889,7 +1898,7 @@ public class Logic
 				{
 					for(Force f: stage.puppets.get(p).bounds.forceArchiver)
 					{
-						if(f.type.equals("yJump") && f.magnitude*9/10 < gravity.magnitude)
+						if(f.type.equals("yJump") && f.magnitude*9/10 < gravity)
 							stage.puppets.get(p).jDirections[1] = -1;
 					}
 				}
