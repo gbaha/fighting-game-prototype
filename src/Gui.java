@@ -80,15 +80,15 @@ public class Gui extends JPanel
 		}
 		
 		//HIT COUNTER
-		if(p1.hitStun > 0)
+		if(p1.hitStun > 0 || p1.isThrown)
 		{
-			if(p2.hitInfo[1] > hitCounter[1][0])
+	//		if(p2.hitInfo[1] > hitCounter[1][0])
 				hitCounter[1][0] = p2.hitInfo[1];
 			hitCounter[1][1] = 60;
 		}
-		if(p2.hitStun > 0)
+		if(p2.hitStun > 0 || p2.isThrown)
 		{
-			if(p1.hitInfo[1] > hitCounter[0][0])
+	//		if(p1.hitInfo[1] > hitCounter[0][0])
 				hitCounter[0][0] = p1.hitInfo[1];
 			hitCounter[0][1] = 60;
 		}

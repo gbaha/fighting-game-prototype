@@ -47,7 +47,8 @@ public class Stage
 		player2 = new Roo(1000+200,4750,false);
 		puppets.add(player1);
 		puppets.add(player2);
-		
+		player1.target = player2.bounds;
+		player2.target = player1.bounds;
 		//END OF LINE
 		//-----------
 		//LINE ENDS HERE

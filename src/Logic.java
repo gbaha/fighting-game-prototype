@@ -4,6 +4,7 @@ import java.util.ArrayList;
 public class Logic
 {
 //	ArrayList<Hitbox> collisionPriority;
+	ArrayList<int[]> hugBuddies;	// [hugger, hugged, tech magnitude, tech decay]
 	Stage stage;
 	Hand[] hands;
 	Cricket cricket;
@@ -33,6 +34,7 @@ public class Logic
 		gravity = 24.5;
 		gamePaused = p;
 		
+		hugBuddies = new ArrayList<int[]>();
 		recovery = new int[]{-1,-1,-1};	//TEST
 	}
 	
@@ -301,64 +303,67 @@ public class Logic
 						hDamp = stage.puppets.get(hitboxes.indexOf(h)).hitstunDamp;
 				}
 				
-				switch(h.forceArchiver.get(f).direction)
+				if(h.forceArchiver.get(f).magnitude > 0)
 				{
-					case 0:
-						if(!h.forceArchiver.get(f).type.equals("gravity") || (h.forceArchiver.get(f).type.equals("gravity") && !h.isFloating))
-							forces[hitboxes.indexOf(h)][0] += h.forceArchiver.get(f).magnitude*hDamp;
-						if(h.forceArchiver.get(f).decay > 0)
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
-						else if(h.forceArchiver.get(f).decay < 0)
-							h.forceArchiver.get(f).decay++;
-						break;
-						
-					case 1:
-						forces[hitboxes.indexOf(h)][1] += h.forceArchiver.get(f).magnitude*hDamp;
-						if((!h.forceArchiver.get(f).type.equals("xKnockback") && !h.forceArchiver.get(f).type.equals("xPursuit")) || h.isGrounded || hDamp < 1)
-						{
+					switch(h.forceArchiver.get(f).direction)
+					{
+						case 0:
+							if(!h.forceArchiver.get(f).type.equals("gravity") || (h.forceArchiver.get(f).type.equals("gravity") && !h.isFloating))
+								forces[hitboxes.indexOf(h)][0] += h.forceArchiver.get(f).magnitude*hDamp;
 							if(h.forceArchiver.get(f).decay > 0)
-							{
 								h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
-								if((h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("xPursuit")) && h.forceArchiver.get(f).magnitude < 1 && !h.isGrounded)
-									h.forceArchiver.get(f).magnitude = 1;
-							}
 							else if(h.forceArchiver.get(f).decay < 0)
 								h.forceArchiver.get(f).decay++;
-						}
-						else
-						{
-							h.forceArchiver.get(f).magnitude = 8;
-							h.forceArchiver.get(f).decay = 8;
-						}
-						break;
-						
-					case 2:
-						forces[hitboxes.indexOf(h)][2] += h.forceArchiver.get(f).magnitude*hDamp;
-						if(h.forceArchiver.get(f).decay > 0)
-							h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
-						else if(h.forceArchiver.get(f).decay < 0)
-							h.forceArchiver.get(f).decay++;
-						break;
-						
-					case 3:
-						forces[hitboxes.indexOf(h)][3] += h.forceArchiver.get(f).magnitude*hDamp;
-						if(!h.forceArchiver.get(f).type.equals("xKnockback") || h.isGrounded || hDamp < 1)
-						{
-							if(h.forceArchiver.get(f).decay > 0)
+							break;
+							
+						case 1:
+							forces[hitboxes.indexOf(h)][1] += h.forceArchiver.get(f).magnitude*hDamp;
+							if((!h.forceArchiver.get(f).type.equals("xKnockback") && !h.forceArchiver.get(f).type.equals("xPursuit")) || h.isGrounded || hDamp < 1)
 							{
-								h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
-								if((h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("xPursuit")) && h.forceArchiver.get(f).magnitude < 1 && !h.isGrounded)
-									h.forceArchiver.get(f).magnitude = 1;
+								if(h.forceArchiver.get(f).decay > 0)
+								{
+									h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+									if((h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("xPursuit")) && h.forceArchiver.get(f).magnitude < 1 && !h.isGrounded)
+										h.forceArchiver.get(f).magnitude = 1;
+								}
+								else if(h.forceArchiver.get(f).decay < 0)
+									h.forceArchiver.get(f).decay++;
 							}
+							else
+							{
+								h.forceArchiver.get(f).magnitude = 8;
+								h.forceArchiver.get(f).decay = 8;
+							}
+							break;
+							
+						case 2:
+							forces[hitboxes.indexOf(h)][2] += h.forceArchiver.get(f).magnitude*hDamp;
+							if(h.forceArchiver.get(f).decay > 0)
+								h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
 							else if(h.forceArchiver.get(f).decay < 0)
 								h.forceArchiver.get(f).decay++;
-						}
-						else
-						{
-							h.forceArchiver.get(f).magnitude = 8;
-							h.forceArchiver.get(f).decay = 8;
-						}
-						break;
+							break;
+							
+						case 3:
+							forces[hitboxes.indexOf(h)][3] += h.forceArchiver.get(f).magnitude*hDamp;
+							if(!h.forceArchiver.get(f).type.equals("xKnockback") || h.isGrounded || hDamp < 1)
+							{
+								if(h.forceArchiver.get(f).decay > 0)
+								{
+									h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
+									if((h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("xPursuit")) && h.forceArchiver.get(f).magnitude < 1 && !h.isGrounded)
+										h.forceArchiver.get(f).magnitude = 1;
+								}
+								else if(h.forceArchiver.get(f).decay < 0)
+									h.forceArchiver.get(f).decay++;
+							}
+							else
+							{
+								h.forceArchiver.get(f).magnitude = 8;
+								h.forceArchiver.get(f).decay = 8;
+							}
+							break;
+					}
 				}
 				
 				if(h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("yKnockback"))
@@ -1743,75 +1748,44 @@ public class Logic
 			{
 				if(p1.puppet != p2)
 				{
-					for(Hitbox h: p2.anatomy)
+					if(p1.type != Pleb.GRAB)
 					{
-						if((p1.xCoord >= h.xCoord && p1.xCoord < h.xCoord+h.width) || (p1.xCoord+p1.width > h.xCoord && p1.xCoord+p1.width <= h.xCoord+h.width) || (p1.xCoord <= h.xCoord && p1.xCoord+p1.width >= h.xCoord+h.width))
+						for(Hitbox h: p2.anatomy)
 						{
-							if((p1.yCoord >= h.yCoord && p1.yCoord < h.yCoord+h.height) || (p1.yCoord+p1.height > h.yCoord && p1.yCoord+p1.height <= h.yCoord+h.height) || (p1.yCoord <= h.yCoord && p1.yCoord+p1.height >= h.yCoord+h.height))
+							if((p1.xCoord >= h.xCoord && p1.xCoord < h.xCoord+h.width) || (p1.xCoord+p1.width > h.xCoord && p1.xCoord+p1.width <= h.xCoord+h.width) || (p1.xCoord <= h.xCoord && p1.xCoord+p1.width >= h.xCoord+h.width))
 							{
-								if(p1.duration > 0)
+								if((p1.yCoord >= h.yCoord && p1.yCoord < h.yCoord+h.height) || (p1.yCoord+p1.height > h.yCoord && p1.yCoord+p1.height <= h.yCoord+h.height) || (p1.yCoord <= h.yCoord && p1.yCoord+p1.height >= h.yCoord+h.height))
 								{
-							//		stage.player2.isBlocking[0] = true;	//TEST
-									
-									if(p1.direction == -1)
+									if(p1.duration > 0)
 									{
-										if(p2.currAction == null)
-											p2.canBlock = true;
-									}
-									else
-									{
-									/*	switch(p1.direction)
+								//		stage.player2.isBlocking[0] = true;	//TEST
+										if(p1.type == Pleb.GUARD)
 										{
-											case 0:
-												if(!p2.isBlocking[0] && !p2.isBlocking[1])
-													p2.takeDamage(p1,stage.floors.get(0).cornered);
-												break;
-												
-											case 1:
-												if(!p2.isBlocking[1])
-													p2.takeDamage(p1,stage.floors.get(0).cornered);
-												break;
-												
-											case 2:
-												if(!p2.isBlocking[0])
-													p2.takeDamage(p1,stage.floors.get(0).cornered);
-												break;
-										}*/
-										
-										boolean isUnique = true;
-										for(String u: p2.plebArchiver)
-										{
-											if(u.equals(p1.hash))
-												isUnique = false;
+											if(p2.currAction == null)
+												p2.canBlock = true;
 										}
-										
-										if(isUnique)
+										else
 										{
-											p2.takeDamage(p1,stage.floors.get(0).cornered);
-											p2.plebArchiver.add(p1.hash);
-											p2.hitstunDamp = p1.hitstunDamp;
-											p1.duration = 0;
-											recovery = new int[]{(p2 == stage.player1)? 0:1,0,0};	//TEST
-											
-									/*		for(int[] p3: p1.properties)
+											boolean isUnique = true;
+											for(String u: p2.plebArchiver)
 											{
-												switch(p3[0])
+												if(u.equals(p1.hash))
+													isUnique = false;
+											}
+											
+											if(isUnique)
+											{
+												p2.takeDamage(p1,stage.floors.get(0).cornered);
+												p2.plebArchiver.add(p1.hash);
+												p2.hitstunDamp = p1.hitstunDamp;
+												p1.duration = 0;
+												recovery = new int[]{(p2 == stage.player1)? 0:1,0,0};	//TEST
+												
+												for(Prop p3: stage.props)
 												{
-													case Pleb.KNOCKDOWN:
-														break;
-													
-													case Pleb.AIR_KNOCKDOWN:
-														break;
-													
-													case Pleb.LAUNCH:
-														break;
+													if(p1.bounds == p3.bounds)
+														p3.hits--;
 												}
-											}*/
-											
-											for(Prop p3: stage.props)
-											{
-												if(p1.bounds == p3.bounds)
-													p3.hits--;
 											}
 										}
 									}
@@ -1819,7 +1793,76 @@ public class Logic
 							}
 						}
 					}
+					else
+					{
+						if((p1.xCoord >= p2.bounds.xCoord && p1.xCoord < p2.bounds.xCoord+p2.bounds.width) || (p1.xCoord+p1.width > p2.bounds.xCoord && p1.xCoord+p1.width <= p2.bounds.xCoord+p2.bounds.width) || (p1.xCoord <= p2.bounds.xCoord && p1.xCoord+p1.width >= p2.bounds.xCoord+p2.bounds.width))
+						{
+							if((p1.yCoord >= p2.bounds.yCoord && p1.yCoord < p2.bounds.yCoord+p2.bounds.height) || (p1.yCoord+p1.height > p2.bounds.yCoord && p1.yCoord+p1.height <= p2.bounds.yCoord+p2.bounds.height) || (p1.yCoord <= p2.bounds.yCoord && p1.yCoord+p1.height >= p2.bounds.yCoord+p2.bounds.height))
+							{
+								if(p1.duration > 0)
+								{
+									p2.takeDamage(p1,stage.floors.get(0).cornered);
+									p2.plebArchiver.add(p1.hash);
+									p2.hitstunDamp = p1.hitstunDamp;
+									p1.duration = 0;
+									recovery = new int[]{(p2 == stage.player1)? 0:1,0,0};	//TEST
+									
+									for(Prop p3: stage.props)
+									{
+										if(p1.bounds == p3.bounds)
+											p3.hits--;
+									}
+									hugBuddies.add(new int[]{stage.puppets.indexOf(p1.puppet),stage.puppets.indexOf(p2),90,18});
+								}
+							}
+						}
+					}
 				}
+			}
+		}
+	}
+	
+	public void checkTechs()
+	{
+		int hLimit = hugBuddies.size();
+		for(int h1 = 0; h1 < hLimit; h1++)
+		{
+			for(int h2 = 0; h2 < hLimit; h2++)
+			{
+				if(h1 != h2 && (hugBuddies.get(h1)[0] == hugBuddies.get(h2)[0] || hugBuddies.get(h1)[0] == hugBuddies.get(h2)[1]) && (hugBuddies.get(h1)[1] == hugBuddies.get(h2)[0] || hugBuddies.get(h1)[1] == hugBuddies.get(h2)[1]))
+				{
+					hugBuddies.remove(h2);
+					hLimit = hugBuddies.size();
+					h2--;
+				}
+			}
+		}
+		
+		for(int h = 0; h < hLimit; h++)
+		{
+			if(!stage.puppets.get(hugBuddies.get(h)[0]).isThrowing && !stage.puppets.get(hugBuddies.get(h)[1]).isThrowing && !stage.puppets.get(hugBuddies.get(h)[1]).isThrown)
+			{
+				int[] i = new int[]{(stage.puppets.get(hugBuddies.get(h)[0]).isFacingRight)? hugBuddies.get(h)[0]:hugBuddies.get(h)[1],(stage.puppets.get(hugBuddies.get(h)[0]).isFacingRight)? hugBuddies.get(h)[1]:hugBuddies.get(h)[0],hugBuddies.get(h)[2]/2,hugBuddies.get(h)[2]/2};
+				if(stage.puppets.get(i[0]).bounds.xCoord-stage.floors.get(0).xCoord < i[2])
+				{
+					i[2] = stage.puppets.get(i[0]).bounds.xCoord-stage.floors.get(0).xCoord;
+					i[3] = i[3]*2-(stage.puppets.get(i[0]).bounds.xCoord-stage.floors.get(0).xCoord);
+				}
+				if((stage.floors.get(0).xCoord+stage.floors.get(0).width)-(stage.puppets.get(i[1]).bounds.xCoord+stage.puppets.get(i[1]).bounds.width) < i[3])
+				{
+					i[3] = (stage.floors.get(0).xCoord+stage.floors.get(0).width)-(stage.puppets.get(i[1]).bounds.xCoord+stage.puppets.get(i[1]).bounds.width);
+					i[2] = i[2]*2-((stage.floors.get(0).xCoord+stage.floors.get(0).width)-(stage.puppets.get(i[1]).bounds.xCoord+stage.puppets.get(i[1]).bounds.width));
+				}
+				
+				stage.puppets.get(i[0]).bounds.forceArchiver.add(new Force("tech",1,i[2],i[2]));
+				stage.puppets.get(i[1]).bounds.forceArchiver.add(new Force("tech",3,i[3],i[3]));
+				hugBuddies.get(h)[2] -= hugBuddies.get(h)[3];
+			}
+			if(hugBuddies.get(h)[2] <= 0)
+			{
+				hugBuddies.remove(h);
+				hLimit = hugBuddies.size();
+				h--;
 			}
 		}
 	}
@@ -1856,9 +1899,11 @@ public class Logic
 			applyForces();
 			checkCollisions();
 			checkDamage();	//MIGHT BE UNNECESSARY, might actually need to keep hitboxes aligned if forces push bounds in which case remove getHitboxes() prior to applyForces()
+			checkTechs();
 			
 			for(Puppet p: stage.puppets)
 			{
+				p.applyProperties();
 				p.getHitboxes();
 				if(p.hitStop > hitStop)
 				{
@@ -1922,16 +1967,14 @@ public class Logic
 					stage.updateTrail("pleb",stage.plebs.indexOf(p));*/
 			}
 			
-			if(stage.player1 != null && stage.player2 != null)
+			for(Puppet p: stage.puppets)
 			{
-				if(stage.player1.bounds.isGrounded && stage.player2.bounds.isGrounded)
-				{
-					stage.player1.isFacingRight = (stage.player1.xCoord+stage.player1.width/2 <= stage.player2.xCoord+stage.player2.width/2)? true:false;
-					stage.player2.isFacingRight = (stage.player2.xCoord+stage.player2.width/2 <= stage.player1.xCoord+stage.player1.width/2)? true:false;
-				}
-		//		resetFocus();
-				setFocus();
+				if(p.target != null && p.bounds.isGrounded && p.currAction == null)
+					p.isFacingRight = (p.xCoord+p.width/2 <= p.target.xCoord+p.target.width/2)? true:false;
 			}
+	//		resetFocus();
+			setFocus();
+			
 			focus();
 			
 			if(hitStop > 0)

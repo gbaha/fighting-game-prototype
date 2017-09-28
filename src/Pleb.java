@@ -9,23 +9,29 @@ public class Pleb extends Hitbox
 	Organ bounds;
 	Action action;
 	String hash;	//action, type;
-	int duration, direction, strength, hDamage, sDamage, xKnockback, yKnockback, xDist, yDist;
+	int duration, type, strength, hDamage, sDamage, xKnockback, yKnockback, xDist, yDist;
 	double hitstunDamp;	//decayRate, piercingRate;
 	boolean isAttached, isProjectile;
 	double[][] properties;	//[[type, parameters], ...]
 	
-	public static final int KNOCKDOWN = 0;	//[air only?, kd counter, upward force magnitude, upward force decay, down time]
-	public static final int LAUNCH = 1;		//[homing?, interruptible?, xforce magnitude, xforce decay, yforce magnitude, yforce decay, hitstun]
+	public static final int GUARD = -1;
+	public static final int MID = 0;
+	public static final int LOW = 1;
+	public static final int HIGH = 2;
+	public static final int GRAB = 3;
 	
-	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, double[][] pr)
+	public static final int KNOCKDOWN = 0;	//[air only?, kd counter, upward force magnitude, upward force decay, down time]
+	public static final int LAUNCH = 1;		//[interruptible?, xforce magnitude, xforce decay, yforce magnitude, yforce decay, hitstun]
+	
+	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d, int t, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, double[][] pr)
 	{
 		super(x,y,w,h);
 		puppet = p;
 		bounds = b;
 		action = a;
 		hash = "";
-		duration = d1;
-		direction = d2;	//[0 = mid, 1 = low, 2 = high]
+		duration = d;
+		type = t;
 		strength = s;
 		hDamage = hd;
 		sDamage = sd;
@@ -53,8 +59,8 @@ public class Pleb extends Hitbox
 		}
 	}
 	
-	//FOR GUARD TRIGGER
-	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d, boolean r, boolean ia)
+	//FOR GRABS AND GUARD TRIGGERS
+	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d, int t, boolean r, boolean ia)
 	{
 		super(x,y,w,h);
 		puppet = p;
@@ -62,7 +68,7 @@ public class Pleb extends Hitbox
 		action = a;
 		hash = "";
 		duration = d;
-		direction = -1;
+		type = t;
 		strength = 0;
 		hDamage = 0;
 		sDamage = 0;
@@ -84,7 +90,7 @@ public class Pleb extends Hitbox
 	}
 	
 	//MIGHT REMOVE LATER
-	public Pleb(Puppet p, Organ b, Action a, /*String f, String t,*/ String hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int kx, int ky, double hs, boolean ia, boolean ip)	//, int d2, int s, double d3, double p)
+	public Pleb(Puppet p, Organ b, Action a, /*String f, String t,*/ String hc, int x, int y, int w, int h, int d, int t, int s, int hd, int kx, int ky, double hs, boolean ia, boolean ip)	//, int d2, int s, double d3, double p)
 	{
 		super(x,y,w,h);
 		puppet = p;
@@ -93,8 +99,8 @@ public class Pleb extends Hitbox
 //		faction = f;
 //		type = t;
 		hash = hc;
-		duration = d1;
-		direction = d2;
+		duration = d;
+		type = t;
 		strength = s;
 		hDamage = hd;
 		sDamage = (int)(hDamage/4.0+0.5);
@@ -140,13 +146,28 @@ public class Pleb extends Hitbox
 	public void draw(Graphics g, double w, double h)
 	{
 		//TEST
-		g.setColor((direction != -1)? Color.RED:Color.YELLOW);
+		switch(type)
+		{
+			case -1:
+				g.setColor(Color.YELLOW);
+				break;
+				
+			case 3:
+				g.setColor(Color.ORANGE);
+				break;
+				
+			default:
+				g.setColor(Color.RED);
+				break;
+		}
+		
 		g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50));
 		g.fillRect((int)(xHosh*w/1280),(int)(yHosh*h/720),(int)(width*w/1280),(int)(height*h/720));
-		g.setColor((direction != -1)? Color.RED:Color.YELLOW);
+		g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),255));
 		g.drawRect((int)(xHosh*w/1280),(int)(yHosh*h/720),(int)(width*w/1280),(int)(height*h/720));
 		g.drawString(duration+"",(int)((xHosh+width)*w/1280),(int)((yHosh+height*9/10)*h/720));
-		switch(direction)
+		
+		switch(type)
 		{
 			case 0:
 				g.drawString("MID",(int)(xHosh*w/1280),(int)(yHosh*h/720));
@@ -156,6 +177,9 @@ public class Pleb extends Hitbox
 				break;
 			case 2:
 				g.drawString("HIGH",(int)(xHosh*w/1280),(int)(yHosh*h/720));
+				break;
+			case 3:
+				g.drawString("GRAB",(int)(xHosh*w/1280),(int)(yHosh*h/720));
 				break;
 		}
 		

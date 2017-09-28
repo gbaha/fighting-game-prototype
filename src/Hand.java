@@ -12,7 +12,7 @@ public class Hand implements KeyListener	//, MouseListener
 	double winWidth, winHeight;
 	double xMouse, yMouse;
 	
-	int currButton, fTimer;
+	int currButton, fTimer;	//, hugBuffer;
 	boolean gamePaused, debugging;
 	
 	public Hand()
@@ -33,10 +33,7 @@ public class Hand implements KeyListener	//, MouseListener
 		
 		currButton = -1;
 		fTimer = 0;
-/*		dtapArchiver = -1;
-		dtapCheck = new long[2];
-		dtapCheck[0] = -1;
-		dtapCheck[1] = -1;*/
+//		hugBuffer = 0;
 	}
 	
 	public Hand(/*Player p,*/ int x, int y, int w, int h, int[] s, int[] b)
@@ -71,6 +68,7 @@ public class Hand implements KeyListener	//, MouseListener
 			player.isCrouching = false;
 			player.isDashing = false;
 			player.isBlocking = new boolean[]{false,false};
+			player.sInputs = stickArchiver;
 			
 			for(Force f: player.bounds.forceArchiver)
 			{
@@ -85,14 +83,14 @@ public class Hand implements KeyListener	//, MouseListener
 						f.decay = f.magnitude;
 				}
 			}
-			currButton = -1;
+	//		currButton = -1;
 			if(fTimer < 1000)
 				fTimer++;
 			
 			//INPUT CHECKS
 			if(stickArchiver[0])
 			{
-				if(inputOrder.getFirst() && !player.isAirLocked)
+				if((inputOrder.getFirst() || player.bounds.isGrounded)&& !player.isAirLocked)
 				{
 					boolean j = (player.currAction == null);
 					if(!j)
@@ -235,6 +233,30 @@ public class Hand implements KeyListener	//, MouseListener
 			if(!stickArchiver[0] && !stickArchiver[1] && !stickArchiver[2] && !stickArchiver[3])
 				addStickInput(5);
 			
+			if(currButton != -1 /*&& hugBuffer == 0*/ && ((player.bounds.isGrounded && player.normals[currButton].groundOk) || (!player.bounds.isGrounded && player.normals[currButton].airOk)))
+			{//System.out.println("@  "+currButton);
+				if(buttonArchiver[currButton] && !buttonHeld[currButton])
+				{
+					if(player.currAction == null)
+						player.setAction(player.normals[currButton]);
+					else if(player.currAction.isCancelable(player.hitInfo[0],player.fCounter,player.normals[currButton].type,currButton,player.bounds.isGrounded))
+					{
+						Puppet t = player.currAction.target;
+						player.setAction(player.normals[currButton]);
+						player.currAction.target = t;
+						player.fCounter = 0;
+						player.sIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
+						
+						if(player.bounds.isGrounded)
+							player.bounds.botOffset = 0;
+					}
+					player.currAction.button = currButton;
+					currButton = -1;
+				}
+			}
+	/*		else if(hugBuffer > 0)
+				hugBuffer--;*/
+			
 			for(int b = 0; b < 6; b++)
 			{
 				if(buttonArchiver[b])
@@ -242,7 +264,6 @@ public class Hand implements KeyListener	//, MouseListener
 					buttonHeld[b] = true;
 			//		currButton = b;
 					addButtonInput(b);
-			
 				}
 			}
 		}
@@ -359,24 +380,6 @@ public class Hand implements KeyListener	//, MouseListener
 				player.actions[player.movelist.indexOf(m)].button = currButton;
 			}
 		}
-		
-		if(currButton != -1 && ((player.bounds.isGrounded && player.normals[currButton].groundOk) || (!player.bounds.isGrounded && player.normals[currButton].airOk)))
-		{//System.out.println("@  "+currButton);
-			if(player.currAction == null)
-				player.setAction(player.normals[currButton]);
-			else if(player.currAction.isCancelable(player.hitInfo[0],player.fCounter,player.normals[currButton].type,currButton,player.bounds.isGrounded))
-			{
-				Puppet t = player.currAction.target;
-				player.setAction(player.normals[currButton]);
-				player.currAction.target = t;
-				player.fCounter = 0;
-				player.sIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
-				
-				if(player.bounds.isGrounded)
-					player.bounds.botOffset = 0;
-			}
-			player.currAction.button = currButton;
-		}
 	}
 	
 	public void addStickInput(int i)
@@ -400,6 +403,7 @@ public class Hand implements KeyListener	//, MouseListener
 					stickInputs.removeLast();
 				while(inputOrder.size() > 60)
 					inputOrder.removeLast();
+				
 				fTimer = 0;
 				readInputs();
 			}
@@ -426,7 +430,10 @@ public class Hand implements KeyListener	//, MouseListener
 				buttonInputs.removeLast();
 			while(inputOrder.size() > 60)
 				inputOrder.removeLast();
+			
 			fTimer = 0;
+/*			if(hugBuffer == 0)
+				hugBuffer = 1;*/
 			readInputs();
 		}
 	}

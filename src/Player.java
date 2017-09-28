@@ -9,10 +9,12 @@ public class Player extends Puppet
 	Action[] actions;
 	int airOptions, airDashLimit, jumpLimit, aDash, jCount;
 	boolean isDashing, isHoming, isJumping;
+	boolean[] sInputs;
 	
 	public enum PlayerState implements State
 	{
-		PuppetState, DASH_FORWARD, DASH_BACKWARD, JUMP_HOMING1, JUMP_HOMING2, 
+		PuppetState, DASH_FORWARD, DASH_BACKWARD, JUMP_HOMING1, JUMP_HOMING2,
+		HUG_START, HUG_HOLD, HUG_HIT, HUG_FORWARD, HUG_UP, HUG_BACK, HUG_BREAK,
 		STANDING_LP, STANDING_MP, STANDING_HP, STANDING_LK, STANDING_MK, STANDING_HK, 
 		CROUCHING_LP, CROUCHING_MP, CROUCHING_HP, CROUCHING_LK, CROUCHING_MK, CROUCHING_HK, 
 		JUMPING_LP, JUMPING_MP, JUMPING_HP, JUMPING_LK, JUMPING_MK, JUMPING_HK;
@@ -48,8 +50,11 @@ public class Player extends Puppet
 		movelist.add(new int[][]{{7,5,4},{-1,-1,-1},{0,10,10}});
 		movelist.add(new int[][]{{8},{-1},{0},{2,1}});
 		movelist.add(new int[][]{{9},{-1},{0},{2,1}});
+		movelist.add(new int[][]{{-1,-1},{0,3},{0,1}});
+		movelist.add(new int[][]{{-1,-1},{3,0},{0,1}});
 		
-		actions = new Action[]{new FrontDash(), new FrontDash(), new BackDash(), new BackDash(), new HomingJump(), new HomingJump()};
+		actions = new Action[]{new FrontDash(), new FrontDash(), new BackDash(), new BackDash(), new HomingJump(), new HomingJump(), new Hug(), new Hug()};
+		sInputs = new boolean[4];
 	}
 	
 	public void reset(int x, int y) //TEST
@@ -72,6 +77,7 @@ public class Player extends Puppet
 		aDash = 0;
 		jCount = 0;
 		meter = 1000;
+		sInputs = new boolean[4];
 	}
 	
 	public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean d)
@@ -98,7 +104,7 @@ public class Player extends Puppet
 			case "JUMP_BACKWARD":
 				jump();
 				break;
-				
+			
 			case "DASH_FORWARD":
 			case "DASH_BACKWARD":
 			case "JUMP_HOMING1":
@@ -121,7 +127,17 @@ public class Player extends Puppet
 			case "JUMPING_LK":
 			case "JUMPING_MK":
 			case "JUMPING_HK":
+			case "HUG_START":
+			case "HUG_HOLD":
+			case "HUG_HIT":
+			case "HUG_FRONT":
+			case "HUG_UP":
+			case "HUG_DOWN":
 				performAction();
+				break;
+				
+			case "HUG_BREAK":
+				flinch();
 				break;
 		}
 		super.checkState();
@@ -136,7 +152,8 @@ public class Player extends Puppet
 				currAction = a;
 				a.button = -1;
 				
-				jDirections[1] = 0;
+				if(!bounds.isGrounded)
+					jDirections[1] = 0;
 				isHoming = false;
 			}
 		}
@@ -147,7 +164,8 @@ public class Player extends Puppet
 			fCounter = 0;
 	//		sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 			
-			jDirections[1] = 0;
+			if(!bounds.isGrounded)
+				jDirections[1] = 0;
 			isHoming = false;
 		}
 	}
@@ -165,9 +183,8 @@ public class Player extends Puppet
 	
 	public void idle()
 	{
-		if(currAction != null)
+		if(currAction != null && currState != PuppetState.PREJUMP)
 		{
-		//	currState = PuppetState.PERFORM_ACTION;
 			performAction();
 			return;
 		}
@@ -259,7 +276,6 @@ public class Player extends Puppet
 	{
 		if(currAction != null)
 		{
-	//		currState = PuppetState.PERFORM_ACTION;
 			performAction();
 			return;
 		}
@@ -361,15 +377,26 @@ public class Player extends Puppet
 			currState = PuppetState.IDLE;*/
 	}
 	
+	public void takeDamage(Pleb p, Hitbox[] c)
+	{
+		if(p.type == Pleb.GRAB && isThrowing)
+		{
+			currState = PlayerState.HUG_BREAK;
+			sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+			hitStun = 15;
+			isThrowing = false;
+			
+			p.puppet.sIndex = p.puppet.hitboxArchiver.get(p.puppet.currState.getPosition())[0][1];
+			p.puppet.currState = PlayerState.HUG_BREAK;
+			p.puppet.hitStun = 15;
+			p.puppet.isThrowing = false;
+		}
+		else
+			super.takeDamage(p,c);
+	}
+	
 	public void jump()
 	{
-		if(currAction != null)
-		{
-	//		currState = PuppetState.PERFORM_ACTION;
-			performAction();
-			return;
-		}
-		
 		if(jCount < jumpLimit && airOptions > aDash+jCount && isJumping && !bounds.isFloating)
 		{
 			int fLimit = bounds.forceArchiver.size();
@@ -389,6 +416,13 @@ public class Player extends Puppet
 			jCount++;
 		}
 		bounds.botOffset = 0;
+		
+		if(currAction != null)
+		{
+			bounds.isGrounded = false;
+			performAction();
+			return;
+		}
 		
 		if(isBlocking[0] || isBlocking[1])
 		{
@@ -438,7 +472,7 @@ public class Player extends Puppet
 	{
 	//	HITBOX FRAME TEST
 	//	bounds.isGrounded = false; bounds.isFloating = true;
-	//	currState = PlayerState.JUMPING_HP; setAction(normals[2]); sIndex = 3; fCounter = 3; currAction.frames = 30;
+	//	currState = PlayerState.JUMPING_MK; setAction(normals[4]); sIndex = 2; fCounter = 0; currAction.frames = 30;
 		
 	//	super.update();
 		if(bounds.isGrounded)
@@ -484,7 +518,7 @@ public class Player extends Puppet
 				new boolean[]{true,true,true},
 				new boolean[]{true,true,true},
 				new boolean[]{true,true,true},
-				new int[]{8,99,-1,-1,3,99},
+				new int[]{8,99,-1,-1,1,99},
 				new boolean[]{true,true,false});
 			magnitude = 35;
 			decay = 2;
@@ -547,7 +581,7 @@ public class Player extends Puppet
 				new boolean[]{true,true,true},
 				new boolean[]{true,true,true},
 				new boolean[]{true,true,true},
-				new int[]{8,99,-1,-1,3,99},
+				new int[]{8,99,-1,-1,1,99},
 				new boolean[]{true,true,false});
 			magnitude = 28;
 			decay = 2;
@@ -648,5 +682,15 @@ public class Player extends Puppet
 					f = frames;
 			}
 		}
+	}
+	
+	public class Hug extends Action
+	{
+		public Hug()	// MIGHT GIVE UNIQUE GRAB TYPE RATHER THAN SPECIAL
+		{
+			super(Action.GRAB,0,new int[][]{new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true,true});
+		}
+		
+		public void perform(int f){}
 	}
 }
