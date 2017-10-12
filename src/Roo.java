@@ -206,9 +206,6 @@ public class Roo extends Player
 			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
-		//GRABBED
-		hitboxArchiver.add(new int[][]{new int[]{11,0,0,0,2},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//KNOCKDOWN
 		hitboxArchiver.add(new int[][]{new int[]{15,0,9,0,2},
 			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -255,9 +252,21 @@ public class Roo extends Player
 			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//GRABBED(ARMS)
+		hitboxArchiver.add(new int[][]{new int[]{18,0,0,0,2},
+			new int[]{-32,0,125,125,	-32,74,125,125,	-32,147,125,125}});
+		//GRABBED(HEAD)
+		hitboxArchiver.add(new int[][]{new int[]{18,1,1,0,2},
+			new int[]{-32,0,125,125,	-32,74,125,125,	-32,147,125,125}});
+		//GRABBED(BODY)
+		hitboxArchiver.add(new int[][]{new int[]{18,2,2,0,2},
+			new int[]{-32,0,125,125,	-32,74,125,125,	-32,147,125,125}});
+		//GRABBED(LEGS)
+		hitboxArchiver.add(new int[][]{new int[]{18,3,3,0,2},
+			new int[]{-32,0,125,125,	-32,74,125,125,	-32,147,125,125}});
 		
 		//DASH FORWARD
-		hitboxArchiver.add(new int[][]{new int[]{18,0,5,0,3},
+		hitboxArchiver.add(new int[][]{new int[]{19,0,5,0,3},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -265,7 +274,7 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//DASH BACKWARD
-		hitboxArchiver.add(new int[][]{new int[]{19,0,5,0,3},
+		hitboxArchiver.add(new int[][]{new int[]{20,0,5,0,3},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -282,7 +291,7 @@ public class Roo extends Player
 			new int[]{51,-53,53,50,	-36,-30,126,80,	-10,52,150,90,	-20,142,100,103}});
 		
 		//THROW START
-		hitboxArchiver.add(new int[][]{new int[]{38,0,7,0,3},
+		hitboxArchiver.add(new int[][]{new int[]{39,0,7,0,3},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -292,10 +301,10 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//THROW HOLD
-		hitboxArchiver.add(new int[][]{new int[]{0,0,0,0,4},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		hitboxArchiver.add(new int[][]{new int[]{23,4,4,0,4},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//THROW HIT
-		hitboxArchiver.add(new int[][]{new int[]{24,0,9,0,1},
+		hitboxArchiver.add(new int[][]{new int[]{25,0,9,0,1},
 			new int[]{50,-28,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{58,-28,63,50,	-24,0,160,55,	-24,55,170,100,	-34,155,190,95},
 			new int[]{58,-28,63,50,	-24,0,160,55,	-24,55,170,100,	-34,155,190,95},
@@ -307,16 +316,28 @@ public class Roo extends Player
 			new int[]{58,-28,63,50,	-24,0,160,55,	-24,55,170,100,	-34,155,190,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//THROW FORWARD
-		hitboxArchiver.add(new int[][]{new int[]{0,0,0,0,4},
+		hitboxArchiver.add(new int[][]{new int[]{40,0,12,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//THROW UPWARD
-		hitboxArchiver.add(new int[][]{new int[]{0,0,0,0,4},
+		hitboxArchiver.add(new int[][]{new int[]{41,0,0,0,4},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//THROW DOWNWARD
 		hitboxArchiver.add(new int[][]{new int[]{0,0,0,0,4},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//THROW BREAK
-		hitboxArchiver.add(new int[][]{new int[]{19,0,5,0,3},
+		hitboxArchiver.add(new int[][]{new int[]{20,0,5,0,3},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -325,14 +346,14 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		
 		//STANDING LP
-		hitboxArchiver.add(new int[][]{new int[]{20,0,4,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{21,0,4,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95, 125,0,120,45},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95, 125,0,120,45},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//STANDING MP
-		hitboxArchiver.add(new int[][]{new int[]{21,0,8,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{22,0,8,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -343,7 +364,7 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//STANDING HP
-		hitboxArchiver.add(new int[][]{new int[]{22,0,13,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{23,0,13,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -359,7 +380,7 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//STANDING LK
-		hitboxArchiver.add(new int[][]{new int[]{23,0,6,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{24,0,6,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,60,50,	-32,0,150,70,	-32,75,125,75,	-42,155,160,95},
 			new int[]{32,-23,60,50,	-32,0,150,90,	-32,100,250,75,	-42,165,290,85},
@@ -368,7 +389,7 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//STANDING MK
-		hitboxArchiver.add(new int[][]{new int[]{24,0,9,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{25,0,9,0,2},
 			new int[]{50,-28,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{58,-28,63,50,	-24,0,160,55,	-24,55,170,100,	-34,155,190,95},
 			new int[]{58,-28,63,50,	-24,0,160,55,	-24,55,170,100,	-34,155,190,95},
@@ -380,7 +401,7 @@ public class Roo extends Player
 			new int[]{58,-28,63,50,	-24,0,160,55,	-24,55,170,100,	-34,155,190,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//STANDING HK
-		hitboxArchiver.add(new int[][]{new int[]{25,0,24,0,1},
+		hitboxArchiver.add(new int[][]{new int[]{26,0,24,0,1},
 			new int[]{0,-23,58,50,	-32,20,150,55,	-22,55,160,110,	-22,175,160,75},
 			new int[]{0,-23,58,50,	-32,20,150,55,	-22,55,160,110,	-22,175,160,75},
 			new int[]{0,-23,58,50,	-32,20,150,55,	-22,55,160,110,	-22,175,160,75},
@@ -408,14 +429,14 @@ public class Roo extends Player
 			new int[]{50,-28,58,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 			
 		//CROUCHING LP
-		hitboxArchiver.add(new int[][]{new int[]{26,0,4,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{27,0,4,0,2},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	125,-5,80,40},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	125,-5,80,40},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	125,-5,80,40},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90}});
 		//CROUCHING MP
-		hitboxArchiver.add(new int[][]{new int[]{27,0,6,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{28,0,6,0,2},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	125,-5,80,40},
@@ -424,7 +445,7 @@ public class Roo extends Player
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90}});
 		//CROUCHING HP
-		hitboxArchiver.add(new int[][]{new int[]{28,0,12,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{29,0,12,0,2},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
 			new int[]{32,-80,53,50,	-32,-45,150,40,	-32,0,135,55,	-45,60,185,90},
@@ -439,7 +460,7 @@ public class Roo extends Player
 			new int[]{32,-80,53,50,	-32,-45,150,40,	-32,0,135,55,	-45,60,185,90},
 			new int[]{32,-80,53,50,	-32,-45,150,40,	-32,0,135,55,	-45,60,185,90}});
 		//CROUCHING LK
-		hitboxArchiver.add(new int[][]{new int[]{29,0,6,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{30,0,6,0,2},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	150,105,100,45},
@@ -448,7 +469,7 @@ public class Roo extends Player
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90}});
 		//CROUCHING MK
-		hitboxArchiver.add(new int[][]{new int[]{30,0,10,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{31,0,10,0,2},
 			new int[]{32,-40,53,50,	-16,-5,125,35,	-16,25,135,40,	-45,60,185,90},
 			new int[]{32,-40,53,50,	-16,-5,125,35,	-16,25,135,40,	-30,60,185,90},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90,	130,90,100,60},
@@ -461,7 +482,7 @@ public class Roo extends Player
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90}});
 		//CROUCHING HK
-		hitboxArchiver.add(new int[][]{new int[]{31,0,33,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{32,0,33,0,2},
 			new int[]{32,-40,53,50,	-16,-5,125,35,	-16,25,135,40,	-45,60,185,90},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90},
@@ -498,7 +519,7 @@ public class Roo extends Player
 			new int[]{32,-40,53,50,	-32,-5,125,35,	-32,25,135,40,	-45,60,185,90}});
 		
 		//JUMPING LP
-		hitboxArchiver.add(new int[][]{new int[]{32,0,3,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{33,0,3,0,2},
 			new int[]{96,-42,53,50,	0,0,150,55,	-56,36,160,125,	56,-100,100,100},
 			new int[]{96,-42,53,50,	0,0,150,55,	-56,36,145,125,	80,-70,100,125},
 			new int[]{96,-42,53,50,	0,0,185,50,	-32,32,120,125},
@@ -506,7 +527,7 @@ public class Roo extends Player
 			new int[]{96,-42,53,50,	0,0,185,50,	-32,32,120,125},
 			new int[]{96,-42,53,50,	0,0,185,50,	-32,32,120,125}});
 		//JUMPING MP
-		hitboxArchiver.add(new int[][]{new int[]{33,0,7,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{34,0,7,0,2},
 			new int[]{24,-62,53,50,	-32,-30,135,35,	-24,5,185,50,	-24,60,170,55,	-24,120,110,65},
 			new int[]{48,-45,53,50,	-72,-30,180,55,	-24,30,130,65, -42,100,180,60},
 			new int[]{48,-45,53,50,	0,-30,120,55,	0,30,100,35, -42,70,180,60, 0,135,100,35},
@@ -516,7 +537,7 @@ public class Roo extends Player
 			new int[]{22,-45,53,50,	-32,-20,150,40,	-32,20,190,50,	-32,75,170,60,	-32,140,135,65},
 			new int[]{35,-56,53,50,	-48,-25,136,80,	-10,38,150,80,	-10,118,103,125}});
 		//JUMPING HP
-		hitboxArchiver.add(new int[][]{new int[]{34,0,6,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{35,0,6,0,2},
 			new int[]{40,-62,53,50,	-72,-25,175,35,	0,15,175,35,	-42,55,185,95},
 			new int[]{64,-48,53,50,	-32,-25,130,35,	0,20,100,50,	-75,75,215,70},
 			new int[]{64,-48,53,50,	-16,-25,130,35,	0,20,100,50,	-75,75,200,70},
@@ -525,7 +546,7 @@ public class Roo extends Player
 			new int[]{64,-48,53,50,	-16,-25,130,35,	0,20,100,50,	-75,75,200,70,	105,-10,100,80},
 			new int[]{48,-48,53,50,	-16,-25,130,35,	0,20,180,50,	-50,75,175,80}});
 		//JUMPING LK
-		hitboxArchiver.add(new int[][]{new int[]{35,0,6,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{36,0,6,0,2},
 			new int[]{48,-48,53,50,	-24,-30,125,65,	-10,40,150,105},
 			new int[]{48,-48,53,50,	-24,-30,125,65,	-10,40,150,105},
 			new int[]{56,-36,53,50,	-48,-20,165,55,	-30,40,165,80},
@@ -534,7 +555,7 @@ public class Roo extends Player
 			new int[]{48,-48,53,50,	-48,-20,165,55,	-40,40,160,80},
 			new int[]{48,-48,53,50,	-24,-30,125,65,	-10,40,150,105}});
 		//JUMPING MK
-		hitboxArchiver.add(new int[][]{new int[]{36,0,9,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{37,0,9,0,2},
 			new int[]{32,-48,53,50,	-32,-15,155,50,	-10,40,140,105},
 			new int[]{48,-48,53,50,	-32,-15,155,50,	-10,40,140,105},
 			new int[]{56,-36,53,50,	-32,-30,130,85,	-35,60,150,50,	100,-10,85,50},
@@ -546,7 +567,7 @@ public class Roo extends Player
 			new int[]{48,-48,53,50,	-48,-20,155,50,	-10,30,190,30,	-30,60,235,95},
 			new int[]{48,-56,53,50,	-48,-25,136,70,	-10,45,150,80,	-10,125,103,75}});
 		//JUMPING HK
-		hitboxArchiver.add(new int[][]{new int[]{37,0,13,0,3},
+		hitboxArchiver.add(new int[][]{new int[]{38,0,13,0,3},
 			new int[]{24,-56,53,50,	-16,-20,155,50,	-20,30,185,100},
 			new int[]{0,-56,53,50,	-48,-20,155,75,	-35,60,130,70},
 			new int[]{0,-56,53,50,	-24,-20,130,75,	-60,60,350,50,	-15,110,100,40},
@@ -563,7 +584,7 @@ public class Roo extends Player
 			new int[]{24,-56,53,50,	-16,-20,155,70,	-20,50,185,120}});
 		
 		//FIREBALL LAUNCH
-		hitboxArchiver.add(new int[][]{new int[]{39,0,9,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{42,0,9,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
@@ -575,7 +596,7 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//FIREBALL RECOVER
-		hitboxArchiver.add(new int[][]{new int[]{40,0,2,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{43,0,2,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
@@ -596,7 +617,7 @@ public class Roo extends Player
 			{
 				Image sheet = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/roo.png"));
 				int f = /*(hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal())[0][3] == 0)?*/ (int)sIndex;	//:hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal()).length-(int)sIndex-2;
-				s.read(g,i,xHosh,yHosh,width,800,490,f,hitboxArchiver.get(currState.getPosition())[0][0],spriteParams,!isFacingRight,sheet);
+				s.read(g,i,xHosh,yHosh,width,800,490,f,hitboxArchiver.get(currState.getPosition())[0][0],xOffset,yOffset,spriteParams,!isFacingRight,sAngle,sheet);
 			}
 			catch(java.lang.IndexOutOfBoundsException e)
 			{
@@ -1261,14 +1282,24 @@ public class Roo extends Player
 			{
 				if(target != null)
 				{
-					currState = PlayerState.HUG_BREAK;
-					sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
-					hitStun = 15;
-					isThrowing = false;
+					if(currState != PlayerState.HUG_FORWARD && currState != PlayerState.HUG_UPWARD && currState != PlayerState.HUG_DOWNWARD)
+					{
+			//			addGrab(target,bounds.xCoord,bounds.yCoord,1,1,1,false,false,false);
+						currState = PlayerState.HUG_BREAK;
+						sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+						hitStun = 15;
+						
+						target.currState = PlayerState.HUG_BREAK;
+						target.sIndex = target.hitboxArchiver.get(target.currState.getPosition())[0][1];
+						target.hitStun = 15;
+					}
+			/*		else
+						isThrowing = false;*/
 					
-					target.currState = PlayerState.HUG_BREAK;
-					target.sIndex = target.hitboxArchiver.get(target.currState.getPosition())[0][1];
-					target.hitStun = 15;
+					target.xOffset = 0;
+					target.yOffset = 0;
+					target.sAngle = 0;
+					isThrowing = false;
 					target.isThrown = false;
 				}
 				else
@@ -1317,31 +1348,99 @@ public class Roo extends Player
 						f = 0;
 					}
 					
-					if(currState == PlayerState.HUG_HOLD && lastMashed != button)
+					if(currState == PlayerState.HUG_HOLD)
 					{
-						currState = PlayerState.HUG_HIT;
-						lastMashed = button;
-						frames = 9;
+						if(lastMashed != button)
+						{
+							currState = PlayerState.HUG_HIT;
+							frames = 9;
+							lastMashed = button;
+						}
+						else if(sInputs[1] || sInputs[3])
+						{
+							currState = PlayerState.HUG_FORWARD;
+							frames = 26;
+							hTimer = 26;
+							isFacingRight = sInputs[1];
+						}
 						fCounter = 0;
 						f = 0;
-					}
-					
-					if(target.hitStun == 0)
-					{
-						target.currState = PuppetState.HUGGED0;
-						target.sIndex = target.hitboxArchiver.get(target.currState.getPosition())[0][1];
-						if((target.isFacingRight && bounds.xCoord-(target.bounds.xCoord+target.bounds.width) < 50) || (!target.isFacingRight && target.bounds.xCoord-(bounds.xCoord+bounds.width) > 50))
-							target.bounds.forceArchiver.add(new Force("Hug",(target.isFacingRight)? 3:1,50,50));
+						
+						if(target.hitStun == 0 && target.isThrown)
+						{
+							target.currState = PuppetState.HUGGED1;
+							target.sIndex = target.hitboxArchiver.get(target.currState.getPosition())[0][1];
+							target.yOffset = -25;
+						}
+						
+						if((!isFacingRight && bounds.xCoord-(target.bounds.xCoord+target.bounds.width-50) < 50) || (isFacingRight && target.bounds.xCoord-(bounds.xCoord+bounds.width+50) > 50))
+							target.bounds.forceArchiver.add(new Force("Hug",(isFacingRight)? 1:3,50,50));
 						else
-							target.bounds.xCoord = (target.isFacingRight)? bounds.xCoord-target.bounds.width:bounds.xCoord+bounds.width;
+							target.bounds.xCoord = (isFacingRight)? bounds.xCoord+bounds.width+50:bounds.xCoord-target.bounds.width-50;
 					}
 					
 					switch(f)
 					{
 						case 2:
 							if(currState == PlayerState.HUG_HIT)
-								addPleb(roo,hTimer,bounds.xCoord+100,bounds.yCoord+40,150,210,5,Pleb.MID,0,10,0,0,0,0.75,true,false,true,new double[][]{});
+								addPleb(roo,0,bounds.xCoord+100,bounds.yCoord+40,150,210,5,Pleb.MID,0,10,0,0,0,0.75,true,false,true,new double[][]{});
+							else if(currState == PlayerState.HUG_FORWARD)
+							{
+								target.currState = PuppetState.HUGGED3;
+								target.isFacingRight = isFacingRight;
+								target.bounds.forceArchiver.clear();
+								
+								target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width/3+target.bounds.width/2),bounds.yCoord-bounds.height/5);
+								target.sAngle = 210;
+							}
 							break;
+							
+						case 4:
+							if(currState == PlayerState.HUG_FORWARD)
+							{
+								target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width*2/3+target.bounds.width/2),bounds.yCoord-bounds.height/5-10);
+								target.sAngle = 195;
+							}
+							break;
+							
+						case 6:
+							if(currState == PlayerState.HUG_FORWARD)
+								target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width*2/3+target.bounds.width/2+20),bounds.yCoord-bounds.height/5);
+							break;
+							
+						case 8:
+							if(currState == PlayerState.HUG_FORWARD)
+								target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width*2/3+target.bounds.width/2+20),bounds.yCoord-bounds.height/5+10);
+							break;
+							
+						case 10:
+							if(currState == PlayerState.HUG_FORWARD)
+							{
+								target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width*2/5+target.bounds.width/2),bounds.yCoord-bounds.height*2/3);
+								target.sAngle = 90;
+							}
+							break;
+							
+						case 12:
+							if(currState == PlayerState.HUG_FORWARD)
+							{
+								target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? 1:-1)*(bounds.width/2+target.bounds.width/2),bounds.yCoord-bounds.height/5);
+								target.sAngle = 0;
+							}
+							break;
+							
+						case 15:
+							if(currState == PlayerState.HUG_FORWARD)
+								addPleb(roo,0,bounds.xCoord+100,bounds.yCoord+40,150,210,5,Pleb.MID,0,200,0,20,0,0.75,true,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,80,4,60}});
+							break;
+							
+						case 16:
+							if(currState == PlayerState.HUG_FORWARD)
+							{
+								target.bounds.xCoord = (isFacingRight)? bounds.xCoord+bounds.width:bounds.xCoord-target.bounds.width;
+								target.xOffset = 0;
+								target.yOffset = 0;
+							}
 					}
 					hTimer--;
 				}

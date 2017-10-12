@@ -25,7 +25,7 @@ abstract class Puppet
 	int health, stamina, meter, speed;
 	int preFrames, fCounter, hitStun, hitStop, sCooldown;
 	int kdCounter, kdLimit, kdStun, launchPoint;
-	double sIndex, jForce, jump, juggleDamp, hitstunDamp;
+	double sIndex, sAngle, jForce, jump, juggleDamp, hitstunDamp;
 	boolean isFacingRight, isPerformingAction, isCrouching, canBlock, isGuardBroken;
 	boolean isThrowing, isThrown, isJuggled, /*isUnstoppable,*/ isAirLocked;	//, isJumping;
 	
@@ -36,7 +36,7 @@ abstract class Puppet
 	{
 		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, PREJUMP, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD,
 		GUARD_STANDING, GUARD_CROUCHING, GUARD_JUMPING, FLINCH_STANDING0, FLINCH_STANDING1, FLINCH_STANDING2, FLINCH_CROUCHING, FLINCH_TRIP0, FLINCH_TRIP1, FLINCH_AERIAL0, FLINCH_AERIAL1, FLINCH_AERIAL2,
-		HUGGED0, KNOCKDOWN, FALLING, BREAK_GROUND, BREAK_AIR;
+		KNOCKDOWN, FALLING, BREAK_GROUND, BREAK_AIR, HUGGED0, HUGGED1, HUGGED2, HUGGED3;
 		
 		public String getState()
 		{
@@ -110,11 +110,13 @@ abstract class Puppet
 		preFrames = 0;
 		fCounter = 0;
 		sIndex = 0;
+		sAngle = 0;
 		hitStun = 0;
 		hitStop = 0;
 		hitstunDamp = 0;
 		juggleDamp = 0;
 		sCooldown = 0;		//999999;
+//		techWindow = 8;	// Might need
 		
 		kdCounter = 0;
 		kdLimit = 2;	// if counter >= limit, cannot be knocked down in combo
@@ -148,7 +150,7 @@ abstract class Puppet
 					g.drawLine((int)((bounds.xHosh+bounds.width-15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720),(int)((bounds.xHosh+bounds.width+15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720));
 				else
 					g.drawLine((int)((bounds.xHosh-15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720),(int)((bounds.xHosh+15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720));
-				g.fillRect((int)(xHosh*w/1280),(int)(yHosh*h/720),(int)(10*w/1280),(int)(10*h/720));
+				g.fillRect((int)((xHosh+xOffset)*w/1280),(int)((yHosh+yOffset)*h/720),(int)(10*w/1280),(int)(10*h/720));
 				g.fillRect((int)((xHosh+bounds.width-10)*w/1280),(int)((yHosh+bounds.height+bounds.botOffset-10)*h/720),(int)(10*w/1280),(int)(10*h/720));
 				
 				for(Hitbox a: anatomy)
@@ -206,9 +208,12 @@ abstract class Puppet
 			case "FLINCH_AERIAL0":
 			case "FLINCH_AERIAL1":
 			case "FLINCH_AERIAL2":
-			case "HUGGED0":
 			case "BREAK_GROUND":
 			case "BREAK_AIR":
+			case "HUGGED0":
+			case "HUGGED1":
+			case "HUGGED2":
+			case "HUGGED3":
 				flinch();
 				break;
 				
@@ -221,14 +226,14 @@ abstract class Puppet
 		if(bounds.height == height)	//((!bounds.isGrounded || currState == PuppetState.LANDING) && currState != PuppetState.GUARD_CROUCHING && currState != PuppetState.FLINCH_CROUCHING)
 			yCoord = bounds.yCoord;
 		
-		if(currState.getPosition() < hitboxArchiver.size())
+	/*	if(currState.getPosition() < hitboxArchiver.size())
 		{
 			if(currState != prevState)
 			{
 				sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 				prevState = currState;
 			}
-		}
+		}*/
 	}
 	
 	public void setAction(Action a)
@@ -392,7 +397,7 @@ abstract class Puppet
 	
 	public void takeDamage(Pleb p, Hitbox[] c)
 	{
-		boolean hitSuccessful = false;
+		boolean hitSuccessful = (kdStun > 0 && kdCounter < kdLimit);
 		bounds.forceArchiver = new ArrayList<Force>();
 		switch(p.type)
 		{
@@ -421,13 +426,13 @@ abstract class Puppet
 				break;
 		}
 		
-		if(hitSuccessful && kdCounter < kdLimit)
+		if(hitSuccessful)
 		{
 			health -= (!isGuardBroken)? p.hDamage:(int)((double)p.hDamage*2.5+0.5);
 			if(health < 0)
 				health = 0;
 			
-			if(!bounds.isGrounded)
+			if(!bounds.isGrounded || kdCounter > 0)
 				currState = PuppetState.FLINCH_AERIAL0;
 			else if(isCrouching)
 				currState = PuppetState.FLINCH_CROUCHING;
@@ -466,6 +471,7 @@ abstract class Puppet
 					hitStop = 10;
 					break;
 			}
+			kdStun = 0;
 			bounds.forceArchiver.clear();
 			
 	//		isUnstoppable = false;
@@ -479,7 +485,7 @@ abstract class Puppet
 							if(t[1] == 0 || !bounds.isGrounded)
 							{
 								currState = (bounds.isGrounded)? PuppetState.FLINCH_TRIP0:PuppetState.FLINCH_TRIP1;
-								p.appliedForces.add(new Force("knockdown",2,t[3],t[4]));
+								p.appliedForces.add(new Force("knockdown",(t[3] > 0)? 2:0,Math.abs(t[3]),t[4]));
 					/*			bounds.yCoord = yCoord;
 								bounds.height = height;
 								kdCounter += t[2];
@@ -497,6 +503,9 @@ abstract class Puppet
 							bounds.forceArchiver.add(new Force("xLaunch",(p.puppet.isFacingRight)? 3:1,t[2],t[3]));
 							bounds.forceArchiver.add(new Force("yLaunch",2,t[4],t[5]));*/
 							
+							if((isFacingRight && bounds == c[0]) || (!isFacingRight && bounds == c[1]))
+								t[2] = 0;
+							
 					//		bounds.isGrounded = false;
 							hitStun = (int)t[6];
 							launchPoint = p.puppet.hitInfo[1]+1;
@@ -509,6 +518,8 @@ abstract class Puppet
 			}
 			sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 			isFacingRight = !p.puppet.isFacingRight;
+			yOffset = 0;
+			sAngle = 0;
 			
 			p.puppet.hitInfo[0] = 2;
 			p.puppet.hitInfo[1]++;
@@ -629,6 +640,12 @@ abstract class Puppet
 				plebArchiver.clear();
 				currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
 			}
+		/*	else if(isThrown && techWindow > 0 && currAction != null)	// Probably gonna need
+			{
+				if(currAction.type == Action.GRAB)
+					performAction();
+				techWindow--;
+			}*/
 		}
 		jDirections = new int[]{0,0};
 	}
@@ -713,7 +730,7 @@ abstract class Puppet
 			bounds.yCoord += height-kdHeight;
 			bounds.height = kdHeight;
 		}
-		else if((isCrouching && jDirections[0] == 0 && jDirections[1] == 0 && currState != PuppetState.LANDING && currState != PuppetState.PREJUMP && currState != PuppetState.FLINCH_TRIP0 && currState != PuppetState.FLINCH_TRIP1) || currState == PuppetState.CROUCHING)
+		else if(((isCrouching && jDirections[0] == 0 && jDirections[1] == 0 && currState != PuppetState.LANDING && currState != PuppetState.PREJUMP && currState != PuppetState.FLINCH_TRIP0 && currState != PuppetState.FLINCH_TRIP1) || currState == PuppetState.CROUCHING) && (hitStun == 0 && !isThrown))
 		{
 			bounds.yCoord += height-crHeight;
 			bounds.height = crHeight;
@@ -758,6 +775,7 @@ abstract class Puppet
 			hitStun--;
 		else
 		{
+//			techWindow = 8;
 			isJuggled = false;
 			if(bounds.isGrounded)
 			{
@@ -783,12 +801,26 @@ abstract class Puppet
 		}
 		else
 			sCooldown--;
+		
+		if(sAngle < 0)
+			sAngle += 360;
+		if(sAngle >= 360)
+			sAngle %= 360;
 	}
 	
 	
 	protected void getHitboxes(int h)
 	{
 		anatomy = new ArrayList<Organ>();
+		if(currState.getPosition() < hitboxArchiver.size())
+		{
+			if(currState != prevState)
+			{
+				sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+				prevState = currState;
+			}
+		}
+		
 		if(h < hitboxArchiver.size())
 		{
 			//MIGHT REMOVE AGAIN, COULD BE PLACED IN PUBLIC METHOD
@@ -808,7 +840,17 @@ abstract class Puppet
 				i += hitboxArchiver.get(h)[0][1];*/
 			
 			for(int j = 0; j < hitboxArchiver.get(h)[i].length; j += 4)
-				anatomy.add(new Organ((isFacingRight)? hitboxArchiver.get(h)[i][j]+bounds.xCoord+xOffset:bounds.xCoord+bounds.width-xOffset-hitboxArchiver.get(h)[i][j]-hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+1]+bounds.yCoord-yOffset,hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+3],speed));
+			{
+				int x = (isFacingRight)? hitboxArchiver.get(h)[i][j]+bounds.xCoord+xOffset:bounds.xCoord+bounds.width+xOffset-hitboxArchiver.get(h)[i][j]-hitboxArchiver.get(h)[i][j+2];
+				int y = hitboxArchiver.get(h)[i][j+1]+bounds.yCoord+yOffset;
+				if(sAngle != 0 && j != 4 && isThrown)
+				{
+					double d = Math.sqrt(Math.pow(hitboxArchiver.get(h)[i][j]+hitboxArchiver.get(h)[i][j+2]/2-(hitboxArchiver.get(h)[i][4]+hitboxArchiver.get(h)[i][6]/2),2)+Math.pow(hitboxArchiver.get(h)[i][j+1]+hitboxArchiver.get(h)[i][j+3]/2-(hitboxArchiver.get(h)[i][5]+hitboxArchiver.get(h)[i][7]/2),2));
+					x = ((isFacingRight)? hitboxArchiver.get(h)[i][4]+bounds.xCoord+xOffset:bounds.xCoord+bounds.width+xOffset-hitboxArchiver.get(h)[i][4]-hitboxArchiver.get(h)[i][6])+(int)(d*Math.cos(Math.toRadians(sAngle+((j == 0 || (j == 2 && isFacingRight))? -90:90)))+0.5);
+					y = hitboxArchiver.get(h)[i][5]+(int)(d*Math.sin(Math.toRadians(sAngle+((j == 0 ^ isFacingRight)? -90:90)))+0.5)+bounds.yCoord+yOffset;
+				}
+				anatomy.add(new Organ(x,y,hitboxArchiver.get(h)[i][j+2],hitboxArchiver.get(h)[i][j+3],speed));
+			}
 				
 			int f = (int)sIndex+((hitboxArchiver.get(h)[0][3] == 1 && sIndex != (int)sIndex)? 1:0);
 			

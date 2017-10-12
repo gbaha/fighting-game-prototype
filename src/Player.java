@@ -14,7 +14,7 @@ public class Player extends Puppet
 	public enum PlayerState implements State
 	{
 		PuppetState, DASH_FORWARD, DASH_BACKWARD, JUMP_HOMING1, JUMP_HOMING2,
-		HUG_START, HUG_HOLD, HUG_HIT, HUG_FORWARD, HUG_UP, HUG_BACK, HUG_BREAK,
+		HUG_START, HUG_HOLD, HUG_HIT, HUG_FORWARD, HUG_UPWARD, HUG_DOWNWARD, HUG_BREAK,
 		STANDING_LP, STANDING_MP, STANDING_HP, STANDING_LK, STANDING_MK, STANDING_HK, 
 		CROUCHING_LP, CROUCHING_MP, CROUCHING_HP, CROUCHING_LK, CROUCHING_MK, CROUCHING_HK, 
 		JUMPING_LP, JUMPING_MP, JUMPING_HP, JUMPING_LK, JUMPING_MK, JUMPING_HK;
@@ -130,9 +130,9 @@ public class Player extends Puppet
 			case "HUG_START":
 			case "HUG_HOLD":
 			case "HUG_HIT":
-			case "HUG_FRONT":
-			case "HUG_UP":
-			case "HUG_DOWN":
+			case "HUG_FORWARD":
+			case "HUG_UPWARD":
+			case "HUG_DOWNWARD":
 				performAction();
 				break;
 				
@@ -386,8 +386,8 @@ public class Player extends Puppet
 			hitStun = 15;
 			isThrowing = false;
 			
-			p.puppet.sIndex = p.puppet.hitboxArchiver.get(p.puppet.currState.getPosition())[0][1];
 			p.puppet.currState = PlayerState.HUG_BREAK;
+			p.puppet.sIndex = p.puppet.hitboxArchiver.get(p.puppet.currState.getPosition())[0][1];
 			p.puppet.hitStun = 15;
 			p.puppet.isThrowing = false;
 		}

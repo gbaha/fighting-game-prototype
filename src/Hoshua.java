@@ -78,8 +78,13 @@ public class Hoshua extends JPanel
 						q++;
 						break;
 					default:
-						puppets.add(puppets.size(),puppets.get(q));
-						puppets.remove(q);
+						if(puppets.get(q).hitStun == 0 && !puppets.get(q).isThrown)
+						{
+							puppets.add(puppets.size(),puppets.get(q));
+							puppets.remove(q);
+						}
+						else
+							q++;
 						break;
 				}
 			}
@@ -94,8 +99,13 @@ public class Hoshua extends JPanel
 						q++;
 						break;
 					default:
-						players.add(players.size(),players.get(q));
-						players.remove(q);
+						if(players.get(q).hitStun == 0 && !players.get(q).isThrown)
+						{
+							players.add(players.size(),players.get(q));
+							players.remove(q);
+						}
+						else
+							q++;
 						break;
 				}
 			}

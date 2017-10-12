@@ -375,7 +375,7 @@ public class Gui extends JPanel
 			
 			if(!hasDrawn)
 				i--;
-			if((j >= h1.stickInputs.size() && k >= h1.buttonInputs.size())/* || order.size() == 0*/)
+			if((j >= h1.stickInputs.size() && k >= h1.buttonInputs.size()) || order.size() == 0)
 				i = 9;
 		}
 		g.setStroke(new BasicStroke((int)(1*w/1280)));

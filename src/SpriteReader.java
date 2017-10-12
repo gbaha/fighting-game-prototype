@@ -3,6 +3,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.RescaleOp;
@@ -28,12 +29,19 @@ public class SpriteReader// extends JPanel
 	}
 	
 	
-	public void read(Graphics2D g, ImageObserver i, int x1, int y1, int w1, int w2, int h, int x2, int y2, int[] p, boolean r, Image s)
+	public void read(Graphics2D g, ImageObserver i, int x1, int y1, int w1, int w2, int h, int x2, int y2, int x3, int y3, int[] p, boolean r, double a, Image s)
 	{
 		if(s.getWidth(i) > 0 && s.getHeight(i) > 0)
 		{
 			BufferedImage sprite = new BufferedImage((int)(w2*width/1280),(int)(h*height/720),BufferedImage.TYPE_INT_ARGB);
 			Graphics2D sRead = sprite.createGraphics();	//sprites.get(sprites.size()-1).createGraphics();
+			
+			AffineTransform sTrans = new AffineTransform();
+			sTrans.translate((w2/2)*width/1280,(h-p[2]*3/5)*height/720);
+			sTrans.rotate(a/180*Math.PI);
+			sTrans.translate(-(w2/2)*width/1280,(p[2]*3/5-h)*height/720);
+			sRead.setTransform(sTrans);
+			
 			sRead.drawImage(s,0,0,(int)(w2*width/1280),(int)(h*height/720),x2*p[2],y2*p[3],(x2+1)*p[2],(y2+1)*p[3],i);
 			sRead.dispose();
 			
@@ -52,7 +60,7 @@ public class SpriteReader// extends JPanel
 			recolor(sprites.get(sprites.size()-1),c[0],c[1],c[2],c[3]);*/
 		/*	g.setColor(Color.LIGHT_GRAY);
 			g.fillRect(r?(int)((x1-p[0])*width/1280):(int)((x1+w1+p[0])*width/1280),(int)((y1-p[1])*height/720),(r)?(int)(w2*width/1280):-(int)(w2*width/1280),(int)(h*height/720));*/
-			g.drawImage(sprite,r?(int)((x1-p[0])*width/1280):(int)((x1+w1+p[0])*width/1280),(int)((y1-p[1])*height/720),r?(int)(w2*width/1280):-(int)(w2*width/1280),(int)(h*height/720),i);
+			g.drawImage(sprite,r?(int)((x1+x3-p[0])*width/1280):(int)((x1+x3+w1+p[0])*width/1280),(int)((y1+y3-p[1])*height/720),r?(int)(w2*width/1280):-(int)(w2*width/1280),(int)(h*height/720),i);
 		}
 	}
 	

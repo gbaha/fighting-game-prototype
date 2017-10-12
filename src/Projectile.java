@@ -29,7 +29,7 @@ abstract class Projectile extends Prop
 			{
 				Image sheet = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/ninja.png"));
 				int f = /*(hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal())[0][3] == 0)?*/ (int)fIndex;	//:hitboxArchiver.get(Roo.State.valueOf(currState.toString()).ordinal()).length-(int)fIndex-2;
-				s.read(g,i,bounds.xHosh,bounds.yHosh,bounds.width,1760,1320,f,spriteArchiver.get(currState.getPosition())[0],spriteParams,!isFacingRight,sheet);
+				s.read(g,i,bounds.xHosh,bounds.yHosh,bounds.width,1760,1320,f,spriteArchiver.get(currState.getPosition())[0],0,0,spriteParams,!isFacingRight,0,sheet);
 			}
 			catch(java.lang.IndexOutOfBoundsException e)
 			{

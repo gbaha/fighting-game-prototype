@@ -1773,7 +1773,7 @@ public class Logic
 													isUnique = false;
 											}
 											
-											if(isUnique)
+											if(isUnique ^ p2.isThrown)
 											{
 												p2.takeDamage(p1,stage.floors.get(0).cornered);
 												p2.plebArchiver.add(p1.hash);
@@ -1842,22 +1842,41 @@ public class Logic
 		{
 			if(!stage.puppets.get(hugBuddies.get(h)[0]).isThrowing && !stage.puppets.get(hugBuddies.get(h)[1]).isThrowing && !stage.puppets.get(hugBuddies.get(h)[1]).isThrown)
 			{
-				int[] i = new int[]{(stage.puppets.get(hugBuddies.get(h)[0]).isFacingRight)? hugBuddies.get(h)[0]:hugBuddies.get(h)[1],(stage.puppets.get(hugBuddies.get(h)[0]).isFacingRight)? hugBuddies.get(h)[1]:hugBuddies.get(h)[0],hugBuddies.get(h)[2]/2,hugBuddies.get(h)[2]/2};
-				if(stage.puppets.get(i[0]).bounds.xCoord-stage.floors.get(0).xCoord < i[2])
+				if(stage.puppets.get(hugBuddies.get(h)[0]).hitStun > 0 && stage.puppets.get(hugBuddies.get(h)[1]).hitStun > 0)
 				{
-					i[2] = stage.puppets.get(i[0]).bounds.xCoord-stage.floors.get(0).xCoord;
-					i[3] = i[3]*2-(stage.puppets.get(i[0]).bounds.xCoord-stage.floors.get(0).xCoord);
+					int[] i = new int[]{(stage.puppets.get(hugBuddies.get(h)[0]).isFacingRight)? hugBuddies.get(h)[0]:hugBuddies.get(h)[1],(stage.puppets.get(hugBuddies.get(h)[0]).isFacingRight)? hugBuddies.get(h)[1]:hugBuddies.get(h)[0],hugBuddies.get(h)[2]/2,hugBuddies.get(h)[2]/2};
+					if(stage.puppets.get(i[0]).bounds.xCoord-stage.floors.get(0).xCoord < i[2])
+					{
+						i[2] = stage.puppets.get(i[0]).bounds.xCoord-stage.floors.get(0).xCoord;
+						i[3] = i[3]*2-(stage.puppets.get(i[0]).bounds.xCoord-stage.floors.get(0).xCoord);
+					}
+					if((stage.floors.get(0).xCoord+stage.floors.get(0).width)-(stage.puppets.get(i[1]).bounds.xCoord+stage.puppets.get(i[1]).bounds.width) < i[3])
+					{
+						i[3] = (stage.floors.get(0).xCoord+stage.floors.get(0).width)-(stage.puppets.get(i[1]).bounds.xCoord+stage.puppets.get(i[1]).bounds.width);
+						i[2] = i[2]*2-((stage.floors.get(0).xCoord+stage.floors.get(0).width)-(stage.puppets.get(i[1]).bounds.xCoord+stage.puppets.get(i[1]).bounds.width));
+					}
+					
+					stage.puppets.get(i[0]).bounds.forceArchiver.add(new Force("tech",1,i[2],i[2]));
+					stage.puppets.get(i[1]).bounds.forceArchiver.add(new Force("tech",3,i[3],i[3]));
+					hugBuddies.get(h)[2] -= hugBuddies.get(h)[3];
 				}
-				if((stage.floors.get(0).xCoord+stage.floors.get(0).width)-(stage.puppets.get(i[1]).bounds.xCoord+stage.puppets.get(i[1]).bounds.width) < i[3])
-				{
-					i[3] = (stage.floors.get(0).xCoord+stage.floors.get(0).width)-(stage.puppets.get(i[1]).bounds.xCoord+stage.puppets.get(i[1]).bounds.width);
-					i[2] = i[2]*2-((stage.floors.get(0).xCoord+stage.floors.get(0).width)-(stage.puppets.get(i[1]).bounds.xCoord+stage.puppets.get(i[1]).bounds.width));
-				}
-				
-				stage.puppets.get(i[0]).bounds.forceArchiver.add(new Force("tech",1,i[2],i[2]));
-				stage.puppets.get(i[1]).bounds.forceArchiver.add(new Force("tech",3,i[3],i[3]));
-				hugBuddies.get(h)[2] -= hugBuddies.get(h)[3];
+				else
+					hugBuddies.get(h)[2] = 0;
 			}
+			
+			if(stage.floors.get(0).xCoord > stage.puppets.get(hugBuddies.get(h)[0]).bounds.xCoord || stage.floors.get(0).xCoord > stage.puppets.get(hugBuddies.get(h)[1]).bounds.xCoord)
+			{
+				int x = stage.floors.get(0).xCoord-((stage.puppets.get(hugBuddies.get(h)[0]).bounds.xCoord > stage.puppets.get(hugBuddies.get(h)[1]).bounds.xCoord)? stage.puppets.get(hugBuddies.get(h)[1]).bounds.xCoord:stage.puppets.get(hugBuddies.get(h)[0]).bounds.xCoord);
+				stage.puppets.get(hugBuddies.get(h)[0]).bounds.xCoord += x;
+				stage.puppets.get(hugBuddies.get(h)[1]).bounds.xCoord += x;
+			}
+			else if(stage.floors.get(0).xCoord+stage.floors.get(0).width < stage.puppets.get(hugBuddies.get(h)[0]).bounds.xCoord+stage.puppets.get(hugBuddies.get(h)[0]).bounds.width || stage.floors.get(0).xCoord+stage.floors.get(0).width < stage.puppets.get(hugBuddies.get(h)[1]).bounds.xCoord+stage.puppets.get(hugBuddies.get(h)[1]).bounds.width)
+			{
+				int x = ((stage.puppets.get(hugBuddies.get(h)[0]).bounds.xCoord+stage.puppets.get(hugBuddies.get(h)[0]).bounds.width > stage.puppets.get(hugBuddies.get(h)[1]).bounds.xCoord)? stage.puppets.get(hugBuddies.get(h)[0]).bounds.xCoord+stage.puppets.get(hugBuddies.get(h)[0]).bounds.width:stage.puppets.get(hugBuddies.get(h)[1]).bounds.xCoord+stage.puppets.get(hugBuddies.get(h)[1]).bounds.width)-(stage.floors.get(0).xCoord+stage.floors.get(0).width);
+				stage.puppets.get(hugBuddies.get(h)[0]).bounds.xCoord -= x;
+				stage.puppets.get(hugBuddies.get(h)[1]).bounds.xCoord -= x;
+			}
+			
 			if(hugBuddies.get(h)[2] <= 0)
 			{
 				hugBuddies.remove(h);
@@ -1969,7 +1988,7 @@ public class Logic
 			
 			for(Puppet p: stage.puppets)
 			{
-				if(p.target != null && p.bounds.isGrounded && p.currAction == null)
+				if(p.target != null && p.bounds.isGrounded && p.currAction == null && !p.isThrown)
 					p.isFacingRight = (p.xCoord+p.width/2 <= p.target.xCoord+p.target.width/2)? true:false;
 			}
 	//		resetFocus();

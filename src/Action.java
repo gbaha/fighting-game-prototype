@@ -86,6 +86,8 @@ abstract class Action
 	protected void addGrab(Puppet pu, int x, int y, int w, int h, int d, boolean r, boolean ia, boolean a)
 	{
 		Pleb p = new Pleb(pu,pu.bounds,(a)? this:null,x,y,w,h,d,Pleb.GRAB,r,ia);
+		hashCounter = "huggies0";
+		p.hash = hashCounter;
 		pu.plebsOut.add(p);
 	}
 	
