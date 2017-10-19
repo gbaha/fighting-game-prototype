@@ -356,14 +356,17 @@ public class Hand implements KeyListener	//, MouseListener
 					if(m.length < 4)
 						player.setAction(player.actions[player.movelist.indexOf(m)]);
 				}
-				else if(player.currAction.isCancelable(player.hitInfo[0],player.fCounter,player.actions[player.movelist.indexOf(m)].type,currButton,player.bounds.isGrounded))
+				else if(player.currAction.cancelOk && (player.currAction.isCancelable(player.hitInfo[0],player.fCounter,player.actions[player.movelist.indexOf(m)].type,currButton,player.bounds.isGrounded) || m.length >= 4))
 				{
 					boolean n = (m.length < 4);
 					if(!n)
 					{
-						boolean[] o = new boolean[]{(player.bounds.isGrounded && !player.currAction.cLock),player.currAction.cLock,!player.bounds.isGrounded};
-						if(((m[3][0] < player.normals.length && player.currAction == player.normals[m[3][0]]) || (m[3][0] >= player.normals.length && player.currAction == player.actions[m[3][0]])) && o[m[3][1]])
-							n = true;
+						for(int o = 0; o < m[3].length; o += 2)
+						{
+							boolean[] p = new boolean[]{(player.bounds.isGrounded && !player.currAction.cLock),player.currAction.cLock,!player.bounds.isGrounded};
+							if(((m[3][o] < player.normals.length && player.currAction.getClass() == player.normals[m[3][o]].getClass()) || (m[3][o] >= player.normals.length && player.currAction.getClass() == player.actions[m[3][o]].getClass())) && p[m[3][o+1]])
+								n = true;
+						}
 					}
 					if(n)
 					{

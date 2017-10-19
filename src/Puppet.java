@@ -27,7 +27,7 @@ abstract class Puppet
 	int kdCounter, kdLimit, kdStun, launchPoint;
 	double sIndex, sAngle, jForce, jump, juggleDamp, hitstunDamp;
 	boolean isFacingRight, isPerformingAction, isCrouching, canBlock, isGuardBroken;
-	boolean isThrowing, isThrown, isJuggled, /*isUnstoppable,*/ isAirLocked;	//, isJumping;
+	boolean throwInvul, isThrowing, isThrown, isTeching, isJuggled, /*isUnstoppable,*/ isAirLocked;	//, isJumping;
 	
 	int[] hitInfo, flinchPoints, jDirections, spriteParams;	//Add tint later
 	boolean[] isBlocking;
@@ -36,7 +36,7 @@ abstract class Puppet
 	{
 		IDLE, CROUCH, STANDING, CROUCHING, WALK_FORWARD, WALK_BACKWARD, FALL_NEUTRAL, FALL_FORWARD, FALL_BACKWARD, LANDING, PREJUMP, JUMP_NEUTRAL, JUMP_FORWARD, JUMP_BACKWARD,
 		GUARD_STANDING, GUARD_CROUCHING, GUARD_JUMPING, FLINCH_STANDING0, FLINCH_STANDING1, FLINCH_STANDING2, FLINCH_CROUCHING, FLINCH_TRIP0, FLINCH_TRIP1, FLINCH_AERIAL0, FLINCH_AERIAL1, FLINCH_AERIAL2,
-		KNOCKDOWN, FALLING, BREAK_GROUND, BREAK_AIR, HUGGED0, HUGGED1, HUGGED2, HUGGED3;
+		KNOCKDOWN, FALLING, BREAK_GROUND, BREAK_AIR, HUG_BREAK, HUGGED0, HUGGED1, HUGGED2, HUGGED3;
 		
 		public String getState()
 		{
@@ -84,14 +84,16 @@ abstract class Puppet
 		isPerformingAction = false;
 		canBlock = false;
 		isGuardBroken = false;
-		isThrowing = false;	// Checks normal throws only
+		throwInvul = false;
+		isThrowing = false;
 		isThrown = false;
+		isTeching = false;
 		isJuggled = false;
 	//	isUnstoppable = false;	// Unaffected by new forces through damage?
 	//	isJumping = false;
 		
 		hitInfo = new int[]{0,0,0};	//[type, number of hits, enemy hitstun]
-		flinchPoints = new int[]{0,0,0,0,0,0,0,0,0,0}; 	//marks points where sprite freezes during hitstun
+		flinchPoints = new int[]{0,0,0,0,0,0,0,0,0,0,0}; 	//marks points where sprite freezes during hitstun
 		jDirections = new int[]{0,0};
 		isBlocking = new boolean[]{false,false};
 		
@@ -151,7 +153,7 @@ abstract class Puppet
 				else
 					g.drawLine((int)((bounds.xHosh-15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720),(int)((bounds.xHosh+15)*w/1280),(int)((bounds.yHosh+bounds.height/2)*h/720));
 				g.fillRect((int)((xHosh+xOffset)*w/1280),(int)((yHosh+yOffset)*h/720),(int)(10*w/1280),(int)(10*h/720));
-				g.fillRect((int)((xHosh+bounds.width-10)*w/1280),(int)((yHosh+bounds.height+bounds.botOffset-10)*h/720),(int)(10*w/1280),(int)(10*h/720));
+				g.fillRect((int)((bounds.xHosh+bounds.width-10)*w/1280),(int)((bounds.yHosh+bounds.height+bounds.botOffset-10)*h/720),(int)(10*w/1280),(int)(10*h/720));
 				
 				for(Hitbox a: anatomy)
 				{
@@ -210,6 +212,7 @@ abstract class Puppet
 			case "FLINCH_AERIAL2":
 			case "BREAK_GROUND":
 			case "BREAK_AIR":
+			case "HUG_BREAK":
 			case "HUGGED0":
 			case "HUGGED1":
 			case "HUGGED2":
@@ -241,11 +244,25 @@ abstract class Puppet
 		if(currAction == null)
 		{
 			currAction = a;
+			a.target = null;
 			a.button = -1;
 		}
 		else if(currAction.isCancelable(hitInfo[0],fCounter,currAction.type,currAction.button,bounds.isGrounded))
 		{
+			if(currAction.target != null)
+			{
+				currAction.target.xOffset = 0;
+				currAction.target.yOffset = 0;
+				currAction.target.sAngle = 0;
+			}
+			
+			bounds.botOffset = 0;
+			xOffset = 0;
+			yOffset = 0;
+			isThrowing = false;
+			
 			currAction = a;
+			a.target = null;
 			a.button = -1;
 			fCounter = 0;
 			sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
@@ -268,6 +285,7 @@ abstract class Puppet
 			currAction = null;
 			currState = (isCrouching)? PuppetState.CROUCH:PuppetState.IDLE;
 			fCounter = 0;
+			sAngle = 0;
 		}
 		
 		if(bounds.isGrounded && bounds.botOffset != 0)
@@ -275,6 +293,7 @@ abstract class Puppet
 			currAction = null;
 			currState = PuppetState.LANDING;
 			fCounter = 0;
+			sAngle = 0;
 			
 			isPerformingAction = false;
 	//		preFrames = 3;
@@ -397,7 +416,7 @@ abstract class Puppet
 	
 	public void takeDamage(Pleb p, Hitbox[] c)
 	{
-		boolean hitSuccessful = (kdStun > 0 && kdCounter < kdLimit);
+		boolean hitSuccessful = (kdStun > 0 && kdCounter < kdLimit && p.type != Pleb.GRAB);
 		bounds.forceArchiver = new ArrayList<Force>();
 		switch(p.type)
 		{
@@ -421,6 +440,7 @@ abstract class Puppet
 				{
 					p.puppet.currAction.target = this;
 					p.puppet.fCounter = 0;
+					p.puppet.hitInfo[0] = 2;
 					isThrown = true;
 				}
 				break;
@@ -434,7 +454,7 @@ abstract class Puppet
 			
 			if(!bounds.isGrounded || kdCounter > 0)
 				currState = PuppetState.FLINCH_AERIAL0;
-			else if(isCrouching)
+			else if(isCrouching && currState != PuppetState.FLINCH_CROUCHING)
 				currState = PuppetState.FLINCH_CROUCHING;
 			else
 			{
@@ -483,34 +503,21 @@ abstract class Puppet
 					{
 						case Pleb.KNOCKDOWN:
 							if(t[1] == 0 || !bounds.isGrounded)
-							{
-								currState = (bounds.isGrounded)? PuppetState.FLINCH_TRIP0:PuppetState.FLINCH_TRIP1;
-								p.appliedForces.add(new Force("knockdown",(t[3] > 0)? 2:0,Math.abs(t[3]),t[4]));
-					/*			bounds.yCoord = yCoord;
-								bounds.height = height;
-								kdCounter += t[2];
-								kdStun = (int)t[5];
-								isCrouching = false;*/
-							}
+								currState = (bounds.isGrounded)? ((t[3] == 0)? PuppetState.KNOCKDOWN:PuppetState.FLINCH_TRIP0):PuppetState.FLINCH_TRIP1;
 							break;
 							
 						case Pleb.LAUNCH:
 							currState = PuppetState.FLINCH_AERIAL1;
-					/*		for(Force f: bounds.forceArchiver)
-								f.magnitude = 0;
-							for(Force f: p.appliedForces)
-								f.magnitude = 0;
-							bounds.forceArchiver.add(new Force("xLaunch",(p.puppet.isFacingRight)? 3:1,t[2],t[3]));
-							bounds.forceArchiver.add(new Force("yLaunch",2,t[4],t[5]));*/
-							
 							if((isFacingRight && bounds == c[0]) || (!isFacingRight && bounds == c[1]))
 								t[2] = 0;
 							
-					//		bounds.isGrounded = false;
 							hitStun = (int)t[6];
 							launchPoint = p.puppet.hitInfo[1]+1;
 							isJuggled = true;
-					//		isUnstoppable = !(t[1] == 0);
+							break;
+							
+						case Pleb.SPIKE:
+							currState = PuppetState.FLINCH_AERIAL2;
 							break;
 					}
 					propertyArchiver.add(t);
@@ -518,6 +525,7 @@ abstract class Puppet
 			}
 			sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 			isFacingRight = !p.puppet.isFacingRight;
+			bounds.botOffset = 0;
 			yOffset = 0;
 			sAngle = 0;
 			
@@ -528,7 +536,7 @@ abstract class Puppet
 			if(p.puppet.currAction != null)
 				p.puppet.currAction.target = this;
 		}
-		else if(!isThrown)
+		else if(!isThrown && p.type != Pleb.GRAB)
 		{
 			stamina -= p.sDamage;
 			if(stamina <= 0)
@@ -565,6 +573,8 @@ abstract class Puppet
 			
 			p.puppet.hitInfo[0] = 1;
 			p.puppet.hitInfo[2] = hitStun;
+			if(p.puppet.currAction != null)
+				p.puppet.currAction.target = this;
 		//	p.puppet.hitInfo[1]++;
 		}
 		sCooldown = 120;
@@ -640,12 +650,12 @@ abstract class Puppet
 				plebArchiver.clear();
 				currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
 			}
-		/*	else if(isThrown && techWindow > 0 && currAction != null)	// Probably gonna need
+			else if(isThrown && currAction != null)	// Probably gonna need
 			{
 				if(currAction.type == Action.GRAB)
-					performAction();
-				techWindow--;
-			}*/
+					isTeching = true;
+				currAction = null;
+			}
 		}
 		jDirections = new int[]{0,0};
 	}
@@ -679,7 +689,8 @@ abstract class Puppet
 				case Pleb.KNOCKDOWN:
 					if(t[1] == 0 || !bounds.isGrounded)
 					{
-			//			currState = (bounds.isGrounded)? PuppetState.FLINCH_TRIP0:PuppetState.FLINCH_TRIP1;
+						currState = (bounds.isGrounded)? ((t[3] == 0)? PuppetState.KNOCKDOWN:PuppetState.FLINCH_TRIP0):PuppetState.FLINCH_TRIP1;
+						bounds.forceArchiver.add(new Force("knockdown",(t[3] > 0)? 2:0,Math.abs(t[3]),t[4]));
 						bounds.yCoord = yCoord;
 						bounds.height = height;
 						kdCounter += t[2];
@@ -690,14 +701,23 @@ abstract class Puppet
 					break;
 					
 				case Pleb.LAUNCH:
-			//		currState = PuppetState.FLINCH_AERIAL1;
-			/*		for(Force f: bounds.forceArchiver)
-						f.magnitude = 0;*/
-					bounds.forceArchiver.add(new Force("xLaunch",(isFacingRight)? 3:1,t[2],t[3]));
+					bounds.forceArchiver.add(new Force("xLaunch",((isFacingRight && t[2] > 0) || (!isFacingRight && t[2] < 0))? 1:3,Math.abs(t[2]),t[3]));
 					bounds.forceArchiver.add(new Force("yLaunch",2,t[4],t[5]));
-					
-			//		bounds.isGrounded = false;
 					pCleared = true;
+					break;
+					
+				case Pleb.SPIKE:
+					if(!bounds.isGrounded)
+					{
+						currState = PuppetState.FLINCH_AERIAL2;
+						bounds.forceArchiver.add(new Force("yLaunch",0,t[1],t[1]));
+						hitStun++;
+					}
+					else
+					{
+						propertyArchiver.add(new double[]{Pleb.KNOCKDOWN,0,1,t[2],t[2]/5,t[3]});
+						pCleared = true;
+					}
 					break;
 			}
 			
@@ -878,7 +898,6 @@ abstract class Puppet
 	
 	private void juggleCheck(Puppet p, boolean h)
 	{
-
 		double[] y = new double[]{(h)? ((p.bounds.isGrounded)? 50:50):25,2};
 		for(Force j: p.bounds.forceArchiver)
 		{
@@ -1001,5 +1020,53 @@ abstract class Puppet
 		}
 		
 		public void perform(int f){}
+	}
+	
+	public class Hug extends Action
+	{
+		int techWindow, tCounter;
+		
+		public Hug(int t)
+		{
+			super(Action.GRAB,2,
+					new int[][]{new int[]{}, new int[]{}, new int[]{}},
+					new boolean[]{false,false,false},
+					new boolean[]{false,false,false},
+					new boolean[]{false,false,false},
+					new boolean[]{false,false,false},
+					new int[]{10,120,-1,-1,-1,-1},
+					new boolean[]{true,true,true});
+			techWindow = t;
+			tCounter = 0;
+		}
+		
+		public void perform(int f)
+		{
+			if(target != null)
+			{
+				if(target.isTeching && tCounter < techWindow)
+				{
+					target.currState = PuppetState.HUG_BREAK;
+					target.sIndex = target.hitboxArchiver.get(target.currState.getPosition())[0][1];
+					target.hitStun = 15;
+					target.xOffset = 0;
+					target.yOffset = 0;
+					target.sAngle = 0;
+					target.isThrown = false;
+					
+					currState = PuppetState.HUG_BREAK;
+					sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+					hitStun = 15;
+					xOffset = 0;
+					yOffset = 0;
+					sAngle = 0;
+					isTeching = true;
+				}
+				else
+					target.isTeching = false;
+				tCounter++;
+			}
+			jDirections[1] = 0;
+		}
 	}
 }

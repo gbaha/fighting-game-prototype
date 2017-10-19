@@ -12,7 +12,7 @@ abstract class Action
 	int[] cancelWindow;
 	int button, type, cancelType, frames;
 	boolean[] isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable;
-	boolean groundOk, airOk, aLock, cLock;
+	boolean cancelOk, groundOk, airOk, aLock, cLock;
 	String hashCounter;
 	
 	public Action(int t, int ct, int[][] b, boolean[] c1, boolean[] c2, boolean[] c3, boolean[] c4, int[] cw, boolean[] ok)
@@ -29,6 +29,7 @@ abstract class Action
 		isDashCancelable =	c3;
 		isJumpCancelable =	c4;
 		
+		cancelOk = true;
 		groundOk = ok[0];
 		airOk = ok[1];
 		aLock = ok[2];
@@ -41,28 +42,31 @@ abstract class Action
 	
 	public boolean isCancelable(int c1, int f, int t, int b, boolean g)
 	{
-		if(type == Action.NORMAL && t == Action.GRAB)
-			return (f < 2);
-		else
+		if(cancelOk)
 		{
-			if(cancelType <= c1)
+			if(type == Action.NORMAL && t == Action.GRAB)
+				return (f < 2);
+			else
 			{
-				if((g && (!cLock && f >= cancelWindow[0] && f < cancelWindow[1]) || (cLock && f >= cancelWindow[2] && f < cancelWindow[3])) || (!g && f >= cancelWindow[4] && f < cancelWindow[5]))
+				if(cancelType <= c1)
 				{
-					int i = (!g)? 2:((!cLock)? 0:1);
-					if(t == Action.NORMAL)
+					if((g && (!cLock && f >= cancelWindow[0] && f < cancelWindow[1]) || (cLock && f >= cancelWindow[2] && f < cancelWindow[3])) || (!g && f >= cancelWindow[4] && f < cancelWindow[5]))
 					{
-						for(int p: buttonPath[i])
+						int i = (!g)? 2:((!cLock)? 0:1);
+						if(t == Action.NORMAL)
 						{
-							if(p == b)
+							for(int p: buttonPath[i])
+							{
+								if(p == b)
+									return true;
+							}
+						}
+						else
+						{
+							boolean[][] cancel = new boolean[][]{isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable, isSpecialCancelable};
+							if(cancel[t-1][i])
 								return true;
 						}
-					}
-					else
-					{
-						boolean[][] cancel = new boolean[][]{isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable, isSpecialCancelable};
-						if(cancel[t-1][i])
-							return true;
 					}
 				}
 			}

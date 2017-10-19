@@ -14,7 +14,7 @@ public class Player extends Puppet
 	public enum PlayerState implements State
 	{
 		PuppetState, DASH_FORWARD, DASH_BACKWARD, JUMP_HOMING1, JUMP_HOMING2,
-		HUG_START, HUG_HOLD, HUG_HIT, HUG_FORWARD, HUG_UPWARD, HUG_DOWNWARD, HUG_BREAK,
+		HUG_START, HUG_HOLD, HUG_HIT, HUG_FORWARD, HUG_UPWARD, HUG_DOWNWARD,
 		STANDING_LP, STANDING_MP, STANDING_HP, STANDING_LK, STANDING_MK, STANDING_HK, 
 		CROUCHING_LP, CROUCHING_MP, CROUCHING_HP, CROUCHING_LK, CROUCHING_MK, CROUCHING_HK, 
 		JUMPING_LP, JUMPING_MP, JUMPING_HP, JUMPING_LK, JUMPING_MK, JUMPING_HK;
@@ -53,7 +53,7 @@ public class Player extends Puppet
 		movelist.add(new int[][]{{-1,-1},{0,3},{0,1}});
 		movelist.add(new int[][]{{-1,-1},{3,0},{0,1}});
 		
-		actions = new Action[]{new FrontDash(), new FrontDash(), new BackDash(), new BackDash(), new HomingJump(), new HomingJump(), new Hug(), new Hug()};
+		actions = new Action[]{new FrontDash(), new FrontDash(), new BackDash(), new BackDash(), new HomingJump(), new HomingJump(), new Hug(10), new Hug(10)};
 		sInputs = new boolean[4];
 	}
 	
@@ -135,10 +135,6 @@ public class Player extends Puppet
 			case "HUG_DOWNWARD":
 				performAction();
 				break;
-				
-			case "HUG_BREAK":
-				flinch();
-				break;
 		}
 		super.checkState();
 	}
@@ -150,6 +146,7 @@ public class Player extends Puppet
 			if((a != actions[0] && a != actions[2]) || aDash < airDashLimit)
 			{
 				currAction = a;
+				a.target = null;
 				a.button = -1;
 				
 				if(!bounds.isGrounded)
@@ -159,7 +156,21 @@ public class Player extends Puppet
 		}
 		else //if(currAction.isCancelable(hitInfo[0],fCounter,currAction.type,currAction.button))
 		{
+			if(currAction.target != null)
+			{
+				currAction.target.xOffset = 0;
+				currAction.target.yOffset = 0;
+				currAction.target.sAngle = 0;
+			}
+			
+			bounds.botOffset = 0;
+			xOffset = 0;
+			yOffset = 0;
+			sAngle = 0;
+			isThrowing = false;
+			
 			currAction = a;
+			a.target = null;
 			a.button = -1;
 			fCounter = 0;
 	//		sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
@@ -377,24 +388,6 @@ public class Player extends Puppet
 			currState = PuppetState.IDLE;*/
 	}
 	
-	public void takeDamage(Pleb p, Hitbox[] c)
-	{
-		if(p.type == Pleb.GRAB && isThrowing)
-		{
-			currState = PlayerState.HUG_BREAK;
-			sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
-			hitStun = 15;
-			isThrowing = false;
-			
-			p.puppet.currState = PlayerState.HUG_BREAK;
-			p.puppet.sIndex = p.puppet.hitboxArchiver.get(p.puppet.currState.getPosition())[0][1];
-			p.puppet.hitStun = 15;
-			p.puppet.isThrowing = false;
-		}
-		else
-			super.takeDamage(p,c);
-	}
-	
 	public void jump()
 	{
 		if(jCount < jumpLimit && airOptions > aDash+jCount && isJumping && !bounds.isFloating)
@@ -496,10 +489,17 @@ public class Player extends Puppet
 			bounds.xDrag = 0;
 		}
 		
-		bounds.wasFloating = false;
-		if(bounds.isFloating && !(!bounds.isGrounded && (isJuggled || isDashing || isHoming)))
-			bounds.wasFloating = true;
-		bounds.isFloating = !bounds.isGrounded && (isJuggled || isDashing || isHoming); // || other isFloating checks;
+		boolean f = !bounds.isGrounded && (isJuggled || isDashing || isHoming || isThrown || isTeching); // || other isFloating checks;
+		bounds.wasFloating = bounds.isFloating  && !f;
+		bounds.isFloating = f;
+		if(f)
+		{
+			for(Force j: bounds.forceArchiver)
+			{
+				if(j.type.equals("yJump"))
+					j.magnitude = 0;
+			}
+		}
 		
 		super.update();
 		bounds.update();
@@ -636,7 +636,7 @@ public class Player extends Puppet
 	{
 		public HomingJump()
 		{
-			super(Action.SPECIAL,0,
+			super(Action.JUMP,0,
 				new int[][]{new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}},
 				new boolean[]{true,true,true},
 				new boolean[]{true,true,true},
@@ -682,15 +682,5 @@ public class Player extends Puppet
 					f = frames;
 			}
 		}
-	}
-	
-	public class Hug extends Action
-	{
-		public Hug()	// MIGHT GIVE UNIQUE GRAB TYPE RATHER THAN SPECIAL
-		{
-			super(Action.GRAB,0,new int[][]{new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new boolean[]{false,false,false},new int[]{0,0,0,0,0,0},new boolean[]{true,true,true});
-		}
-		
-		public void perform(int f){}
 	}
 }

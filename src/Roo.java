@@ -24,7 +24,7 @@ public class Roo extends Player
 	public Roo(int x, int y, boolean r)
 	{
 		super(x,y,100,250,150,50,/*100,*/6,2,2,1,50,r);
-		flinchPoints = new int[]{1,0,0,0,0,1,1,1};
+		flinchPoints = new int[]{1,0,0,0,0,1,1,1,0};
 		spriteParams = new int[]{345,180,290,178};
 		
 		//IDLE
@@ -200,9 +200,7 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//MIDAIR FLINCH(SPIKE)
-		hitboxArchiver.add(new int[][]{new int[]{14,0,5,0,2},
-			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+		hitboxArchiver.add(new int[][]{new int[]{14,2,4,0,2},
 			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
@@ -251,6 +249,14 @@ public class Roo extends Player
 			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-33,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//THROW BREAK
+		hitboxArchiver.add(new int[][]{new int[]{20,0,5,0,3},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//GRABBED(ARMS)
 		hitboxArchiver.add(new int[][]{new int[]{18,0,0,0,2},
@@ -331,19 +337,23 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//THROW UPWARD
-		hitboxArchiver.add(new int[][]{new int[]{41,0,0,0,4},
+		hitboxArchiver.add(new int[][]{new int[]{41,0,6,0,3},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//THROW DOWNWARD
-		hitboxArchiver.add(new int[][]{new int[]{0,0,0,0,4},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
-		//THROW BREAK
-		hitboxArchiver.add(new int[][]{new int[]{20,0,5,0,3},
+		hitboxArchiver.add(new int[][]{new int[]{41,0,6,0,3},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
-			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		
 		//STANDING LP
 		hitboxArchiver.add(new int[][]{new int[]{21,0,4,0,2},
@@ -601,11 +611,18 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		
+		movelist.add(new int[][]{{4},{-1},{0},{6,0}});
+		movelist.add(new int[][]{{6},{-1},{0},{6,0}});
+		movelist.add(new int[][]{{8},{-1},{0},{6,0}});
+		movelist.add(new int[][]{{2},{-1},{0},{6,0}});
 		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,0},{0,-1,10,10}});	//{0,7,4,3}});
 		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,1},{0,-1,10,10}});
 		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,2},{0,-1,10,10}});
 		
-		actions = new Action[]{actions[0], actions[1], actions[2], actions[3], actions[4], actions[5], new Hug(this), new Hug(this), new FireBall(this,0), new FireBall(this,1), new FireBall(this,2)};
+	/*	movelist.get(4)[3] = new int[]{2,1,10,0};
+		movelist.get(5)[3] = new int[]{2,1,10,0};*/
+		
+		actions = new Action[]{actions[0], actions[1], actions[2], actions[3], actions[4], actions[5], new Hug(this), new Hug(this), new HugForward(this,false), new HugForward(this,true), new HugUpward(this), new HugDownward(this), new FireBall(this,0), new FireBall(this,1), new FireBall(this,2)};
 		normals = new Action[]{new LightPunch(this), new MediumPunch(this), new HeavyPunch(this), new LightKick(this), new MediumKick(this), new HeavyKick(this)};
 	}
 	
@@ -663,6 +680,9 @@ public class Roo extends Player
 			if(f >= frames)
 			{
 				isPerformingAction = false;
+				if(target != null)
+					isFacingRight = bounds.xCoord+bounds.width/2 <= target.bounds.xCoord+target.bounds.width/2;
+				
 				target = null;
 				bounds.botOffset = 0;
 				return;
@@ -742,6 +762,9 @@ public class Roo extends Player
 			if(f >= frames)
 			{
 				isPerformingAction = false;
+				if(target != null)
+					isFacingRight = bounds.xCoord+bounds.width/2 <= target.bounds.xCoord+target.bounds.width/2;
+				
 				target = null;
 				bounds.botOffset = 0;
 				return;
@@ -794,7 +817,7 @@ public class Roo extends Player
 						if(!bounds.isGrounded)
 						{
 							if(j)
-								addPleb(roo,1,bounds.xCoord+110,bounds.yCoord-85,100,135,2,Pleb.HIGH,1,25,10,2,0,0.8,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,2,1,25,1,25}});
+								addPleb(roo,1,bounds.xCoord+110,bounds.yCoord-85,100,135,2,Pleb.HIGH,1,25,10,2,0,0.8,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,-2,1,25,1,25}});
 							else
 								addPleb(roo,1,bounds.xCoord+110,bounds.yCoord-85,100,135,2,Pleb.HIGH,1,25,10,4,-8,0.8,true,false,true,new double[][]{});
 						}
@@ -807,7 +830,7 @@ public class Roo extends Player
 						if(!bounds.isGrounded)
 						{
 							if(j)
-								addPleb(roo,1,bounds.xCoord+150,bounds.yCoord-70,60,80,6,Pleb.HIGH,1,25,10,2,0,0.8,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,2,1,25,1,25}});
+								addPleb(roo,1,bounds.xCoord+150,bounds.yCoord-70,60,80,6,Pleb.HIGH,1,25,10,2,0,0.8,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,-2,1,25,1,25}});
 							else
 								addPleb(roo,1,bounds.xCoord+150,bounds.yCoord-70,60,80,6,Pleb.HIGH,1,25,10,4,-8,0.8,true,false,true,new double[][]{});
 						}
@@ -853,6 +876,9 @@ public class Roo extends Player
 			if(f >= frames)
 			{
 				isPerformingAction = false;
+				if(target != null)
+					isFacingRight = bounds.xCoord+bounds.width/2 <= target.bounds.xCoord+target.bounds.width/2;
+				
 				target = null;
 				bounds.botOffset = 0;
 				return;
@@ -915,8 +941,8 @@ public class Roo extends Player
 						}
 						else if(isCrouching)
 						{
-							addPleb(roo,0,bounds.xCoord+102,bounds.yCoord-35,95,70,2,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,2,-35,35,1,45}});
-							addPleb(roo,0,bounds.xCoord+90,bounds.yCoord+35,70,60,2,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,2,-35,35,1,45}});
+							addPleb(roo,0,bounds.xCoord+102,bounds.yCoord-35,95,70,2,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,-2,-35,35,1,45}});
+							addPleb(roo,0,bounds.xCoord+90,bounds.yCoord+35,70,60,2,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,-2,-35,35,1,45}});
 						}
 						else{}
 						break;
@@ -925,8 +951,8 @@ public class Roo extends Player
 						if(!bounds.isGrounded){}
 						else if(isCrouching)
 						{
-							addPleb(roo,0,bounds.xCoord+103,bounds.yCoord-25,97,87,1,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,2,-35,35,1,45}});
-							addPleb(roo,0,bounds.xCoord+80,bounds.yCoord+45,87,72,1,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,2,-35,35,1,45}});
+							addPleb(roo,0,bounds.xCoord+103,bounds.yCoord-25,97,87,1,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,-2,-35,35,1,45}});
+							addPleb(roo,0,bounds.xCoord+80,bounds.yCoord+45,87,72,1,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,-2,-35,35,1,45}});
 						}
 						else
 						{
@@ -939,8 +965,8 @@ public class Roo extends Player
 						if(!bounds.isGrounded){}
 						else if(isCrouching)
 						{
-							addPleb(roo,0,bounds.xCoord+88,bounds.yCoord-180,45,90,2,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,2,-35,35,1,45}});
-							addPleb(roo,0,bounds.xCoord+118,bounds.yCoord-105,45,90,2,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,2,-35,35,1,45}});
+							addPleb(roo,0,bounds.xCoord+88,bounds.yCoord-180,45,90,2,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,-2,-35,35,1,45}});
+							addPleb(roo,0,bounds.xCoord+118,bounds.yCoord-105,45,90,2,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,-2,-35,35,1,45}});
 						}
 						else{}
 						break;
@@ -948,7 +974,7 @@ public class Roo extends Player
 					case 8:
 						if(!bounds.isGrounded){}
 						else if(isCrouching)
-							addPleb(roo,0,bounds.xCoord+78,bounds.yCoord-175,40,50,2,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,2,-35,35,1,45}});
+							addPleb(roo,0,bounds.xCoord+78,bounds.yCoord-175,40,50,2,Pleb.MID,2,45,25,18,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,-2,-35,35,1,45}});
 						else{}
 						break;
 				}
@@ -979,6 +1005,9 @@ public class Roo extends Player
 			if(f >= frames)
 			{
 				isPerformingAction = false;
+				if(target != null)
+					isFacingRight = bounds.xCoord+bounds.width/2 <= target.bounds.xCoord+target.bounds.width/2;
+				
 				target = null;
 				bounds.botOffset = 0;
 				return;
@@ -1059,6 +1088,9 @@ public class Roo extends Player
 			if(f >= frames)
 			{
 				isPerformingAction = false;
+				if(target != null)
+					isFacingRight = bounds.xCoord+bounds.width/2 <= target.bounds.xCoord+target.bounds.width/2;
+				
 				target = null;
 				bounds.botOffset = 0;
 				return;
@@ -1089,7 +1121,7 @@ public class Roo extends Player
 						
 					case 1:
 						if(!bounds.isGrounded)
-							addGuardTrigger(roo,bounds.xCoord,bounds.yCoord+30,300,200,15,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,bounds.xCoord-50,bounds.yCoord+30,350,200,15,roo.isFacingRight,true,true);
 						else if(isCrouching)
 							addGuardTrigger(roo,bounds.xCoord+130,bounds.yCoord+60,215,95,6,roo.isFacingRight,true,true);
 						else
@@ -1109,7 +1141,7 @@ public class Roo extends Player
 						{
 							addPleb(roo,0,bounds.xCoord+230,bounds.yCoord+70,40,50,1,Pleb.HIGH,1,18,1,17,0,0.8,true,false,true,new double[][]{});
 							addPleb(roo,0,bounds.xCoord+140,bounds.yCoord+95,100,35,1,Pleb.HIGH,1,18,1,17,0,0.8,true,false,true,new double[][]{});
-							addPleb(roo,0,bounds.xCoord+15,bounds.yCoord+100,125,35,11,Pleb.HIGH,1,18,1,17,0,0.8,true,false,true,new double[][]{});
+							addPleb(roo,0,bounds.xCoord,bounds.yCoord+100,160,35,11,Pleb.HIGH,1,18,1,17,0,0.8,true,false,true,new double[][]{});
 						}
 						else if(isCrouching)
 							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+120,148,30,3,Pleb.LOW,1,18,1,17,0,0.8,true,false,true,new double[][]{});
@@ -1154,6 +1186,9 @@ public class Roo extends Player
 			if(f >= frames)
 			{
 				isPerformingAction = false;
+				if(target != null)
+					isFacingRight = bounds.xCoord+bounds.width/2 <= target.bounds.xCoord+target.bounds.width/2;
+				
 				target = null;
 				bounds.botOffset = 0;
 				return;
@@ -1252,25 +1287,18 @@ public class Roo extends Player
 		}
 	}
 	
-	public class Hug extends Action
+	public class Hug extends Player.Hug
 	{
 		Roo roo;
-		int hTimer, lastMashed;
+		int hCounter, lastMashed;
 		
 		public Hug(Roo r)
 		{
-			super(Action.GRAB,0,
-				new int[][]{new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}},
-				new boolean[]{false,false,false},
-				new boolean[]{false,false,false},
-				new boolean[]{false,false,false},
-				new boolean[]{false,false,false},
-				new int[]{-1,-1,-1,-1,-1,-1},
-				new boolean[]{true,false,true});
+			super(8);
 			roo = r;
 			
+			hCounter = -1;
 			lastMashed = -1;
-			hTimer = 120;
 		}
 		
 		public void perform(int f)
@@ -1278,37 +1306,40 @@ public class Roo extends Player
 			isPerformingAction = true;
 			isCrouching = false;
 			
-			if((target == null && f >= frames) || (hTimer == 0))
+			if(f >= frames)
 			{
 				if(target != null)
 				{
 					if(currState != PlayerState.HUG_FORWARD && currState != PlayerState.HUG_UPWARD && currState != PlayerState.HUG_DOWNWARD)
 					{
-			//			addGrab(target,bounds.xCoord,bounds.yCoord,1,1,1,false,false,false);
-						currState = PlayerState.HUG_BREAK;
+						currState = PuppetState.HUG_BREAK;
 						sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 						hitStun = 15;
 						
-						target.currState = PlayerState.HUG_BREAK;
+						target.currState = PuppetState.HUG_BREAK;
 						target.sIndex = target.hitboxArchiver.get(target.currState.getPosition())[0][1];
 						target.hitStun = 15;
 					}
-			/*		else
-						isThrowing = false;*/
 					
 					target.xOffset = 0;
 					target.yOffset = 0;
 					target.sAngle = 0;
-					isThrowing = false;
 					target.isThrown = false;
 				}
 				else
 					isPerformingAction = false;
 				
+				xOffset = 0;
+				yOffset = 0;
+				sAngle = 0;
+				isThrowing = false;
+				
+				if(target != null)
+					isFacingRight = bounds.xCoord+bounds.width/2 <= target.bounds.xCoord+target.bounds.width/2;
 				target = null;
 				bounds.botOffset = 0;
+				hCounter = -1;
 				lastMashed = -1;
-				hTimer = 120;
 				return;
 			}
 			else
@@ -1318,18 +1349,20 @@ public class Roo extends Player
 					bounds.yCoord = yCoord;
 					bounds.height = height;
 				}
+				isThrowing = true;
 				
 				if(target == null)
-				{
+				{	
 					switch(f)
 					{
 						case 0:
 							currState = PlayerState.HUG_START;
 							frames = 24;
-							isThrowing = true;
-							if(!bounds.isGrounded)
+							cancelOk = false;
+							
+			/*				if(!bounds.isGrounded)
 								bounds.botOffset = -1;
-							break;
+							break;*/
 							
 						case 3:
 							addGrab(roo,bounds.xCoord+100,bounds.yCoord+15,150,235,3,roo.isFacingRight,true,true);
@@ -1337,34 +1370,25 @@ public class Roo extends Player
 					}
 				}
 				else
-				{
-					if(hTimer == 120 || f >= frames)
+				{	
+					cancelOk = true;
+					if(hCounter < 0)
 					{
 						currState = PlayerState.HUG_HOLD;
-						lastMashed = -1;
-						button = -1;
 						frames = 120;
-						fCounter = 0;
-						f = 0;
-					}
-					
-					if(currState == PlayerState.HUG_HOLD)
-					{
-						if(lastMashed != button)
+						
+						if(f == 0)
 						{
-							currState = PlayerState.HUG_HIT;
-							frames = 9;
+							tCounter = 0;
+							lastMashed = -1;
+							button = -1;
+						}
+						
+						if(f >= 10 && lastMashed != button)
+						{
+							hCounter = 0;
 							lastMashed = button;
 						}
-						else if(sInputs[1] || sInputs[3])
-						{
-							currState = PlayerState.HUG_FORWARD;
-							frames = 26;
-							hTimer = 26;
-							isFacingRight = sInputs[1];
-						}
-						fCounter = 0;
-						f = 0;
 						
 						if(target.hitStun == 0 && target.isThrown)
 						{
@@ -1377,72 +1401,311 @@ public class Roo extends Player
 							target.bounds.forceArchiver.add(new Force("Hug",(isFacingRight)? 1:3,50,50));
 						else
 							target.bounds.xCoord = (isFacingRight)? bounds.xCoord+bounds.width+50:bounds.xCoord-target.bounds.width-50;
+						target.bounds.yCoord = bounds.yCoord+bounds.height-target.bounds.height;
+					}
+					else if(bounds.isGrounded && f >= 10)
+					{
+						switch(hCounter)
+						{
+							case 0:
+								currState = PlayerState.HUG_HIT;
+								break;
+								
+							case 2:
+								addPleb(roo,f,bounds.xCoord+100,bounds.yCoord+40,150,210,5,Pleb.MID,0,10,0,0,0,0.75,true,false,true,new double[][]{});
+								break;
+							
+							case 9:
+								hCounter = -1;
+								lastMashed = -1;
+								button = -1;
+								break;
+						}
+						
+						if(hCounter >= 0)
+							hCounter++;
 					}
 					
-					switch(f)
+					if(!bounds.isGrounded && tCounter == techWindow)
 					{
-						case 2:
-							if(currState == PlayerState.HUG_HIT)
-								addPleb(roo,0,bounds.xCoord+100,bounds.yCoord+40,150,210,5,Pleb.MID,0,10,0,0,0,0.75,true,false,true,new double[][]{});
-							else if(currState == PlayerState.HUG_FORWARD)
-							{
-								target.currState = PuppetState.HUGGED3;
-								target.isFacingRight = isFacingRight;
-								target.bounds.forceArchiver.clear();
-								
-								target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width/3+target.bounds.width/2),bounds.yCoord-bounds.height/5);
-								target.sAngle = 210;
-							}
-							break;
-							
-						case 4:
-							if(currState == PlayerState.HUG_FORWARD)
-							{
-								target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width*2/3+target.bounds.width/2),bounds.yCoord-bounds.height/5-10);
-								target.sAngle = 195;
-							}
-							break;
-							
-						case 6:
-							if(currState == PlayerState.HUG_FORWARD)
-								target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width*2/3+target.bounds.width/2+20),bounds.yCoord-bounds.height/5);
-							break;
-							
-						case 8:
-							if(currState == PlayerState.HUG_FORWARD)
-								target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width*2/3+target.bounds.width/2+20),bounds.yCoord-bounds.height/5+10);
-							break;
-							
-						case 10:
-							if(currState == PlayerState.HUG_FORWARD)
-							{
-								target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width*2/5+target.bounds.width/2),bounds.yCoord-bounds.height*2/3);
-								target.sAngle = 90;
-							}
-							break;
-							
-						case 12:
-							if(currState == PlayerState.HUG_FORWARD)
-							{
-								target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? 1:-1)*(bounds.width/2+target.bounds.width/2),bounds.yCoord-bounds.height/5);
-								target.sAngle = 0;
-							}
-							break;
-							
-						case 15:
-							if(currState == PlayerState.HUG_FORWARD)
-								addPleb(roo,0,bounds.xCoord+100,bounds.yCoord+40,150,210,5,Pleb.MID,0,200,0,20,0,0.75,true,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,80,4,60}});
-							break;
-							
-						case 16:
-							if(currState == PlayerState.HUG_FORWARD)
-							{
-								target.bounds.xCoord = (isFacingRight)? bounds.xCoord+bounds.width:bounds.xCoord-target.bounds.width;
-								target.xOffset = 0;
-								target.yOffset = 0;
-							}
+						bounds.forceArchiver.clear();
+						target.bounds.forceArchiver.clear();
+						
+						Puppet t = target;
+						setAction(actions[11]);
+						currAction.target = t;
+						fCounter = -1;
+						sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 					}
-					hTimer--;
+				}
+			}
+			super.perform(f);
+		}
+	}
+	
+	public class HugForward extends Action
+	{
+		Roo roo;
+		boolean hRight;
+		
+		public HugForward(Roo r, boolean d)
+		{
+			super(Action.GRAB,0,
+					new int[][]{new int[]{}, new int[]{}, new int[]{}},
+					new boolean[]{false,false,false},
+					new boolean[]{false,false,false},
+					new boolean[]{false,false,false},
+					new boolean[]{false,false,false},
+					new int[]{-1,-1,-1,-1,-1,-1},
+					new boolean[]{true,false,true});
+				roo = r;
+				hRight = d;
+		}
+		
+		public void perform(int f)
+		{
+			isPerformingAction = true;
+			isCrouching = false;
+			
+			if(f >= frames)
+			{
+				xOffset = 0;
+				yOffset = 0;
+				sAngle = 0;
+				isThrowing = false;
+				
+				target.xOffset = 0;
+				target.yOffset = 0;
+				target.sAngle = 0;
+				target.isThrown = false;
+				
+				isPerformingAction = false;
+				target = null;
+				bounds.botOffset = 0;
+				return;
+			}
+			else
+			{
+				isThrowing = true;
+				switch(f)
+				{
+					case 0:
+						currState = PlayerState.HUG_FORWARD;
+						frames = 26;
+						isFacingRight = isFacingRight ^ !hRight;
+						break;
+						
+					case 2:
+						target.currState = PuppetState.HUGGED3;
+						target.isFacingRight = isFacingRight;
+						target.bounds.forceArchiver.clear();
+						target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width/3+target.bounds.width/2),bounds.yCoord-bounds.height/5);
+						target.sAngle = 210;
+						break;
+						
+					case 4:
+						target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width*2/3+target.bounds.width/2),bounds.yCoord-bounds.height/5-10);
+						target.sAngle = 195;
+						break;
+						
+					case 6:
+						target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width*2/3+target.bounds.width/2+20),bounds.yCoord-bounds.height/5);
+						break;
+						
+					case 8:
+						target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width*2/3+target.bounds.width/2+20),bounds.yCoord-bounds.height/5+10);
+						break;
+						
+					case 10:
+						target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width*2/5+target.bounds.width/2),bounds.yCoord-bounds.height*2/3);
+						target.sAngle = 90;
+						break;
+						
+					case 12:
+						target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? 1:-1)*(bounds.width/2+target.bounds.width/2),bounds.yCoord-bounds.height/5);
+						target.sAngle = 0;
+						break;
+						
+					case 15:
+						addPleb(roo,0,bounds.xCoord+100,bounds.yCoord+40,150,210,1,Pleb.MID,0,200,0,20,0,0.75,true,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,80,4,60}});
+						break;
+						
+					case 16:
+						target.bounds.xCoord = (isFacingRight)? bounds.xCoord+bounds.width:bounds.xCoord-target.bounds.width;
+						target.xOffset = 0;
+						target.yOffset = 0;
+						break;
+				}
+			}
+		}
+	}
+	
+	public class HugUpward extends Action
+	{
+		Roo roo;
+		
+		public HugUpward(Roo r)
+		{
+			super(Action.GRAB,0,
+					new int[][]{new int[]{}, new int[]{}, new int[]{}},
+					new boolean[]{false,false,false},
+					new boolean[]{false,false,false},
+					new boolean[]{false,false,false},
+					new boolean[]{false,false,false},
+					new int[]{-1,-1,-1,-1,-1,-1},
+					new boolean[]{true,false,true});
+				roo = r;
+		}
+		
+		public void perform(int f)
+		{
+			isPerformingAction = true;
+			isCrouching = false;
+			
+			if(f >= frames)
+			{
+				xOffset = 0;
+				yOffset = 0;
+				sAngle = 0;
+				isThrowing = false;
+				
+				target.xOffset = 0;
+				target.yOffset = 0;
+				target.sAngle = 0;
+				target.isThrown = false;
+				
+				isPerformingAction = false;
+				target = null;
+				bounds.botOffset = 0;
+				return;
+			}
+			else
+			{
+				isThrowing = true;
+				switch(f)
+				{
+					case 0:
+						currState = PlayerState.HUG_UPWARD;
+						frames = 25;
+						break;
+						
+					case 3:
+						directTo(bounds.xCoord,bounds.yCoord-20);
+						sAngle = 345;
+						break;
+						
+					case 6:
+						directTo(bounds.xCoord+((isFacingRight)? 1:-1)*bounds.width/2,bounds.yCoord-20);
+						sAngle = 270;
+						addPleb(roo,0,bounds.xCoord+((isFacingRight)? bounds.width:target.bounds.width),bounds.yCoord,target.bounds.width,target.bounds.height,1,Pleb.MID,1,25,0,0,0,0.75,true,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,4,-50,50,2,30}});
+						break;
+				}
+				
+				if(f > 10 && sInputs[0] && ((isFacingRight && !sInputs[3]) || (!isFacingRight && !sInputs[1])))
+				{
+					Puppet t = target;
+					setAction(actions[4]);
+					currAction.target = t;
+					fCounter = -1;
+					sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+				}
+			}
+		}
+	}
+	
+	public class HugDownward extends Action
+	{
+		Roo roo;
+		
+		public HugDownward(Roo r)
+		{
+			super(Action.GRAB,0,
+					new int[][]{new int[]{}, new int[]{}, new int[]{}},
+					new boolean[]{false,false,false},
+					new boolean[]{false,false,false},
+					new boolean[]{false,false,false},
+					new boolean[]{false,false,false},
+					new int[]{-1,-1,-1,-1,-1,-1},
+					new boolean[]{true,true,true});
+				roo = r;
+		}
+		
+		public void perform(int f)
+		{
+			isPerformingAction = true;
+			isCrouching = false;
+			
+			if(f >= frames)
+			{
+				xOffset = 0;
+				yOffset = 0;
+				sAngle = 0;
+				isThrowing = false;
+				
+				target.xOffset = 0;
+				target.yOffset = 0;
+				target.sAngle = 0;
+				target.isThrown = false;
+				
+				isPerformingAction = false;
+				target = null;
+				bounds.botOffset = 0;
+				return;
+			}
+			else
+			{
+				isThrowing = true;
+				switch(f)
+				{
+					case 0:
+						currState = PlayerState.HUG_DOWNWARD;
+						frames = 18;
+						isFacingRight = !isFacingRight;
+						break;
+						
+					case 3:
+						target.currState = PuppetState.HUGGED2;
+						target.bounds.forceArchiver.clear();
+				//		target.bounds.isFloating = true;
+						target.directTo(bounds.xCoord+bounds.width/2+((isFacingRight)? -1:1)*(target.bounds.width/2),bounds.yCoord-bounds.height/3);
+						target.sAngle = 45;
+						
+				//		bounds.isFloating = true;
+						directTo(bounds.xCoord+bounds.width/2+((isFacingRight)? -1:1)*target.bounds.width/2,bounds.yCoord-20);
+						sAngle = 45;
+						break;
+						
+					case 6:
+						target.directTo(bounds.xCoord+bounds.width/2+((isFacingRight)? -1:1)*target.bounds.width/2,bounds.yCoord-bounds.height/3);
+						target.sAngle = 120;
+						
+						directTo(bounds.xCoord+bounds.width/2+((isFacingRight)? -1:1)*target.bounds.width/2,bounds.yCoord-85);
+						sAngle = 95;
+						break;
+						
+					case 9:
+						target.directTo(bounds.xCoord+bounds.width/2+((isFacingRight)? -1:1)*target.bounds.width/2,bounds.yCoord+bounds.height/3);
+						target.sAngle = 225;
+						
+						directTo(bounds.xCoord+bounds.width/2+((isFacingRight)? -1:1)*target.bounds.width/2,bounds.yCoord-120);
+						sAngle = 145;
+						break;
+						
+					case 12:
+						target.bounds.xCoord = bounds.xCoord+bounds.width/2;
+						target.bounds.isGrounded = false;
+						target.xOffset = 0;
+						target.yOffset = 0;
+						target.kdStun = 60;
+						
+						bounds.xCoord += bounds.width*((isFacingRight)? -1:1);
+						bounds.yCoord -= target.bounds.height+10;
+						if(bounds.isGrounded)
+							bounds.forceArchiver.add(new Force("hug",2,45,2));
+						xOffset = 0;
+						yOffset = 0;
+						addPleb(roo,0,bounds.xCoord,bounds.yCoord+bounds.height+10,bounds.width+target.bounds.width,target.bounds.height,1,Pleb.MID,1,140,0,0,0,0.75,true,false,true,new double[][]{new double[]{Pleb.SPIKE,40,60,20}});
+						break;
 				}
 			}
 		}
@@ -1451,7 +1714,7 @@ public class Roo extends Player
 	public class FireBall extends Action
 	{
 		Roo roo;
-		int strength;
+		int strength, charge, cCounter;
 		
 		public FireBall(Roo r, int s)
 		{
@@ -1465,6 +1728,8 @@ public class Roo extends Player
 				new boolean[]{true,false,false});
 			roo = r;
 			strength = s;
+			charge = 0;
+			cCounter = 0;
 		}
 		
 		public void perform(int f)
@@ -1482,26 +1747,39 @@ public class Roo extends Player
 			}
 			else
 			{
-				switch(f)
+				if(f == 0)
+				{
+					charge = 0;
+					cCounter = 0;
+				}
+				if(sIndex == 2+(hitboxArchiver.get(currState.getPosition())[0][4]-1.0)/hitboxArchiver.get(currState.getPosition())[0][4] && cCounter < charge)
+				{
+					sIndex -= 1.0/hitboxArchiver.get(currState.getPosition())[0][4];
+					cCounter++;
+				}
+				
+				switch(f-charge)
 				{
 					case 0:
 						if(bounds.isGrounded)
 						{
 							currState = RooState.FIREBALL_LAUNCH;
 							hashCounter = "";
-							frames = 38;
+							charge = (strength == 2)? 25:0;
+							frames = 38+charge;
 						}
 						else
 							frames = 1;
 						break;
 						
 					case 9:
-						propArchiver.add(new Ninja(roo,bounds.xCoord+((isFacingRight)? bounds.width+105:-105),bounds.yCoord+42,120,50,999,1,strength));
+						System.out.println(f+" "+charge);
+						propArchiver.add(new Ninja(roo,bounds.xCoord+((isFacingRight)? bounds.width+105:-105),bounds.yCoord+42,120,50,360,1,strength));
 						break;
 					
 					case 29:
-			 			currState = RooState.FIREBALL_RECOVER;
-			 			sIndex = 0;
+						currState = RooState.FIREBALL_RECOVER;
+				 		sIndex = 0;
 						break;
 				}
 			}
@@ -1511,27 +1789,35 @@ public class Roo extends Player
 	public class Ninja extends Projectile
 	{
 		Roo roo;
-		int speed;
+		int hCount;
 		
 		public Ninja(Roo r, int x, int y, int w1, int h1, int h2, int h3, int s)
 		{
 			super(r,x,y,w1,h1,h2,h3,s);
 			roo = r;
-			hDamage = 100;
-			sDamage = 40;
+			hCount = 0;
 			
 			switch(strength)
 			{
 				case 0:
+					hDamage = 100;
+					sDamage = 40;
 					speed = 5; 
 					break;
 				
 				case 1:
-					speed = 7; 
+					hDamage = 100;
+					sDamage = 40;
+					speed = 9;
+					health = 240;
 					break;
 					
 				case 2:
-					speed = 9; 
+					hDamage = 100;
+					sDamage = 25;
+					speed = 18;
+					health = 120;
+					hits = 3;
 					break;
 			}
 			
@@ -1548,14 +1834,19 @@ public class Roo extends Player
 			}
 			else if(fCounter > 1)
 			{
-				if(isFacingRight)
-					bounds.xCoord += speed;
-				else
-					bounds.xCoord -= speed;
+				bounds.xCoord += (isFacingRight)? speed:-speed;
 				if(fCounter >= 2)
+				{
 					addGuardTrigger(bounds.xCoord+25,bounds.yCoord-35,130,120,2,roo.isFacingRight,true);
-				if(fCounter == 2)
-					addPleb(0,bounds.xCoord+25,bounds.yCoord-20,85,90,999,Pleb.MID,1,40,40,20,0,1,true,true,new double[][]{new double[]{Pleb.KNOCKDOWN,1,1,21,7,60}});
+					if(hCount != hits)
+					{
+						if(hits == 1)
+							addPleb(hits,bounds.xCoord+25,bounds.yCoord-20,85,90,health,Pleb.MID,1,40,40,20,0,1,true,true,new double[][]{new double[]{Pleb.KNOCKDOWN,1,1,21,7,60}});
+						else
+							addPleb(hits,bounds.xCoord+25,bounds.yCoord-20,85,90,health,Pleb.MID,2,40,40,20,20,1,true,true,new double[][]{});
+						hCount = hits;
+					}
+				}
 			}
 		}
 	}

@@ -70,7 +70,7 @@ public class Main
 				p2.stickInputs.clear();
 		*/			
 				//FRAME BY FRAME TEST
-				fpsLimit = 6;
+				fpsLimit = 2;
 			}
 			
 			//TRAINING MODE HEALTH RESET TEST
