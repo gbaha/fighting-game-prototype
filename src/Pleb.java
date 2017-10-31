@@ -11,7 +11,7 @@ public class Pleb extends Hitbox
 	String hash;	//action, type;
 	int duration, type, strength, hDamage, sDamage, xKnockback, yKnockback, xDist, yDist;
 	double hitstunDamp;	//decayRate, piercingRate;
-	boolean isAttached, isProjectile;
+	boolean isAttached, isProjectile, pBreaker;
 	double[][] properties;	//[[type, parameters], ...]
 	
 	public static final int GUARD = -1;
@@ -24,7 +24,7 @@ public class Pleb extends Hitbox
 	public static final int LAUNCH = 1;		//[interruptible?, xforce magnitude, xforce decay, yforce magnitude, yforce decay, hitstun]
 	public static final int SPIKE = 2;		//[downward force, ground bounce force, down time]
 	
-	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d, int t, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, double[][] pr)
+	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d, int t, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, boolean pb, double[][] pr)
 	{
 		super(x,y,w,h);
 		puppet = p;
@@ -41,6 +41,7 @@ public class Pleb extends Hitbox
 		hitstunDamp = hs;
 		isAttached = ia;
 		isProjectile = ip;
+		pBreaker = pb;
 		properties = pr;
 		
 		forceArchiver = new ArrayList<Force>();
@@ -78,6 +79,7 @@ public class Pleb extends Hitbox
 		hitstunDamp = 0;
 		isAttached = ia;
 		isProjectile = false;
+		pBreaker = false;
 		properties = new double[][]{};
 		
 		forceArchiver = new ArrayList<Force>();
@@ -110,6 +112,7 @@ public class Pleb extends Hitbox
 		hitstunDamp = hs;
 		isAttached = ia;
 		isProjectile = ip;
+		pBreaker = false;
 //		direction = d2;
 //		speed = s;
 //		decayRate = d3;

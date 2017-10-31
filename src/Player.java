@@ -36,6 +36,7 @@ public class Player extends Puppet
 //		currState = PuppetState.IDLE;
 //		prevState = PuppetState.IDLE;
 		isDashing = false;
+		isHoming = false;
 		airOptions = a1;
 		airDashLimit = a2;
 		jumpLimit = j1;
@@ -74,6 +75,7 @@ public class Player extends Puppet
 		currState = PuppetState.IDLE;
 		isDashing = false;
 		isHoming = false;
+		floatOverride = false;
 		aDash = 0;
 		jCount = 0;
 		meter = 1000;
@@ -211,14 +213,15 @@ public class Player extends Puppet
 			return;
 		}
 		
-		if(jDirections[1] == 1)
+		if(preFrames == 0)
 		{
-			if(preFrames > 0)
+			if(jDirections[2] == 1)
 			{
 				currState = PuppetState.PREJUMP;
-				return;
+				jDirections[1] = 1;
+				preFrames = 2;
 			}
-			else
+			if(jDirections[1] == 1)
 			{
 				isJumping = true;
 				switch(jDirections[0])
@@ -297,14 +300,16 @@ public class Player extends Puppet
 			return;
 		}
 		
-		if(jDirections[1] == 1)
+		if(preFrames == 0)
 		{
-			if(preFrames > 0)
+			if(jDirections[2] == 1)
 			{
 				currState = PuppetState.PREJUMP;
+				jDirections[1] = 1;
+				preFrames = 2;
 				return;
 			}
-			else
+			if(jDirections[1] == 1)
 			{
 				isJumping = true;
 				switch(jDirections[0])
@@ -342,14 +347,15 @@ public class Player extends Puppet
 			return;
 		}
 		
-		if(jDirections[1] == 1)
+		if(preFrames == 0)
 		{
-			if(preFrames > 0)
+			if(jDirections[2] == 1)
 			{
 				currState = PuppetState.PREJUMP;
-				return;
+				jDirections[1] = 1;
+				preFrames = 2;
 			}
-			else
+			if(jDirections[1] == 1)
 			{
 				isJumping = true;
 				switch(jDirections[0])
@@ -405,8 +411,11 @@ public class Player extends Puppet
 			
 			bounds.forceArchiver.add(new Force("yJump",2,jump,1));
 			jDirections[1] = 1;
+			jDirections[2] = -1;
 			isJumping = false;
 			jCount++;
+			preFrames = 10;
+			sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 		}
 		bounds.botOffset = 0;
 		
@@ -423,23 +432,26 @@ public class Player extends Puppet
 			return;
 		}
 		
-/*		if(jDirections[1] == 1)
+		if(jDirections[2] == 1)
 		{
-			switch(jDirections[0])
+			if(preFrames == 0)
 			{
-				case 0:
-					currState = PuppetState.JUMP_NEUTRAL;
-					return;
-				case 1:
-					currState = (isFacingRight)? PuppetState.JUMP_FORWARD:PuppetState.JUMP_BACKWARD;
-					return;
-				case -1:
-					currState = (isFacingRight)? PuppetState.JUMP_BACKWARD:PuppetState.JUMP_FORWARD;
-					return;
+				isJumping = true;
+				switch(jDirections[0])
+				{
+					case 0:
+						currState = PuppetState.JUMP_NEUTRAL;
+						return;
+					case 1:
+						currState = (isFacingRight)? PuppetState.JUMP_FORWARD:PuppetState.JUMP_BACKWARD;
+						return;
+					case -1:
+						currState = (isFacingRight)? PuppetState.JUMP_BACKWARD:PuppetState.JUMP_FORWARD;
+						return;
+				}
 			}
 		}
-		else*/
-		if(jDirections[1] < 1)
+		if(jDirections[1] == 0 && !bounds.isGrounded)
 		{
 			switch(jDirections[0])
 			{
@@ -653,6 +665,7 @@ public class Player extends Puppet
 			if(f >= frames)
 			{
 				jDirections[1] = -1;
+				jDirections[2] = -1;
 				isPerformingAction = false;
 				isHoming = false;
 				target = null;

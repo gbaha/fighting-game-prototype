@@ -8,12 +8,13 @@ abstract class Prop
 	ArrayList<Pleb> plebsIn, plebsOut;
 	ArrayList<int[]> spriteArchiver;
 //	ArrayList<Force> forceArchiver;
+	Puppet puppet;
 	Organ bounds;
 	State currState;
 	int id, xCoord, yCoord, xHosh, yHosh, width, height;
 	int maxHp, health, hits, fCounter;
 	double fIndex;
-	boolean isFacingRight;
+	boolean isFacingRight, isHit;
 	int[] spriteParams;
 	
 	public enum PropState implements State
@@ -51,10 +52,12 @@ abstract class Prop
 		fCounter = 0;
 		fIndex = 0;
 		isFacingRight = true;
+		isHit = false;
 		
 	/*	xBlocked = false;
 		yBlocked = false;*/
 		
+		puppet = null;
 		bounds = new Organ(x,y,w1,h1,0);
 	//	bounds.isFloating = f;
 		bounds.isMovable = true;
@@ -70,6 +73,7 @@ abstract class Prop
 			g.fillRect((int)(bounds.xHosh*w/1280),(int)(bounds.yHosh*h/720),(int)(bounds.width*w/1280),(int)(bounds.height*h/720));
 			g.setColor(Color.CYAN);
 			g.drawRect((int)(bounds.xHosh*w/1280),(int)(bounds.yHosh*h/720),(int)(bounds.width*w/1280),(int)(bounds.height*h/720));
+			g.drawString(hits+"",(int)(bounds.xHosh*w/1280)-15,(int)((bounds.yHosh+bounds.height)*h/720));
 			g.drawString(health+"",(int)(bounds.xHosh*w/1280)-15,(int)(bounds.yHosh*h/720));
 //		}
 	}

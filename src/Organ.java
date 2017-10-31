@@ -8,7 +8,7 @@ public class Organ extends Hitbox
 	ArrayList<Force> forceArchiver;
 	int xForward, yForward, xDrift, yDrift;
 	int[] blocked;
-	boolean hInvul, pInvul;
+	boolean isGhost, hInvul, pInvul;
 //	boolean xBlocked, yBlocked;
 	
 	//================================================
@@ -33,6 +33,7 @@ public class Organ extends Hitbox
 		blocked[2] = yCoord+height/2;
 		blocked[3] = xCoord+width/2;
 		
+		isGhost = false;
 		hInvul = false;
 		pInvul = false;
 	/*	xBlocked = false;
@@ -61,6 +62,7 @@ public class Organ extends Hitbox
 		blocked[2] = yCoord+height/2;
 		blocked[3] = xCoord+width/2;
 		
+		isGhost = false;
 		hInvul = false;
 		pInvul = false;
 	/*	xBlocked = false;

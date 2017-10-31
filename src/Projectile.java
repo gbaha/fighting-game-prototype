@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 abstract class Projectile extends Prop
 {
-	Puppet puppet;
 	String hashCounter;
 	int strength, hDamage, sDamage, speed;
 	
@@ -39,17 +38,24 @@ abstract class Projectile extends Prop
 		super.draw(g,i,s,w,h,d);
 	}
 	
+	public void move()
+	{System.out.println(isHit);
+		if(!isHit)
+			super.move();
+	}
+	
 	public void update()
 	{
 		super.update();
+		isHit = false;
 		health--;
 		if(health <= 0 || hits <= 0)
 			health = 0;
 	}
 	
-	protected void addPleb(int hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, double[][] pr)
+	protected void addPleb(int hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, boolean pb, double[][] pr)
 	{
-		Pleb p = new Pleb(puppet,bounds,null,x,y,w,h,d1,d2,s,hd,sd,kx,ky,hs,ia,ip,pr);
+		Pleb p = new Pleb(puppet,bounds,null,x,y,w,h,d1,d2,s,hd,sd,kx,ky,hs,ia,ip,pb,pr);
 		
 		if(hashCounter.equals(""))
 			hashCounter = this.toString()+hc;

@@ -27,7 +27,7 @@ abstract class Puppet
 	int kdCounter, kdLimit, kdStun, launchPoint;
 	double sIndex, sAngle, jForce, jump, juggleDamp, hitstunDamp;
 	boolean isFacingRight, isPerformingAction, isCrouching, canBlock, isGuardBroken;
-	boolean throwInvul, isThrowing, isThrown, isTeching, isJuggled, /*isUnstoppable,*/ isAirLocked;	//, isJumping;
+	boolean throwInvul, isThrowing, isThrown, isTeching, isJuggled, isAirLocked, floatOverride;	//, isUnstoppable, isJumping;
 	
 	int[] hitInfo, flinchPoints, jDirections, spriteParams;	//Add tint later
 	boolean[] isBlocking;
@@ -89,12 +89,13 @@ abstract class Puppet
 		isThrown = false;
 		isTeching = false;
 		isJuggled = false;
+		floatOverride = false;
 	//	isUnstoppable = false;	// Unaffected by new forces through damage?
 	//	isJumping = false;
 		
 		hitInfo = new int[]{0,0,0};	//[type, number of hits, enemy hitstun]
 		flinchPoints = new int[]{0,0,0,0,0,0,0,0,0,0,0}; 	//marks points where sprite freezes during hitstun
-		jDirections = new int[]{0,0};
+		jDirections = new int[]{0,0,0};
 		isBlocking = new boolean[]{false,false};
 		
 		maxHp = hp;
@@ -140,10 +141,11 @@ abstract class Puppet
 			{
 				if(!isThrown)
 				{
-					g.setColor(Color.BLUE);
+					Color c = (bounds.isGhost)? Color.WHITE:Color.BLUE;
+					g.setColor(c);
 					g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50));
 					g.fillRect((int)(bounds.xHosh*w/1280),(int)(bounds.yHosh*h/720),(int)(bounds.width*w/1280),(int)(bounds.height*h/720));
-					g.setColor(Color.BLUE);
+					g.setColor(c);
 					g.drawRect((int)(bounds.xHosh*w/1280),(int)(bounds.yHosh*h/720),(int)(bounds.width*w/1280),(int)(bounds.height*h/720));
 				}
 				
@@ -155,13 +157,33 @@ abstract class Puppet
 				g.fillRect((int)((xHosh+xOffset)*w/1280),(int)((yHosh+yOffset)*h/720),(int)(10*w/1280),(int)(10*h/720));
 				g.fillRect((int)((bounds.xHosh+bounds.width-10)*w/1280),(int)((bounds.yHosh+bounds.height+bounds.botOffset-10)*h/720),(int)(10*w/1280),(int)(10*h/720));
 				
-				for(Hitbox a: anatomy)
+				for(Organ a: anatomy)
 				{
-					g.setColor(Color.GREEN);
+					Color c = (a.hInvul)? Color.WHITE:((throwInvul)? Color.MAGENTA:((a.pInvul)? Color.CYAN:Color.GREEN));
+					g.setColor(c);
 					g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50));
 					g.fillRect((int)(a.xHosh*w/1280),(int)(a.yHosh*h/720),(int)(a.width*w/1280),(int)(a.height*h/720));
-					g.setColor(Color.GREEN);
+					g.setColor(c);
 					g.drawRect((int)(a.xHosh*w/1280),(int)(a.yHosh*h/720),(int)(a.width*w/1280),(int)(a.height*h/720));
+				}
+				
+				if(!anatomy.isEmpty())
+				{
+					if(anatomy.get(0).hInvul)
+					{
+						g.setColor(Color.WHITE);
+						g.fillRect((int)((bounds.xHosh+bounds.width-60)*w/1280),(int)((bounds.yHosh+bounds.height+20)*h/720),(int)(20*w/1280),(int)(20*h/720));
+					}
+					if(anatomy.get(0).pInvul)
+					{
+						g.setColor(Color.CYAN);
+						g.fillRect((int)((bounds.xHosh+bounds.width-20)*w/1280),(int)((bounds.yHosh+bounds.height+20)*h/720),(int)(20*w/1280),(int)(20*h/720));
+					}
+				}
+				if(throwInvul)
+				{
+					g.setColor(Color.MAGENTA);
+					g.fillRect((int)((bounds.xHosh+bounds.width-40)*w/1280),(int)((bounds.yHosh+bounds.height+20)*h/720),(int)(20*w/1280),(int)(20*h/720));
 				}
 			}
 			catch(java.lang.NullPointerException e)
@@ -309,14 +331,9 @@ abstract class Puppet
 			return;
 		}
 		
-		if(jDirections[1] == 1)
+		if(jDirections[2] == 1)
 		{
-			if(preFrames > 0)
-			{
-				currState = PuppetState.PREJUMP;
-				return;
-			}
-			else
+			if(preFrames == 0)
 			{
 				switch(jDirections[0])
 				{
@@ -332,8 +349,7 @@ abstract class Puppet
 				}
 			}
 		}
-		
-		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
+		if(jDirections[1] == 0 && !bounds.isGrounded)
 		{
 			switch(jDirections[0])
 			{
@@ -342,7 +358,7 @@ abstract class Puppet
 					return;
 				case 1:
 					currState = (isFacingRight)? PuppetState.FALL_FORWARD:PuppetState.FALL_BACKWARD;
-			 		return;
+					return;
 				case -1:
 					currState = (isFacingRight)? PuppetState.FALL_BACKWARD:PuppetState.FALL_FORWARD;
 					return;
@@ -385,6 +401,40 @@ abstract class Puppet
 			else if(preFrames == 0)
 				currState = PuppetState.IDLE;
 		}
+		
+		if(jDirections[2] == 1)
+		{
+			if(preFrames == 0)
+			{
+				switch(jDirections[0])
+				{
+					case 0:
+						currState = PuppetState.JUMP_NEUTRAL;
+						return;
+					case 1:
+						currState = (isFacingRight)? PuppetState.JUMP_FORWARD:PuppetState.JUMP_BACKWARD;
+						return;
+					case -1:
+						currState = (isFacingRight)? PuppetState.JUMP_BACKWARD:PuppetState.JUMP_FORWARD;
+						return;
+				}
+			}
+		}
+		if(jDirections[1] == 0 && !bounds.isGrounded)
+		{
+			switch(jDirections[0])
+			{
+				case 0:
+					currState = PuppetState.FALL_NEUTRAL;
+					return;
+				case 1:
+					currState = (isFacingRight)? PuppetState.FALL_FORWARD:PuppetState.FALL_BACKWARD;
+					return;
+				case -1:
+					currState = (isFacingRight)? PuppetState.FALL_BACKWARD:PuppetState.FALL_FORWARD;
+					return;
+			}
+		}
 	}
 	
 	public void move()
@@ -395,7 +445,26 @@ abstract class Puppet
 			currState = (isBlocking[0])? PuppetState.GUARD_STANDING:PuppetState.GUARD_CROUCHING;
 			return;
 		}
-		if(!bounds.isGrounded && jDirections[1] == 0) //!isJumping)
+		
+		if(jDirections[2] == 1)
+		{
+			if(preFrames == 0)
+			{
+				switch(jDirections[0])
+				{
+					case 0:
+						currState = PuppetState.JUMP_NEUTRAL;
+						return;
+					case 1:
+						currState = (isFacingRight)? PuppetState.JUMP_FORWARD:PuppetState.JUMP_BACKWARD;
+						return;
+					case -1:
+						currState = (isFacingRight)? PuppetState.JUMP_BACKWARD:PuppetState.JUMP_FORWARD;
+						return;
+				}
+			}
+		}
+		if(jDirections[1] == 0 && !bounds.isGrounded)
 		{
 			switch(jDirections[0])
 			{
@@ -436,7 +505,7 @@ abstract class Puppet
 				break;
 				
 			case Pleb.GRAB:
-				if(hitStun == 0 && bounds.isGrounded == p.puppet.bounds.isGrounded && !isBlocking[0] && !isBlocking[1])
+				if(hitStun == 0 && kdStun == 0 && bounds.isGrounded == p.puppet.bounds.isGrounded && !isBlocking[0] && !isBlocking[1])
 				{
 					p.puppet.currAction.target = this;
 					p.puppet.fCounter = 0;
@@ -454,7 +523,7 @@ abstract class Puppet
 			
 			if(!bounds.isGrounded || kdCounter > 0)
 				currState = PuppetState.FLINCH_AERIAL0;
-			else if(isCrouching && currState != PuppetState.FLINCH_CROUCHING)
+			else if(isCrouching) //&& currState != PuppetState.FLINCH_CROUCHING)
 				currState = PuppetState.FLINCH_CROUCHING;
 			else
 			{
@@ -470,6 +539,7 @@ abstract class Puppet
 						currState = PuppetState.FLINCH_STANDING2;
 						break;
 				}
+		//		isCrouching = false;
 			}
 			
 			switch(p.strength)
@@ -524,7 +594,7 @@ abstract class Puppet
 				}
 			}
 			sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
-			isFacingRight = !p.puppet.isFacingRight;
+	//		p.puppet.isFacingRight = !isFacingRight;
 			bounds.botOffset = 0;
 			yOffset = 0;
 			sAngle = 0;
@@ -657,7 +727,7 @@ abstract class Puppet
 				currAction = null;
 			}
 		}
-		jDirections = new int[]{0,0};
+		jDirections = new int[]{0,0,0};
 	}
 	
 	public void knockdown()
@@ -750,7 +820,7 @@ abstract class Puppet
 			bounds.yCoord += height-kdHeight;
 			bounds.height = kdHeight;
 		}
-		else if(((isCrouching && jDirections[0] == 0 && jDirections[1] == 0 && currState != PuppetState.LANDING && currState != PuppetState.PREJUMP && currState != PuppetState.FLINCH_TRIP0 && currState != PuppetState.FLINCH_TRIP1) || currState == PuppetState.CROUCHING) && (hitStun == 0 && !isThrown))
+		else if(((isCrouching && jDirections[0] == 0 && jDirections[1] == 0 && currState != PuppetState.LANDING && currState != PuppetState.PREJUMP && currState != PuppetState.FLINCH_TRIP0 && currState != PuppetState.FLINCH_TRIP1) || currState == PuppetState.CROUCHING) && !isThrown)
 		{
 			bounds.yCoord += height-crHeight;
 			bounds.height = crHeight;
@@ -950,7 +1020,7 @@ abstract class Puppet
 					}
 				}
 				if(x[2] != -1 && ((p.isFacingRight && p.jDirections[0] == 1) || (!p.isFacingRight && p.jDirections[0] == -1)))
-					p.bounds.forceArchiver.add(new Force("xPursuit",(int)x[2],x[0],x[1]));
+					p.bounds.forceArchiver.add(new Force("xPursuit",(int)x[2],x[0]*0.9,x[1]));
 				if(!yExists && p.bounds.yCoord+p.bounds.height >= bounds.yCoord)
 					p.bounds.forceArchiver.add(new Force("yPursuit",2,((h)? 50:25),2));
 				

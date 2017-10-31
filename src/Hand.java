@@ -65,7 +65,8 @@ public class Hand implements KeyListener	//, MouseListener
 	{
 		if(player != null)
 		{
-			player.isCrouching = false;
+			if(player.hitStun == 0 || !player.bounds.isGrounded)
+				player.isCrouching = false;
 			player.isDashing = false;
 			player.isBlocking = new boolean[]{false,false};
 			player.sInputs = stickArchiver;
@@ -90,7 +91,7 @@ public class Hand implements KeyListener	//, MouseListener
 			//INPUT CHECKS
 			if(stickArchiver[0])
 			{
-				if((inputOrder.getFirst() || player.bounds.isGrounded)&& !player.isAirLocked)
+				if((inputOrder.getFirst() || player.bounds.isGrounded) && !player.isAirLocked)
 				{
 					boolean j = (player.currAction == null);
 					if(!j)
@@ -108,7 +109,7 @@ public class Hand implements KeyListener	//, MouseListener
 					
 					if(j)
 					{
-						if(player.jDirections[1] == 0 && player.airOptions > player.aDash+player.jCount && player.jCount < player.jumpLimit && !player.isBlocking[0] && !player.isBlocking[1])
+						if(/*player.jDirections[1] == 0 &&*/ player.airOptions > player.aDash+player.jCount && player.jCount < player.jumpLimit && !player.isBlocking[0] && !player.isBlocking[1])
 						{
 							if(stickArchiver[1])
 								player.jDirections[0] = 1;
@@ -116,10 +117,8 @@ public class Hand implements KeyListener	//, MouseListener
 								player.jDirections[0] = -1;
 							else
 								player.jDirections[0] = 0;
-							player.jDirections[1] = 1;
-							
-							if(player.bounds.isGrounded)
-								player.preFrames = 2;
+							if(player.jDirections[2] == 0)
+								player.jDirections[2] = 1;
 						}
 						
 						for(Force f: player.bounds.forceArchiver)
@@ -158,7 +157,7 @@ public class Hand implements KeyListener	//, MouseListener
 			{
 				if(stickArchiver[2])
 				{
-					if(player.bounds.isGrounded && !player.isDashing)
+					if(player.bounds.isGrounded && !player.isDashing && player.hitStun == 0)
 					{
 						player.isCrouching = true;
 						player.bounds.xDir = 0;
@@ -173,8 +172,8 @@ public class Hand implements KeyListener	//, MouseListener
 						addStickInput(2);
 				}
 				
-				if(player.jDirections[1] == -1)
-					player.jDirections[1] = 0;
+			//	if(player.jDirections[2] == -1)
+					player.jDirections[2] = 0;
 			}
 			
 			if(stickArchiver[1])
