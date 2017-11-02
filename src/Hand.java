@@ -280,6 +280,7 @@ public class Hand implements KeyListener	//, MouseListener
 			
 			int i = m[0].length-1;
 			boolean c = true;
+			
 			while(i >= 0)
 			{
 				int s = sInputs.getFirst()[0];
@@ -318,7 +319,9 @@ public class Hand implements KeyListener	//, MouseListener
 					if(m[0][i] != -1)
 					{
 						if(((m[2][0] == 0 && (m[2][i] >= sInputs.getFirst()[1] || m[2][i] == -1)) || (m[2][0] == 1 && (m[2][i] <= sInputs.getFirst()[1] || m[2][i] == -1))) || i == 0)
+						{
 							sInputs.removeFirst();
+						}
 						else
 							c = false;
 					}
@@ -338,6 +341,11 @@ public class Hand implements KeyListener	//, MouseListener
 					sInputs.addLast(new int[]{5,1});
 					bInputs.addLast(new int[]{-1,1});
 				}
+				else if(s == 5 && sInputs.size() > 1 && order.getFirst())
+				{
+					int t = sInputs.getFirst()[1];
+					sInputs.getFirst()[1] += t;
+				}
 				else
 					c = false;
 				
@@ -349,7 +357,7 @@ public class Hand implements KeyListener	//, MouseListener
 			}
 			
 			if(c && ((player.bounds.isGrounded && player.actions[player.movelist.indexOf(m)].groundOk) || (!player.bounds.isGrounded && player.actions[player.movelist.indexOf(m)].airOk)))
-			{//System.out.println(">> "+player.movelist.indexOf(m));
+			{//System.out.println(">> "+player.movelist.indexOf(m)+" "+player.actions[player.movelist.indexOf(m)]);
 				if(player.currAction == null)
 				{
 					if(m.length < 4)

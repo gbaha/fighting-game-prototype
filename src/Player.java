@@ -475,10 +475,6 @@ public class Player extends Puppet
 	
 	public void update()
 	{
-	//	HITBOX FRAME TEST
-	//	bounds.isGrounded = false; bounds.isFloating = true;
-	//	currState = PlayerState.JUMPING_MK; setAction(normals[4]); sIndex = 2; fCounter = 0; currAction.frames = 30;
-		
 	//	super.update();
 		if(bounds.isGrounded)
 		{

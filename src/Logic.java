@@ -41,38 +41,45 @@ public class Logic
 	
 	public void focus()
 	{
-		stage.xFocus = xFocus;
-		stage.yFocus = yFocus;
+		if(Math.abs(stage.xFocus-xFocus) < 15)
+			stage.xFocus = xFocus;
+		else 
+			stage.xFocus += (xFocus-stage.xFocus)/5;
+		
+		if(Math.abs(stage.yFocus-yFocus) < 15)
+			stage.yFocus = yFocus;
+		else
+			stage.yFocus += (yFocus-stage.yFocus)/5;
 	
 		for(Floor f: stage.floors)
 		{
-			f.xHosh = f.xCoord+xFocus;
-			f.yHosh = f.yCoord+yFocus;
+			f.xHosh = f.xCoord+stage.xFocus;
+			f.yHosh = f.yCoord+stage.yFocus;
 		}
 		for(Puppet p1: stage.puppets)
 		{
-			p1.xHosh = p1.xCoord+xFocus;
-			p1.yHosh = p1.yCoord+yFocus;
-			p1.bounds.xHosh = p1.bounds.xCoord+xFocus;
-			p1.bounds.yHosh = p1.bounds.yCoord+yFocus;
+			p1.xHosh = p1.xCoord+stage.xFocus;
+			p1.yHosh = p1.yCoord+stage.yFocus;
+			p1.bounds.xHosh = p1.bounds.xCoord+stage.xFocus;
+			p1.bounds.yHosh = p1.bounds.yCoord+stage.yFocus;
 			
 			for(Organ o: p1.anatomy)
 			{
-				o.xHosh = o.xCoord+xFocus;
-				o.yHosh = o.yCoord+yFocus;
+				o.xHosh = o.xCoord+stage.xFocus;
+				o.yHosh = o.yCoord+stage.yFocus;
 			}
 		}
 		for(Prop p2: stage.props)
 		{
-			p2.xHosh = p2.xCoord+xFocus;
-			p2.yHosh = p2.yCoord+yFocus;
-			p2.bounds.xHosh = p2.bounds.xCoord+xFocus;
-			p2.bounds.yHosh = p2.bounds.yCoord+yFocus;							
+			p2.xHosh = p2.xCoord+stage.xFocus;
+			p2.yHosh = p2.yCoord+stage.yFocus;
+			p2.bounds.xHosh = p2.bounds.xCoord+stage.xFocus;
+			p2.bounds.yHosh = p2.bounds.yCoord+stage.yFocus;							
 		}
 		for(Pleb p3: stage.plebs)
 		{
-			stage.plebs.get(stage.plebs.indexOf(p3)).xHosh = stage.plebs.get(stage.plebs.indexOf(p3)).xCoord+xFocus;
-			stage.plebs.get(stage.plebs.indexOf(p3)).yHosh = stage.plebs.get(stage.plebs.indexOf(p3)).yCoord+yFocus;
+			stage.plebs.get(stage.plebs.indexOf(p3)).xHosh = stage.plebs.get(stage.plebs.indexOf(p3)).xCoord+stage.xFocus;
+			stage.plebs.get(stage.plebs.indexOf(p3)).yHosh = stage.plebs.get(stage.plebs.indexOf(p3)).yCoord+stage.yFocus;
 		}
 	}
 	
@@ -1822,7 +1829,7 @@ public class Logic
 									//		stage.player2.isBlocking[0] = true;	//TEST
 											if(p1.type == Pleb.GUARD)
 											{
-												if(p2.currAction == null)
+												if(p2.currAction == null && p2.hitStun == 0)
 													p2.canBlock = true;
 											}
 											else

@@ -8,7 +8,7 @@ public class Roo extends Player
 {
 	public enum RooState implements State
 	{
-		PlayerState, FIREBALL_LAUNCH, FIREBALL_RECOVER, TATSU_START, TATSU_SPIN, TATSU_RECOVER;
+		PlayerState, FIREBALL_LAUNCH, FIREBALL_RECOVER, TATSU_START, TATSU_SPIN, TATSU_RECOVER, DP, DP_RECOVER;
 		
 		public String getState()
 		{
@@ -639,6 +639,22 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//DP
+		hitboxArchiver.add(new int[][]{new int[]{46,0,7,0,2},
+			new int[]{72,0,53,50,	0,25,125,50,	0,85,140,50,	-42,145,185,105},
+			new int[]{88,36,53,50,	24,50,100,50,	0,95,140,50,	-42,145,185,105},
+			new int[]{88,58,53,50,	24,80,100,50,	0,120,140,70,	-42,145,185,105},
+			new int[]{88,42,53,50,	12,50,120,90,	72,95,110,80,	-42,145,185,105},
+			new int[]{80,0,53,50,	12,20,120,50,	12,80,120,50,	-42,145,180,105},
+			new int[]{0,-80,53,50,	-32,-40,130,80,	0,0,160,125,	0,125,80,125},
+			new int[]{0,-80,53,50,	-32,-40,130,80,	0,0,160,125,	0,125,80,125},
+			new int[]{0,-80,53,50,	-32,-40,130,80,	0,0,160,125,	0,125,80,125}});
+		//DP RECOVER
+		hitboxArchiver.add(new int[][]{new int[]{47,0,3,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		
 		movelist.add(new int[][]{{4},{-1},{0},{6,0}});
 		movelist.add(new int[][]{{6},{-1},{0},{6,0}});
@@ -650,14 +666,16 @@ public class Roo extends Player
 		movelist.add(new int[][]{{2,1,4,-1},{-1,-1,-1,3},{0,-1,10,10}});
 		movelist.add(new int[][]{{2,1,4,-1},{-1,-1,-1,4},{0,-1,10,10}});
 		movelist.add(new int[][]{{2,1,4,-1},{-1,-1,-1,5},{0,-1,10,10}});
-		
-	/*	movelist.get(4)[3] = new int[]{2,1,10,0};
-		movelist.get(5)[3] = new int[]{2,1,10,0};*/
+		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,0},{0,-1,10,10}});
+		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,1},{0,-1,10,10}});
+		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,2},{0,-1,10,10}});
 		
 		normals = new Action[]{new LightPunch(this), new MediumPunch(this), new HeavyPunch(this), new LightKick(this), new MediumKick(this), new HeavyKick(this)};
 		actions = new Action[]{actions[0], actions[1], actions[2], actions[3], actions[4], actions[5],
 				new Hug(this), new Hug(this), new HugForward(this,false), new HugForward(this,true), new HugUpward(this), new HugDownward(this),
-				new FireBall(this,0), new FireBall(this,1), new FireBall(this,2), new Tatsu(this,0), new Tatsu(this,1), new Tatsu(this,2)};
+				new FireBall(this,0), new FireBall(this,1), new FireBall(this,2),
+				new Tatsu(this,0), new Tatsu(this,1), new Tatsu(this,2),
+				new DragonPunch(this,0), new DragonPunch(this,1), new DragonPunch(this,2)};
 		
 	}
 	
@@ -681,6 +699,10 @@ public class Roo extends Player
 	
 	public void checkState()
 	{
+//		HITBOX FRAME TEST
+//		bounds.isGrounded = true; floatOverride = false;
+//		currState = RooState.DP; setAction(actions[18]); sIndex = 5; fCounter = 10; currAction.frames = 50;
+		
 		switch(currState.getState())
 		{
 			case "FIREBALL_LAUNCH":
@@ -688,6 +710,8 @@ public class Roo extends Player
 			case "TATSU_START":
 			case "TATSU_SPIN":
 			case "TATSU_RECOVER":
+			case "DP":
+			case "DP_RECOVER":
 				performAction();
 				break;
 		}
@@ -1880,7 +1904,7 @@ public class Roo extends Player
 							case 0:
 								currState = RooState.TATSU_SPIN;
 								sIndex = 3;
-								speed += (strength < 2)? ((strength == 0)? 0:2):3;
+								speed += (strength < 2)? ((strength == 0)? 0:3):3;
 								if(speed > maxSpeed)
 									speed = maxSpeed;
 								
@@ -1889,19 +1913,26 @@ public class Roo extends Player
 							
 							case 4:
 								addPleb(roo,f,bounds.xCoord+150,bounds.yCoord+35,130,60,4,Pleb.MID,1,49,25,speed*2,0,0.1,true,false,(strength == 2),true,new double[][]{});
-								target = null;
+								if(target != null)
+								{
+									if(target.hitStun == 0)
+										target = null;
+								}
 								break;
 								
 							case 10:
 								addPleb(roo,f,bounds.xCoord+150,bounds.yCoord+35,130,60,4,Pleb.MID,1,49,25,speed*2,0,0.1,true,false,(strength == 2),true,new double[][]{});
-								target = null;
+								if(target != null)
+								{
+									if(target.hitStun == 0)
+										target = null;
+								}
 								break;
 						}
 					}
 					
 					if(f > 3)
 					{
-						bounds.isGrounded = false;
 						for(Organ a: anatomy)
 							a.pInvul = true;
 						anatomy.get(3).hInvul = true;
@@ -1949,6 +1980,108 @@ public class Roo extends Player
 		}
 	}
 	
+	public class DragonPunch extends Action
+	{
+		Roo roo;
+		int strength;
+		
+		public DragonPunch(Roo r, int s)
+		{
+			super(Action.SPECIAL,1,
+				new int[][]{new int[]{}, new int[]{}, new int[]{}},
+				new boolean[]{false,false,false},
+				new boolean[]{true,true,true},
+				new boolean[]{false,false,false},
+				new boolean[]{false,false,false},
+				new int[]{-1,-1,-1,-1,-1,-1},
+				new boolean[]{true,false,false});
+			roo = r;
+			strength = s;
+		}
+		
+		public void perform(int f)
+		{
+			isPerformingAction = true;
+			isCrouching = false;
+			
+			if(f >= frames)
+			{
+				isPerformingAction = false;
+				target = null;
+				return;
+			}
+			else
+			{
+				switch(f)
+				{
+					case 0:
+						if(bounds.isGrounded)
+						{
+							currState = RooState.DP;
+							hashCounter = "";
+							frames = 8+((strength < 2)? ((strength == 0)? 22:28):32);
+						}
+						else
+							frames = 1;
+						break;
+						
+					case 1:
+						addGuardTrigger(roo,bounds.xCoord+70,bounds.yCoord-230,160,340,(strength == 0)? 21:24,roo.isFacingRight,true,true);
+						addGuardTrigger(roo,bounds.xCoord+70,bounds.yCoord-275,80,385,(strength == 0)? 21:24,roo.isFacingRight,true,true);
+						addGuardTrigger(roo,bounds.xCoord+70,bounds.yCoord-185,180,365,9,roo.isFacingRight,true,true);
+						break;
+						
+					case 8:
+						addPleb(roo,0,bounds.xCoord+bounds.width,bounds.yCoord+40,110,100,2,Pleb.MID,2,(strength < 2)? ((strength == 0)? 85:100):120,25,50,0,0.75,true,false,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,(strength < 2)? ((strength == 0)? 85:100):120,5,60}});
+						break;
+						
+					case 10:
+						bounds.forceArchiver.add(new Force("dp",2,(strength < 2)? ((strength == 0)? 50:56):92,(strength < 2)? 2:4));
+						jDirections[0] = (isFacingRight)? 1:-1;
+						jDirections[1] = -1;
+						addPleb(roo,0,bounds.xCoord+bounds.width-10,bounds.yCoord-180,110,250,2,Pleb.MID,2,(strength < 2)? ((strength == 0)? 85:100):120,25,50,0,0.75,true,false,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,(strength < 2)? ((strength == 0)? 85:100):120,5,60}});
+						break;
+						
+					case 12:
+						if(strength < 2)
+							addPleb(roo,0,bounds.xCoord+bounds.width-20,bounds.yCoord-195,55,70,(strength == 0)? 10:13,Pleb.MID,2,(strength < 2)? ((strength == 0)? 85:100):120,25,50,0,0.75,true,false,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,(strength < 2)? ((strength == 0)? 30:50):70,5,60}});
+						else
+							addPleb(roo,0,bounds.xCoord+bounds.width-10,bounds.yCoord-180,110,250,13,Pleb.MID,2,120,25,50,0,0.75,true,false,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,120,5,60}});
+						break;
+						
+					case 22:
+						if(strength == 0)
+						{
+							currState = RooState.DP_RECOVER;
+							sIndex = 0;
+						}
+						break;
+						
+					case 25:
+						if(strength == 1 || strength == 2)
+						{
+							currState = RooState.DP_RECOVER;
+							sIndex = 0;
+						}
+						break;
+				}
+				
+				if(f < 10)
+				{
+					for(Organ a: anatomy)
+						a.hInvul = true;
+				}
+				if(currState == RooState.DP)
+				{
+					for(Organ a: anatomy)
+						a.pInvul = true;
+					throwInvul = true;
+				}
+			}
+		}
+	}
+	
+	
 	public class Ninja extends Projectile
 	{
 		Roo roo;
@@ -1993,7 +2126,7 @@ public class Roo extends Player
 			if(fCounter == 0)
 			{
 				addGuardTrigger(bounds.xCoord-155,bounds.yCoord-35,365,120,3,roo.isFacingRight,true);
-				addPleb(0,bounds.xCoord-155,bounds.yCoord-20,260,90,2,Pleb.MID,1,40,40,20,0,1,true,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,1,1,21,7,60}});
+				addPleb(0,bounds.xCoord-155,bounds.yCoord-20,260,90,2,Pleb.MID,(strength < 2)? 1:2,40,40,(strength < 2)? 20:30,0,1,true,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,(strength < 2)? 1:0,1,(strength < 2)? 21:70,7,60}});
 			}
 			else if(fCounter > 1)
 			{
@@ -2005,7 +2138,7 @@ public class Roo extends Player
 					if(hCount != hits)
 					{
 						if(hits == 1)
-							addPleb(hits,bounds.xCoord+25,bounds.yCoord-20,85,90,health,Pleb.MID,1,40,40,20,0,1,true,true,true,new double[][]{new double[]{Pleb.KNOCKDOWN,1,1,21,7,60}});
+							addPleb(hits,bounds.xCoord+25,bounds.yCoord-20,85,90,health,Pleb.MID,1,40,40,20,0,1,true,true,true,new double[][]{new double[]{Pleb.KNOCKDOWN,(strength < 2)? 1:0,1,(strength < 2)? 21:49,7,60}});
 						else
 							addPleb(hits,bounds.xCoord+25,bounds.yCoord-20,85,90,health,Pleb.MID,2,40,40,20,20,1,true,true,true,new double[][]{});
 						hCount = hits;

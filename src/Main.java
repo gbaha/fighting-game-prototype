@@ -49,6 +49,8 @@ public class Main
 	public void run()
 	{
 		logic.setFocusTo(1000,4750);
+		stage.xFocus = -360;
+		
 		while(0 < 1)	//TEST -change to while game is running
 		{
 			double start = System.currentTimeMillis();
@@ -70,7 +72,7 @@ public class Main
 				p2.stickInputs.clear();
 		*/			
 				//FRAME BY FRAME TEST
-				fpsLimit = 6;
+				fpsLimit = 1;
 			}
 			
 			//TRAINING MODE HEALTH RESET TEST
@@ -109,7 +111,7 @@ public class Main
 	
 	public static void main(String[] args)
 	{
-   	// 	Main show = new Main(1280,720);
+  	// 	Main show = new Main(1280,720);
      	Main show = new Main(800,450);
      	show.window.getContentPane().add(show.jas);
    	 	show.window.pack();

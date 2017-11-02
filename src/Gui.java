@@ -47,7 +47,6 @@ public class Gui extends JPanel
 		catch(java.awt.FontFormatException e)
 		{
 		}*/
-	//	splashes.add(new Splash("DESTROY THE ZHAOS!",5,3));	//TEST
 	}
 	
 	public void drawTop(Graphics2D g, ImageObserver i, Player p1, Player p2, double w, double h)
