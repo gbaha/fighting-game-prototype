@@ -16,9 +16,9 @@ public class Hoshua extends JPanel
 	Gui gui;
 	int xFocus, yFocus, xCoord, yCoord, fSkip, fCounter;
 	double width, height, fps;
-	boolean gamePaused, debugging;
+	boolean gamePaused;
 	
-	public Hoshua(Stage c, Gui g, int x, int y, double w, double h, double f, int s, boolean p, boolean b)
+	public Hoshua(Stage c, Gui g, int x, int y, double w, double h, double f, int s, boolean p)
 	{
 		super(true);
 		canvas = c;
@@ -36,7 +36,6 @@ public class Hoshua extends JPanel
 		fCounter = 0;
 		
 		gamePaused = p;
-		debugging = b;
 	//	this.add(gui);
 	}
 	
@@ -46,7 +45,7 @@ public class Hoshua extends JPanel
 		super.paintComponent(g);
 		
 		for(Floor f: canvas.floors)
-			f.draw(g,this,width,height,debugging);	
+			f.draw(g,this,width,height,canvas.settings[1]);	
 		
 		xFocus = (int)(canvas.xFocus*width/1280);
 		yFocus = (int)(canvas.yFocus*height/720);
@@ -54,7 +53,7 @@ public class Hoshua extends JPanel
 		try
 		{
 			Graphics2D g2 = (Graphics2D) g;
-			gui.drawTop(g2,this,canvas.player1,canvas.player2,width,height);
+			gui.drawBack(g2,this,canvas,width,height);
 			
 			ArrayList<Puppet> puppets = new ArrayList<Puppet>();
 			ArrayList<Puppet> players = new ArrayList<Puppet>();
@@ -111,20 +110,20 @@ public class Hoshua extends JPanel
 			}
 			
 			for(Puppet p: puppets)
-					p.draw(g2,this,sReader,width,height,debugging);
+				p.draw(g2,this,sReader,width,height,canvas.settings);
 			for(Puppet p: players)
-				p.draw(g2,this,sReader,width,height,debugging);
+				p.draw(g2,this,sReader,width,height,canvas.settings);
 			for(Prop p: canvas.props)
-				p.draw(g2,this,sReader,width,height,debugging);
+				p.draw(g2,this,sReader,width,height,canvas.settings);
 			
-			gui.drawBot(g2,this,canvas.player1,canvas.player2,width,height);
+			gui.drawFront(g2,this,canvas,width,height);
 			
 			for(Pleb p: canvas.plebs)
 			{
-		//		if(p.xCoord <= width*21/20-xFocus && p.xCoord+p.width >= -(xFocus+width/20) && p.yCoord <= height*21/20-yFocus && p.yCoord+p.height >= -(yFocus+height/20))
+				if(canvas.settings[0])
 					p.draw(g,width,height);
 			}
-			sReader.backup(g2,debugging);
+			sReader.backup(g2,canvas.settings);
 		}
 		catch(java.util.ConcurrentModificationException e)
 		{
@@ -135,37 +134,33 @@ public class Hoshua extends JPanel
 /*		for(BlueFairy b: canvas.fairies)
 			b.draw(g,canvas.xFocus,canvas.yFocus,width,height);*/
 		
-		//TEST
+		if(canvas.settings[1])
+		{
 		g.setColor(Color.GRAY);
-		g.drawString(fps+"",5,20);
-	//	g.setColor(new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255)));
-	//	g.fillRect((int)(width-20*width/1280),0,(int)(20*width/1280),(int)(20*height/720));
-		
-		int hqz1 = MouseInfo.getPointerInfo().getLocation().x-xCoord+(int)(10*width/1280);
-		int hqz2 = MouseInfo.getPointerInfo().getLocation().y-yCoord;
-		if(hqz1 < 0)
-			hqz1 = 0;
-		else if(hqz1 > width)
-			hqz1 = (int)width-65;
-		if(hqz2 < 0)
-			hqz2 = 10;
-		else if(hqz2 > height)
-			hqz2 = (int)height-45;
-		
-		g.setColor(Color.DARK_GRAY);
-		g.drawString("("+(MouseInfo.getPointerInfo().getLocation().x-xCoord)+","+(MouseInfo.getPointerInfo().getLocation().y-yCoord)+")",hqz1,hqz2);
-		g.setColor(Color.GRAY);
-		g.drawString("("+(int)((MouseInfo.getPointerInfo().getLocation().x-xCoord-xFocus)*1280/width)+","+(int)((MouseInfo.getPointerInfo().getLocation().y-yCoord-yFocus-25)*720/height+40)+")",hqz1,hqz2+15);
-		
-	/*	g.setColor(Color.LIGHT_GRAY);
-		if(canvas.player != null)
-			g.drawLine((int)((canvas.player.xHosh+canvas.player.width/2)*width/1280),(int)((canvas.player.yHosh+canvas.player.height/2)*height/720),(MouseInfo.getPointerInfo().getLocation().x-xCoord),(MouseInfo.getPointerInfo().getLocation().y-yCoord-25));*/
-		
+			g.drawString(fps+"",5,20);
+		//	g.setColor(new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255)));
+		//	g.fillRect((int)(width-20*width/1280),0,(int)(20*width/1280),(int)(20*height/720));
+			
+			int hqz1 = MouseInfo.getPointerInfo().getLocation().x-xCoord+(int)(10*width/1280);
+			int hqz2 = MouseInfo.getPointerInfo().getLocation().y-yCoord;
+			if(hqz1 < 0)
+				hqz1 = 0;
+			else if(hqz1 > width)
+				hqz1 = (int)width-65;
+			if(hqz2 < 0)
+				hqz2 = 10;
+			else if(hqz2 > height)
+				hqz2 = (int)height-45;
+			
+			g.drawString("("+(int)((MouseInfo.getPointerInfo().getLocation().x-xCoord-xFocus)*1280/width)+","+(int)((MouseInfo.getPointerInfo().getLocation().y-yCoord-yFocus-25)*720/height+40)+")",hqz1,hqz2+15);
+			g.setColor(Color.DARK_GRAY);
+			g.drawString("("+(MouseInfo.getPointerInfo().getLocation().x-xCoord)+","+(MouseInfo.getPointerInfo().getLocation().y-yCoord)+")",hqz1,hqz2);
+		}
 	//	repaint();
 	}
 	
 	
-	public void update(int x, int y, int w, int h, double f, boolean p, boolean b)
+	public void update(int x, int y, int w, int h, double f, boolean p)
 	{
 		xCoord = x;
 		yCoord = y;
@@ -173,7 +168,6 @@ public class Hoshua extends JPanel
 		height = h;
 		fps = f;
 		gamePaused = p;
-		debugging = b;
 		
 		fCounter++;
 		if(fCounter != fSkip)

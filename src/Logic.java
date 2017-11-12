@@ -1860,6 +1860,12 @@ public class Logic
 													}
 												}
 											}
+											
+											if(stage.type == Stage.VERSUS && p2.health <= 0)
+											{
+												p2.bounds.isGrounded = false;
+												p2.propertyArchiver.add(new double[]{Pleb.KNOCKDOWN,(p1.strength < 1)? 1:0,1,(p1.strength < 1)? 21:49,7,60});
+											}
 										}
 									}
 								}
@@ -2117,8 +2123,8 @@ public class Logic
 			
 			for(Puppet p: stage.puppets)
 			{
-				if(p.target != null && p.bounds.isGrounded && !p.isThrowing && !p.isThrown)
-					p.isFacingRight = p.xCoord+p.width/2 <= p.target.xCoord+p.target.width/2;
+				if(p.target != null && p.bounds.isGrounded && !p.isThrowing && !p.isThrown && p.health > 0)
+					p.isFacingRight = p.xCoord+p.width/2 <= p.target.getBounds().xCoord+p.target.getBounds().width/2;
 			}
 	//		resetFocus();
 			setFocus();
@@ -2148,12 +2154,12 @@ public class Logic
 		//TEST
 		if(recovery[0] == 0)
 		{
-			if(stage.player1.hitStun > 0)
+			if(stage.player1.hitStun > 0 || stage.player1.kdStun > 0)
 				recovery[2]++;
 			if(stage.player2.currAction != null)
 				recovery[1]++;
 			
-			if(stage.player1.hitStun <= 0 && stage.player2.currAction == null)
+			if(stage.player1.hitStun <= 0 && stage.player1.kdStun <= 0 && stage.player2.currAction == null)
 			{
 				System.out.println((recovery[2]-recovery[1])+" ("+recovery[1]+" "+recovery[2]+")");
 				recovery = new int[]{-1,-1,-1};
@@ -2163,10 +2169,10 @@ public class Logic
 		{
 			if(stage.player1.currAction != null)
 				recovery[1]++;
-			if(stage.player2.hitStun > 0)
+			if(stage.player2.hitStun > 0 || stage.player2.kdStun > 0)
 				recovery[2]++;
 			
-			if(stage.player1.currAction == null && stage.player2.hitStun <= 0)
+			if(stage.player1.currAction == null && stage.player2.hitStun <= 0 && stage.player2.kdStun <= 0 )
 			{
 				System.out.println((recovery[2]-recovery[1])+" ("+recovery[1]+" "+recovery[2]+")");
 				recovery = new int[]{-1,-1,-1};

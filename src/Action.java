@@ -6,11 +6,13 @@ abstract class Action
 	public static final int DASH = 3;
 	public static final int JUMP = 4;
 	public static final int GRAB = 5;
+	public static final int TAUNT = 6;
 	
 	Puppet target;
 	int[][] buttonPath;
 	int[] cancelWindow;
 	int button, type, cancelType, frames;
+	double scaling;
 	boolean[] isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable;
 	boolean cancelOk, groundOk, airOk, aLock, cLock;
 	String hashCounter;
@@ -23,6 +25,7 @@ abstract class Action
 		type = t;
 		cancelType = ct;	// 0 = on whiff, 1 = on block, 2 = on hit
 		frames = 1;
+		scaling = 0;
 		
 		isSpecialCancelable = c1;
 		isSuperCancelable =	c2;
@@ -44,7 +47,9 @@ abstract class Action
 	{
 		if(cancelOk)
 		{
-			if(type == Action.NORMAL && t == Action.GRAB)
+			if(type == Action.NORMAL && t == Action.TAUNT)
+				return true;
+			else if(type == Action.NORMAL && t == Action.GRAB)
 				return (f < 2);
 			else
 			{

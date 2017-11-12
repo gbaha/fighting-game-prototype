@@ -6,30 +6,32 @@ import java.awt.Toolkit;
 import java.net.URL;
 import java.util.ArrayList;
 
-abstract class Puppet
+abstract class Puppet implements Punchable
 {
 	ArrayList<Organ> anatomy;
 //	ArrayList<int[]> touchArchiver, actionList, spriteArchiver;
 	ArrayList<int[][]> hitboxArchiver;
-	ArrayList<double[]> propertyArchiver;
+	ArrayList<double[]> propertyArchiver, sTint;
 	ArrayList<Pleb> plebsIn, plebsOut;
 	ArrayList<Prop> propArchiver;
 	ArrayList<String> plebArchiver;
 	Action[] normals;
 	
-	Organ bounds, target;
+	Punchable target;
+	Organ bounds;
 	State currState, prevState;
 	Action currAction;
 	int id, xCoord, yCoord, xHosh, yHosh, xOffset, yOffset, width, height, crHeight, kdHeight;
 	int maxHp, maxSp, maxMp, maxSpd;
 	int health, stamina, meter, speed;
-	int preFrames, fCounter, hitStun, hitStop, sCooldown;
+	int preFrames, fCounter, blockStun, hitStun, hitStop, sCooldown;
 	int kdCounter, kdLimit, kdStun, launchPoint;
-	double sIndex, sAngle, jForce, jump, juggleDamp, hitstunDamp;
-	boolean isFacingRight, isPerformingAction, isCrouching, canBlock, isGuardBroken;
+	double sIndex, sAngle, jForce, jump, juggleDamp, hitstunDamp, damageDamp;
+	boolean isFacingRight, isPerformingAction, isCrouching, canBlock, isGuardBroken, isCounterhit, isTaunted;
 	boolean throwInvul, isThrowing, isThrown, isTeching, isJuggled, isAirLocked, floatOverride;	//, isUnstoppable, isJumping;
+	boolean isBella;	// its joke
 	
-	int[] hitInfo, flinchPoints, jDirections, spriteParams;	//Add tint later
+	int[] hitInfo, flinchPoints, jDirections, armor, spriteParams;
 	boolean[] isBlocking;
 	
 	public enum PuppetState implements State
@@ -52,18 +54,17 @@ abstract class Puppet
 	public Puppet(int x, int y, int w, int h, int c, int k, int hp, int sp, int mp, int s, double j, boolean r, boolean f2)
 	{
 		anatomy = new ArrayList<Organ>();
-	//	plebArchiver = new ArrayList<Pleb>();
-	//	touchArchiver = new ArrayList<int[]>();	//[type, id]
 		hitboxArchiver = new ArrayList<int[][]>(); //[sheet.y, sheet.xStart, sheet.xLoop, reversed?, frame delay], [[hitbox.x, hitbox.y, hitbox.w, hitbox.h, ...], ...
 		propertyArchiver = new ArrayList<double[]>();
-	//	actionList = new ArrayList<int[]>();	//[action name, sprites in row, loops?]
-	//	spriteArchiver = new ArrayList<int[]>();	//[xMod,yMod,width,height,sWidth,sHeight]
+		
 		plebsIn = new ArrayList<Pleb>();
 		plebsOut = new ArrayList<Pleb>();
 		propArchiver = new ArrayList<Prop>();
 		plebArchiver = new ArrayList<String>();
 		
-	//	forceArchiver = new ArrayList<Force>();
+		sTint = new ArrayList<double[]>();	//[[default tint], [r,g,b,a,duration], ...] might add priority
+		sTint.add(new double[]{127.5,127.5,127.5,255});
+		
 		normals = new Action[]{new LightPunch(), new MediumPunch(), new HeavyPunch(), new LightKick(), new MediumKick(), new HeavyKick()};
 		
 		currState = PuppetState.IDLE;
@@ -89,13 +90,16 @@ abstract class Puppet
 		isThrown = false;
 		isTeching = false;
 		isJuggled = false;
+		isCounterhit = false;
+		isTaunted = false;
 		floatOverride = false;
 	//	isUnstoppable = false;	// Unaffected by new forces through damage?
 	//	isJumping = false;
 		
-		hitInfo = new int[]{0,0,0};	//[type, number of hits, enemy hitstun]
+		hitInfo = new int[4];	//[type, number of hits, enemy hitstun, enemy damage]
 		flinchPoints = new int[]{0,0,0,0,0,0,0,0,0,0,0}; 	//marks points where sprite freezes during hitstun
 		jDirections = new int[]{0,0,0};
+		armor = new int[]{0,0};	//[hits, duration]
 		isBlocking = new boolean[]{false,false};
 		
 		maxHp = hp;
@@ -114,10 +118,12 @@ abstract class Puppet
 		fCounter = 0;
 		sIndex = 0;
 		sAngle = 0;
+		blockStun = 0;
 		hitStun = 0;
 		hitStop = 0;
 		hitstunDamp = 0;
 		juggleDamp = 0;
+		damageDamp = 0;
 		sCooldown = 0;		//999999;
 //		techWindow = 8;	// Might need
 		
@@ -133,10 +139,10 @@ abstract class Puppet
 	//	touchArchiver.add(new int[]{-1});
 	}
 	
-	public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean d)
+	public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean[] d)
 	{
-	/*	if(d)
-		{*/
+		if(d[0])
+		{
 			try
 			{
 				if(!isThrown)
@@ -190,7 +196,7 @@ abstract class Puppet
 			{
 				draw(g,i,s,w,h,d);
 			}
-	//	}
+		}
 	}
 	
 	public void checkState()
@@ -269,13 +275,15 @@ abstract class Puppet
 			a.target = null;
 			a.button = -1;
 		}
-		else if(currAction.isCancelable(hitInfo[0],fCounter,currAction.type,currAction.button,bounds.isGrounded))
+		else //if(currAction.isCancelable(hitInfo[0],fCounter,currAction.type,currAction.button,bounds.isGrounded))
 		{
 			if(currAction.target != null)
 			{
 				currAction.target.xOffset = 0;
 				currAction.target.yOffset = 0;
 				currAction.target.sAngle = 0;
+				if(currAction.type == Action.GRAB && a.type != Action.GRAB && currAction.target.damageDamp < 0.4)
+					currAction.target.damageDamp = 0.4;
 			}
 			
 			bounds.botOffset = 0;
@@ -304,14 +312,35 @@ abstract class Puppet
 		
 		if(!isPerformingAction)
 		{
+			if(currAction != null)
+			{
+				if(currAction.target != null)
+				{
+					if(currAction.type == Action.GRAB && currAction.target.damageDamp < 0.4)
+						currAction.target.damageDamp = 0.4;
+				}
+				currAction.target = null;
+			}
+			
 			currAction = null;
 			currState = (isCrouching)? PuppetState.CROUCH:PuppetState.IDLE;
 			fCounter = 0;
 			sAngle = 0;
+			bounds.botOffset = 0;
 		}
 		
 		if(bounds.isGrounded && bounds.botOffset != 0)
 		{
+			if(currAction != null)
+			{
+				if(currAction.target != null)
+				{
+					if(currAction.type == Action.GRAB && currAction.target.damageDamp < 0.4)
+						currAction.target.damageDamp = 0.4;
+				}
+				currAction.target = null;
+			}
+			
 			currAction = null;
 			currState = PuppetState.LANDING;
 			fCounter = 0;
@@ -331,7 +360,7 @@ abstract class Puppet
 			return;
 		}
 		
-		if(jDirections[2] == 1)
+		if(jDirections[2] > 0)
 		{
 			if(preFrames == 0)
 			{
@@ -402,7 +431,7 @@ abstract class Puppet
 				currState = PuppetState.IDLE;
 		}
 		
-		if(jDirections[2] == 1)
+		if(jDirections[2] > 0)
 		{
 			if(preFrames == 0)
 			{
@@ -446,7 +475,7 @@ abstract class Puppet
 			return;
 		}
 		
-		if(jDirections[2] == 1)
+		if(jDirections[2] > 0)
 		{
 			if(preFrames == 0)
 			{
@@ -505,7 +534,7 @@ abstract class Puppet
 				break;
 				
 			case Pleb.GRAB:
-				if(hitStun == 0 && kdStun == 0 && bounds.isGrounded == p.puppet.bounds.isGrounded && !isBlocking[0] && !isBlocking[1])
+				if(blockStun == 0 && hitStun == 0 && kdStun == 0 && bounds.isGrounded == p.puppet.bounds.isGrounded && !isBlocking[0] && !isBlocking[1])
 				{
 					p.puppet.currAction.target = this;
 					p.puppet.fCounter = 0;
@@ -515,9 +544,44 @@ abstract class Puppet
 				break;
 		}
 		
+		if(hitSuccessful && armor[0] > 0)
+		{
+			if(p.strength < 3)
+			{
+				health -= p.hDamage/2;
+				sTint.add(new double[]{255,255,255,0,5});
+				
+				armor[0]--;
+				hitSuccessful = false;
+			}
+			else
+				armor[0] = 0;
+		}
+		
 		if(hitSuccessful)
 		{
-			health -= (!isGuardBroken)? p.hDamage:(int)((double)p.hDamage*2.5+0.5);
+			if(p.puppet.currAction != null)
+			{
+				if(p.puppet.currAction.target == null && (p.puppet.hitInfo[1] > 2 || damageDamp > 0))
+					damageDamp += p.puppet.currAction.scaling;
+				p.puppet.currAction.target = this;
+			}
+			if(damageDamp > 0.8)
+				damageDamp = 0.8;
+			
+			if(isCounterhit)
+				isCounterhit = false;
+			else if(currAction != null)
+				isCounterhit = (currAction.type != Action.DASH || currAction.type != Action.JUMP);
+			
+			int damage = p.hDamage;
+			damage *= (isCounterhit)? 1.5:1;
+			damage *= (p.puppet.isTaunted)? 1.15:1;
+			damage *= (isGuardBroken)? 2.5:1;
+			damage *= (p.puppet.isBella && (p.puppet.isThrowing || isThrown))? 999:1;	// its joke
+			damage = (int)(damage*(1-damageDamp)+0.5);
+			
+			health -= damage;
 			if(health < 0)
 				health = 0;
 			
@@ -561,10 +625,15 @@ abstract class Puppet
 					hitStop = 10;
 					break;
 			}
+			if(isCounterhit)
+				hitStun *= 1.5;
+			
+			p.puppet.hitInfo[0] = 2;
+			p.puppet.hitInfo[1]++;
+			p.puppet.hitInfo[3] += damage;
+			
 			kdStun = 0;
 			bounds.forceArchiver.clear();
-			
-	//		isUnstoppable = false;
 			if(p.properties.length > 0)
 			{
 				for(double[] t: p.properties)
@@ -573,7 +642,10 @@ abstract class Puppet
 					{
 						case Pleb.KNOCKDOWN:
 							if(t[1] == 0 || !bounds.isGrounded)
+							{
 								currState = (bounds.isGrounded)? ((t[3] == 0)? PuppetState.KNOCKDOWN:PuppetState.FLINCH_TRIP0):PuppetState.FLINCH_TRIP1;
+								p.puppet.hitInfo[2] += (int)t[5];
+							}
 							break;
 							
 						case Pleb.LAUNCH:
@@ -582,7 +654,7 @@ abstract class Puppet
 								t[2] = 0;
 							
 							hitStun = (int)t[6];
-							launchPoint = p.puppet.hitInfo[1]+1;
+							launchPoint = p.puppet.hitInfo[1];
 							isJuggled = true;
 							break;
 							
@@ -594,17 +666,12 @@ abstract class Puppet
 				}
 			}
 			sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
-	//		p.puppet.isFacingRight = !isFacingRight;
 			bounds.botOffset = 0;
 			yOffset = 0;
 			sAngle = 0;
 			
-			p.puppet.hitInfo[0] = 2;
-			p.puppet.hitInfo[1]++;
-			p.puppet.hitInfo[2] = hitStun;
+			p.puppet.hitInfo[2] = hitStun;	// Must be after properties for launch to work
 			p.puppet.stamina = p.puppet.maxSp;
-			if(p.puppet.currAction != null)
-				p.puppet.currAction.target = this;
 		}
 		else if(!isThrown && p.type != Pleb.GRAB)
 		{
@@ -622,19 +689,19 @@ abstract class Puppet
 				switch(p.strength)
 				{
 					case 0:
-						hitStun = 10;
+						blockStun = 10;
 						hitStop = 5;
 						break;
 					case 1:
-						hitStun = 10;
+						blockStun = 10;
 						hitStop = 7;
 						break;
 					case 2:
-						hitStun = 10;
+						blockStun = 10;
 						hitStop = 9;
 						break;
 					case 3:
-						hitStun = 10;
+						blockStun = 10;
 						hitStop = 10;
 						break;
 				}
@@ -642,7 +709,7 @@ abstract class Puppet
 			isFacingRight = !p.puppet.isFacingRight;
 			
 			p.puppet.hitInfo[0] = 1;
-			p.puppet.hitInfo[2] = hitStun;
+			p.puppet.hitInfo[2] = blockStun;
 			if(p.puppet.currAction != null)
 				p.puppet.currAction.target = this;
 		//	p.puppet.hitInfo[1]++;
@@ -685,7 +752,7 @@ abstract class Puppet
 	/*	if(hitStun > 0)
 			hitStun--;
 		else */
-		if(!isBlocking[0] && !isBlocking[1] && hitStun <= 0)
+		if(!isBlocking[0] && !isBlocking[1] && blockStun <= 0)
 		{
 			plebArchiver.clear();
 			currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
@@ -694,12 +761,13 @@ abstract class Puppet
 	
 	public void flinch()
 	{
-	/*	if(hitStun > 0)
-			hitStun--;
-		else*/
 		if(hitStun <= 0)
 		{
-	//		isUnstoppable = false;
+			isPerformingAction = false;
+			floatOverride = false;
+			currAction = null;
+			jDirections = new int[]{0,0,0};
+			
 			if(kdStun > 0)
 			{
 				if(bounds.isGrounded)
@@ -712,11 +780,10 @@ abstract class Puppet
 			}
 			else if(!isThrown)
 			{
-				isPerformingAction = false;
-				currAction = null;
 				fCounter = 0;
-				
 				kdCounter = 0;
+				damageDamp = 0;
+				isCounterhit = false;
 				plebArchiver.clear();
 				currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
 			}
@@ -724,25 +791,30 @@ abstract class Puppet
 			{
 				if(currAction.type == Action.GRAB)
 					isTeching = true;
-				currAction = null;
 			}
 		}
-		jDirections = new int[]{0,0,0};
 	}
 	
 	public void knockdown()
 	{
 		if(kdStun > 0)
+		{
+			yOffset = 25;
 			kdStun--;
-		else
+		}
+		else if(health > 0)
 		{
 			isPerformingAction = false;
+			floatOverride = false;
+			isCounterhit = false;
 			currAction = null;
-			fCounter = 0;
 			
+			yOffset = 0;
+			fCounter = 0;
 			kdCounter = 0;
+			damageDamp = 0;
 			plebArchiver.clear();
-			currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
+				currState = (!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
 		}
 	}
 	
@@ -763,6 +835,7 @@ abstract class Puppet
 						bounds.forceArchiver.add(new Force("knockdown",(t[3] > 0)? 2:0,Math.abs(t[3]),t[4]));
 						bounds.yCoord = yCoord;
 						bounds.height = height;
+						sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 						kdCounter += t[2];
 						kdStun = (int)t[5];
 						isCrouching = false;
@@ -781,12 +854,73 @@ abstract class Puppet
 					{
 						currState = PuppetState.FLINCH_AERIAL2;
 						bounds.forceArchiver.add(new Force("yLaunch",0,t[1],t[1]));
+						sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 						hitStun++;
 					}
 					else
 					{
 						propertyArchiver.add(new double[]{Pleb.KNOCKDOWN,0,1,t[2],t[2]/5,t[3]});
 						pCleared = true;
+					}
+					break;
+					
+				case Pleb.TAUNT:
+					pCleared = (t[2] == 0 && isTaunted);
+					if(t[1] > 0 && !pCleared)
+					{
+						t[1]--;
+						if(t[2] == 0)
+							t[2] = ((int)(t[1]/60)%2 == 0)? -1:1;
+						t[3] += ((int)(t[1]/60)%2 == 0)? t[2]:-t[2];
+						
+						if(sTint.size() == 1)
+							sTint.add(new double[]{t[3]*-3,t[3],t[3],0,1});
+						isTaunted = true;
+					}
+					else
+					{
+						pCleared = true;
+						isTaunted = false;
+					}
+					break;
+					
+				case Pleb.TAYLOR:
+					if(t[2] == 0 && t[4] == 0)
+					{
+						pCleared = isTaunted;
+						if(!pCleared)
+							propArchiver.add(new Taylor(this,(int)t[1]));
+					}
+					if(t[1] > 0 && !pCleared)
+					{
+						t[1]--;
+						if(t[2] == 0)
+							t[2] = ((int)(t[1]/60)%2 == 0)? -1:1;
+						switch((int)t[4])
+						{
+							case 0:
+								t[3] += ((int)(t[1]/60)%2 == 0)? t[2]:-t[2];
+								
+								if(sTint.size() == 1)
+									sTint.add(new double[]{t[3]*-3,t[3],t[3],0,1});
+								isTaunted = true;
+								break;
+								
+							case 1:
+								if(currAction != null)
+								{
+									if(currAction.type != Action.DASH && currAction.type != Action.JUMP && fCounter == 0)
+										armor = new int[]{2,currAction.frames};
+								}
+								isBella = true;
+								break;
+						}
+					}
+					else
+					{
+						pCleared = true;
+						isTaunted = false;
+						isBella = false;
 					}
 					break;
 			}
@@ -829,6 +963,11 @@ abstract class Puppet
 			isAirLocked = false;
 		bounds.update();
 		
+		if(armor[1] > 0)
+			armor[1]--;
+		if(armor[0] == 0 || armor[1] == 0)
+			armor = new int[2];
+		
 		for(Organ o: anatomy)
 		{
 			o.update();
@@ -855,6 +994,9 @@ abstract class Puppet
 			}
 		}
 		
+		if(blockStun > 0)
+			blockStun--;
+		
 		if(isGuardBroken && hitStun == 0)
 		{
 			stamina = maxSp;
@@ -874,10 +1016,16 @@ abstract class Puppet
 			}
 		}
 		
-		if(hitInfo[2] > 0)
-			hitInfo[2]--;
-		else
-			hitInfo[1] = 0;
+		if(!isThrowing)
+		{
+			if(hitInfo[2] > 0)
+				hitInfo[2]--;
+			else
+			{
+				hitInfo[1] = 0;
+				hitInfo[3] = 0;
+			}
+		}
 		
 		if(isPerformingAction)
 			fCounter++;
@@ -898,6 +1046,11 @@ abstract class Puppet
 			sAngle %= 360;
 	}
 	
+	
+	public Organ getBounds()
+	{
+		return bounds;
+	}
 	
 	protected void getHitboxes(int h)
 	{
@@ -981,7 +1134,7 @@ abstract class Puppet
 				y[0] += j.magnitude;
 				y[1] += j.decay;
 			}
-		}//System.out.println(p.hash+"	"+y[0]);
+		}
 		
 		if(y[0] > 0 && y[1] > 0)
 		{
@@ -995,13 +1148,15 @@ abstract class Puppet
 					x[1] = j.decay;
 					x[2] = j.direction;
 				}
+				if(j.type.equals("yKnockback") && launchPoint > 0)
+					j.magnitude -= y[0]*(1-juggleDamp);
 				if(j.type.equals("juggle"))
 				{
 					j.magnitude = y[0]*(1-juggleDamp);
 					j.decay = y[1];
 					yExists = true;
 				}
-			}//System.out.println(y[0]+" "+y[1]+"	");
+			}
 			if(!yExists)
 				bounds.forceArchiver.add(new Force("juggle",2,y[0]*(1-juggleDamp),y[1]));
 			
@@ -1137,6 +1292,37 @@ abstract class Puppet
 				tCounter++;
 			}
 			jDirections[1] = 0;
+		}
+	}
+	
+	
+	public class Taylor extends Prop	// ITS JOKE
+	{
+		public Taylor(Puppet p, int t)
+		{
+			super(0,0,0,0,t,9999);
+			puppet = p;
+			spriteParams = new int[]{-70,-100,140,163};
+			spriteArchiver.add(new int[]{0,0,0,0,2});
+		}
+		
+		public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean[] d)
+		{
+			try
+			{
+				Image taylor = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/lithead.png"));
+				g.drawImage(taylor,(int)((anatomy.get(0).xHosh+anatomy.get(0).width/2+spriteParams[0])*w/1280),(int)((anatomy.get(0).yHosh+anatomy.get(0).height/2+spriteParams[1])*h/720),(int)(spriteParams[2]*w/1280),(int)(spriteParams[3]*h/720),i);
+			}
+			catch(java.lang.IndexOutOfBoundsException e)
+			{
+				draw(g,i,s,w,h,d);
+			}
+		}
+		
+		public void update()
+		{
+			super.update();
+			health--;
 		}
 	}
 }

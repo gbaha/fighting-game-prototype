@@ -21,9 +21,9 @@ public class Hand implements KeyListener	//, MouseListener
 		buttonInputs = new LinkedList<int[]>();
 		inputOrder = new LinkedList<Boolean>();
 		stickBindings = new int[4];
-		buttonBindings = new int[10];
+		buttonBindings = new int[12];
 		stickArchiver = new boolean[4];
-		buttonArchiver = new boolean[10];
+		buttonArchiver = new boolean[12];
 		buttonHeld = new boolean[8];
 		
 		xMouse = 0;
@@ -45,7 +45,7 @@ public class Hand implements KeyListener	//, MouseListener
 		stickBindings = s;
 		buttonBindings = b;
 		stickArchiver = new boolean[4];
-		buttonArchiver = new boolean[10];
+		buttonArchiver = new boolean[12];
 		buttonHeld = new boolean[8];
 		
 		xMouse = MouseInfo.getPointerInfo().getLocation().x-x;
@@ -109,14 +109,17 @@ public class Hand implements KeyListener	//, MouseListener
 					
 					if(j)
 					{
-						if(/*player.jDirections[1] == 0 &&*/ player.airOptions > player.aDash+player.jCount && player.jCount < player.jumpLimit && !player.isBlocking[0] && !player.isBlocking[1])
+						if(/*player.jDirections[2] == 0 &&*/ player.airOptions > player.aDash+player.jCount && player.jCount < player.jumpLimit && !player.isBlocking[0] && !player.isBlocking[1])
 						{
-							if(stickArchiver[1])
-								player.jDirections[0] = 1;
-							else if(stickArchiver[3])
-								player.jDirections[0] = -1;
-							else
-								player.jDirections[0] = 0;
+							if(player.bounds.isGrounded || (!player.bounds.isGrounded && player.jDirections[2] == 0 && player.preFrames == 0))
+							{
+								if(stickArchiver[1])
+									player.jDirections[0] = 1;
+								else if(stickArchiver[3])
+									player.jDirections[0] = -1;
+								else
+									player.jDirections[0] = 0;
+							}
 							if(player.jDirections[2] == 0)
 								player.jDirections[2] = 1;
 						}
@@ -172,7 +175,7 @@ public class Hand implements KeyListener	//, MouseListener
 						addStickInput(2);
 				}
 				
-			//	if(player.jDirections[2] == -1)
+				if(player.jDirections[2] == -1)	// || (player.jDirections[2] == 2 && player.jDirections[1] != 0))
 					player.jDirections[2] = 0;
 			}
 			
@@ -242,7 +245,7 @@ public class Hand implements KeyListener	//, MouseListener
 					{
 						Puppet t = player.currAction.target;
 						player.setAction(player.normals[currButton]);
-						player.currAction.target = t;
+					//	player.currAction.target = t;
 						player.fCounter = 0;
 						player.sIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
 						
@@ -279,6 +282,7 @@ public class Hand implements KeyListener	//, MouseListener
 			bInputs.addLast(new int[]{-1,1});
 			
 			int i = m[0].length-1;
+			int j = 0;
 			boolean c = true;
 			
 			while(i >= 0)
@@ -318,9 +322,10 @@ public class Hand implements KeyListener	//, MouseListener
 				{
 					if(m[0][i] != -1)
 					{
-						if(((m[2][0] == 0 && (m[2][i] >= sInputs.getFirst()[1] || m[2][i] == -1)) || (m[2][0] == 1 && (m[2][i] <= sInputs.getFirst()[1] || m[2][i] == -1))) || i == 0)
+						if(((m[2][0] == 0 && (m[2][i] >= sInputs.getFirst()[1]+j || m[2][i] == -1)) || (m[2][0] == 1 && (m[2][i] <= sInputs.getFirst()[1]+j || m[2][i] == -1))) || i == 0)
 						{
 							sInputs.removeFirst();
+							j = 0;
 						}
 						else
 							c = false;
@@ -330,8 +335,11 @@ public class Hand implements KeyListener	//, MouseListener
 					
 					if(m[1][i] != -1)
 					{
-						if(((m[2][0] == 0 && (m[2][i] >= bInputs.getFirst()[1] || m[2][i] == -10)) || (m[2][0] == 1 && (m[2][i] <= bInputs.getFirst()[1] || m[2][i] == -10))) || i == 0)
-							bInputs.removeFirst();
+						if(((m[2][0] == 0 && (m[2][i] >= bInputs.getFirst()[1] || m[2][i] == -1)) || (m[2][0] == 1 && (m[2][i] <= bInputs.getFirst()[1] || m[2][i] == -1))) || i == 0)
+						{
+							if(player.actions[player.movelist.indexOf(m)].type != Action.TAUNT || bInputs.getFirst()[1] > 1 || m[2][i] == 1)
+								bInputs.removeFirst();
+						}
 						else
 							c = false;
 					}
@@ -341,11 +349,8 @@ public class Hand implements KeyListener	//, MouseListener
 					sInputs.addLast(new int[]{5,1});
 					bInputs.addLast(new int[]{-1,1});
 				}
-				else if(s == 5 && sInputs.size() > 1 && order.getFirst())
-				{
-					int t = sInputs.getFirst()[1];
-					sInputs.getFirst()[1] += t;
-				}
+				else if(s == 5 && sInputs.size() > 1 && order.getFirst() && j == 0)
+					j = sInputs.getFirst()[1];
 				else
 					c = false;
 				
@@ -379,7 +384,8 @@ public class Hand implements KeyListener	//, MouseListener
 					{
 						Puppet t = player.currAction.target;
 						player.setAction(player.actions[player.movelist.indexOf(m)]);
-						player.currAction.target = t;
+						if(player.currAction.type != Action.SPECIAL && player.currAction.type != Action.SUPER)
+							player.currAction.target = t;
 						player.fCounter = 0;
 						player.sIndex = player.hitboxArchiver.get(player.currState.getPosition())[0][1];
 						
@@ -453,29 +459,24 @@ public class Hand implements KeyListener	//, MouseListener
 	{//System.out.println(e.getKeyCode());
 		if(player != null)
 		{
-		/*	if(e.getKeyCode() == KeyEvent.VK_P)
-				debugging = !debugging;*/
-		
 			for(int s = 0; s < 4; s++)
 			{
 				if(e.getKeyCode() == stickBindings[s])
 					stickArchiver[s] = true;
 			}
 			
-			for(int b = 0; b < 6; b++)
+			for(int b = 0; b < buttonBindings.length; b++)
 			{
 				if(e.getKeyCode() == buttonBindings[b])
 				{
 					buttonArchiver[b] = true;
-					currButton = b;
-					addButtonInput(b);
+					if(b < 6)
+					{
+						currButton = b;
+						addButtonInput(b);
+					}
 				}
 			}
-			
-			if(e.getKeyCode() == buttonBindings[8])
-				buttonArchiver[8] = true;
-			if(e.getKeyCode() == buttonBindings[9])
-				buttonArchiver[9] = true;
 		}
 	}
 	
@@ -506,39 +507,15 @@ public class Hand implements KeyListener	//, MouseListener
 				}
 			}
 			
-			if(e.getKeyCode() == buttonBindings[0])
+			for(int b = 0; b < buttonBindings.length; b++)
 			{
-				buttonArchiver[0] = false;
-				buttonHeld[0] = false;
+				if(e.getKeyCode() == buttonBindings[b])
+				{
+					buttonArchiver[b] = false;
+					if(b < 6)
+						buttonHeld[b] = false;
+				}
 			}
-			if(e.getKeyCode() == buttonBindings[1])
-			{
-				buttonArchiver[1] = false;
-				buttonHeld[1] = false;
-			}
-			if(e.getKeyCode() == buttonBindings[2])
-			{
-				buttonArchiver[2] = false;
-				buttonHeld[2] = false;
-			}
-			if(e.getKeyCode() == buttonBindings[3])
-			{	
-				buttonArchiver[3] = false;
-				buttonHeld[3] = false;
-			}
-			if(e.getKeyCode() == buttonBindings[4])
-			{
-				buttonArchiver[4] = false;
-				buttonHeld[4] = false;
-			}
-			if(e.getKeyCode() == buttonBindings[5])
-			{
-				buttonArchiver[5] = false;
-				buttonHeld[5] = false;
-			}
-			
-			if(e.getKeyCode() == buttonBindings[8])
-				buttonArchiver[8] = false;
 		}
 	}
 	

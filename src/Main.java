@@ -30,11 +30,11 @@ public class Main
 		gamePaused = false;	//Change later
 		debugging = false;
 		
-		stage = new Stage();
+		stage = new Stage(Stage.TRAINING,2);
 //		geebs = new Beaman(stage);
 //		director = new Director(stage,geebs);
-		p1 = new Hand(xCoord,yCoord,width,height,new int[]{87,68,83,65},new int[]{73,79,80,74,75,76,91,59,10,27});
-		p2 = new Hand(xCoord,yCoord,width,height,new int[]{38,39,40,37},new int[]{90,88,67,86,66,78,999,999,999,8});
+		p1 = new Hand(xCoord,yCoord,width,height,new int[]{87,68,83,65},new int[]{73,79,80,74,75,76,91,59,32,49,50,51});
+		p2 = new Hand(xCoord,yCoord,width,height,new int[]{38,39,40,37},new int[]{90,88,67,86,66,78,999,999,999,8,999,999});
 		gui = new Gui(p1,p2,gamePaused);
 		
 		if(stage.player1 != null)
@@ -43,7 +43,7 @@ public class Main
 			p2.player = stage.player2;
 		
 		logic = new Logic(stage,p1,p2,xCoord,yCoord,gamePaused/*,w,h*/);
-		jas = new Hoshua(stage,gui,xCoord,yCoord+window.getInsets().top,w,h,fps,6,gamePaused,debugging);
+		jas = new Hoshua(stage,gui,xCoord,yCoord+window.getInsets().top,w,h,fps,6,gamePaused);
 	}
 	
 	public void run()
@@ -57,31 +57,34 @@ public class Main
 			xCoord = window.getLocation().x;
 			yCoord = window.getLocation().y;
 			
-			
 			double fpsLimit = 60;	//test
 			if(p1.buttonArchiver[8])
+				fpsLimit = 3;
+			if(p1.buttonArchiver[9])
 			{
-				//RESET TEST
-		/*		logic.setFocusTo(1000,4750);
-				stage.player1.reset(1000-200-100,4750);
-				stage.player2.reset(1000+200,4750);
-				stage.plebs.clear();
-				p1.buttonInputs.clear();
-				p2.buttonInputs.clear();
-				p1.stickInputs.clear();
-				p2.stickInputs.clear();
-		*/			
-				//FRAME BY FRAME TEST
-				fpsLimit = 1;
+				stage.type = (stage.type == Stage.TRAINING)? Stage.VERSUS:Stage.TRAINING;
+				stage.settings = (stage.type == Stage.TRAINING)? new boolean[]{true,true}:new boolean[]{false,false};
+				p1.buttonArchiver[9] = false;
+			}
+			if(p1.buttonArchiver[10])
+			{
+				stage.settings[0] = !stage.settings[0];
+				p1.buttonArchiver[10] = false;
+			}
+			if(p1.buttonArchiver[11])
+			{
+				stage.settings[1] = !stage.settings[1];
+				p1.buttonArchiver[11] = false;
+			}
+			if(stage.isResetting)
+			{
+				logic.setFocusTo(1000,4750);
+				stage.xFocus = -360;
+				stage.yFocus = -4350;
+				stage.isResetting = false;
 			}
 			
-			//TRAINING MODE HEALTH RESET TEST
-			if(stage.player1.health < stage.player1.maxHp && gui.hitCounter[1][1] == 0)	// Probably dont want health reset to be relying on gui
-				stage.player1.health = stage.player1.maxHp;
-			if(stage.player2.health < stage.player2.maxHp && gui.hitCounter[0][1] == 0)	// Probably dont want health reset to be relying on gui
-				stage.player2.health = stage.player2.maxHp;
-			
-			
+			stage.update(p1,p2,gui.hDamage);
 		//	director.update();
 			gui.update(width,height,gamePaused);
 			
@@ -92,7 +95,7 @@ public class Main
 			gamePaused = logic.gamePaused;
 			
 		//	geebs.defyLogic();
-			jas.update(xCoord,yCoord+window.getInsets().top,width,height,fps,gamePaused,debugging);
+			jas.update(xCoord,yCoord+window.getInsets().top,width,height,fps,gamePaused);
 			
 			double end = System.currentTimeMillis();
 			fps = 1000.0/(end-start);
@@ -111,7 +114,7 @@ public class Main
 	
 	public static void main(String[] args)
 	{
-  	// 	Main show = new Main(1280,720);
+	//	Main show = new Main(1280,720);
      	Main show = new Main(800,450);
      	show.window.getContentPane().add(show.jas);
    	 	show.window.pack();

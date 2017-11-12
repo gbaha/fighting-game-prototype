@@ -7,6 +7,9 @@ import java.util.ArrayList;
 
 public class Stage
 {
+	public static final int TRAINING = 0;
+	public static final int VERSUS = 1;
+	
 	ArrayList<Floor> floors;
 	ArrayList<Puppet> puppets;
 	ArrayList<Prop> props;
@@ -18,14 +21,21 @@ public class Stage
 	ArrayList<ArrayList<Integer>> navArchiver, propArchiver;
 	ArrayList<int[]> points;
 	ArrayList<double[]> navMesh;
-	boolean[] openNav;
+	boolean[] openNav, settings;
+	int[] timer;
+	int[][] wins;
 	Player player1, player2;
-	int xFocus, yFocus;
+	int type, rounds, rCounter, xFocus, yFocus;
+	boolean isResetting;
 	
-	public Stage()
+	public Stage(int t, int r)
 	{
+		type = t;
+		rounds = r;
+		rCounter = 0;
 		xFocus = 0;
 		yFocus = 0;
+		isResetting = false;
 		floors = new ArrayList<Floor>();
 		
 		puppets = new ArrayList<Puppet>();
@@ -41,14 +51,28 @@ public class Stage
 		navMesh = new ArrayList<double[]>();
 		openNav = new boolean[0];
 		
+		switch(type)
+		{
+			case TRAINING:
+				settings = new boolean[]{true,true};	//[hitboxes, debugging]
+				break;
+				
+			case VERSUS:
+				settings = new boolean[]{false,false};
+				break;
+		}
+		timer = new int[]{99,100};
+		wins = new int[2][r+1];
+		
 		//TEST
 		floors.add(new Floor("",0,0,2000,5000));
 		player1 = new Roo(1000-200-100,4750,true);
 		player2 = new Roo(1000+200,4750,false);
 		puppets.add(player1);
 		puppets.add(player2);
-		player1.target = player2.bounds;
-		player2.target = player1.bounds;
+		player1.target = player2;
+		player2.target = player1;
+		player2.sTint.set(0,new double[]{100,100,255,255});
 		//END OF LINE
 		//-----------
 		//LINE ENDS HERE
@@ -60,5 +84,106 @@ public class Stage
 		for(Floor f: floors)
 			f.update(floors);
 //		buildFairyTrail();
+	}
+	
+	public void reset(Hand h1, Hand h2)
+	{
+		timer = new int[]{99,100};
+		puppets.clear();
+		props.clear();
+		plebs.clear();
+		
+		player1 = new Roo(1000-200-100,4750,true);
+		player2 = new Roo(1000+200,4750,false);
+		puppets.add(player1);
+		puppets.add(player2);
+		player1.target = player2;
+		player2.target = player1;
+		player2.sTint.set(0,new double[]{100,100,255,255});
+		
+		for(Puppet p: puppets)
+			p.id = puppets.indexOf(p);
+		for(Prop p: props)
+			p.id = props.indexOf(p);
+		
+		h1.buttonInputs.clear();
+		h2.buttonInputs.clear();
+		h1.stickInputs.clear();
+		h2.stickInputs.clear();
+		h1.player = player1;
+		h2.player = player2;
+		isResetting = true;
+		
+		//TEST
+		for(int i = 0; i < 10; i++)
+			System.out.println();
+	}
+	
+	public void update(Hand h1, Hand h2, double hd[])
+	{
+		switch(type)
+		{
+			case TRAINING:
+				timer = new int[]{99,100};
+				wins = new int[2][rounds+1];
+				
+				if(player1.health < player1.maxHp && hd[0] == player1.health)
+					player1.health = player1.maxHp;
+				if(player2.health < player2.maxHp && hd[1] == player2.health)
+					player2.health = player2.maxHp;
+				break;
+				
+			case VERSUS:
+				if(wins[0][0] < rounds && wins[1][0] < rounds)
+				{
+					if(timer[0] == 0)
+					{
+						if(player1.health >= player2.health)
+						{
+							wins[0][wins[0][0]+1] = 2;
+							wins[0][0]++;
+						}
+						if(player1.health <= player2.health)
+						{
+							wins[1][wins[1][0]+1] = 2;
+							wins[1][0]++;
+						}
+						if(wins[0][0] < rounds && wins[1][0] < rounds)
+							reset(h1,h2);
+					}
+					else if(player1.health <= 0 && player1.kdStun == 0)
+					{
+						wins[1][wins[1][0]+1] = 1;
+						wins[1][0]++;
+						if(wins[1][0] < rounds)
+							reset(h1,h2);
+					}
+					else if(player2.health <= 0 && player2.kdStun == 0)
+					{
+						wins[0][wins[0][0]+1] = 1;
+						wins[0][0]++;
+						if(wins[0][0] < rounds)
+							reset(h1,h2);
+					}
+					
+					if(timer[1] > 0)
+						timer[1]--;
+					else if(timer[0] > 0)
+					{
+						timer[0]--;
+						timer[1] = 100;
+					}
+				}
+				else
+				{
+				//	h1.player = null;
+					h2.player = null;
+				//	h1.buttonInputs.clear();
+					h2.buttonInputs.clear();
+				//	h1.stickInputs.clear();
+					h2.stickInputs.clear();
+				}
+				break;
+		}
 	}
 }

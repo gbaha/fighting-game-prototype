@@ -3,10 +3,11 @@ import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 
-abstract class Prop
+abstract class Prop implements Punchable
 {
 	ArrayList<Pleb> plebsIn, plebsOut;
 	ArrayList<int[]> spriteArchiver;
+	ArrayList<double[]> sTint;
 //	ArrayList<Force> forceArchiver;
 	Puppet puppet;
 	Organ bounds;
@@ -39,6 +40,9 @@ abstract class Prop
 		spriteArchiver = new ArrayList<int[]>();
 		currState = PropState.IDLE;
 		
+		sTint = new ArrayList<double[]>();
+		sTint.add(new double[]{127.5,127.5,127.5,255});
+		
 		id = -1;
 		xCoord = x;
 		yCoord = y;
@@ -54,9 +58,6 @@ abstract class Prop
 		isFacingRight = true;
 		isHit = false;
 		
-	/*	xBlocked = false;
-		yBlocked = false;*/
-		
 		puppet = null;
 		bounds = new Organ(x,y,w1,h1,0);
 	//	bounds.isFloating = f;
@@ -64,18 +65,22 @@ abstract class Prop
 	}
 	
 	
-	public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean d)
+	public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean[] d)
 	{
-//		if(d)
-//		{
+		if(d[0])
+		{
 			g.setColor(Color.CYAN);
 			g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50));
 			g.fillRect((int)(bounds.xHosh*w/1280),(int)(bounds.yHosh*h/720),(int)(bounds.width*w/1280),(int)(bounds.height*h/720));
 			g.setColor(Color.CYAN);
 			g.drawRect((int)(bounds.xHosh*w/1280),(int)(bounds.yHosh*h/720),(int)(bounds.width*w/1280),(int)(bounds.height*h/720));
+		}
+		if(d[1])
+		{
+			g.setColor(Color.CYAN);
 			g.drawString(hits+"",(int)(bounds.xHosh*w/1280)-15,(int)((bounds.yHosh+bounds.height)*h/720));
 			g.drawString(health+"",(int)(bounds.xHosh*w/1280)-15,(int)(bounds.yHosh*h/720));
-//		}
+		}
 	}
 	
 	public void move()
@@ -104,5 +109,10 @@ abstract class Prop
 			{
 			}
 		}
+	}
+	
+	public Organ getBounds()
+	{
+		return bounds;
 	}
 }

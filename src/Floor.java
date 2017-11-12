@@ -33,21 +33,22 @@ public class Floor
 	public void draw(Graphics g, ImageObserver i, double w, double h, boolean d)
 	{
 	//	g.drawImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/fetusofgrah.jpg")),(int)((xHosh-50)*w/1280),(int)((yHosh+4400)*h/720),(int)((width+100)*w/1280),(int)((height/5)*h/720),i);
-		g.setColor(new Color(255,255,255,35));
-		g.fillRect((int)((xHosh-50)*w/1280),(int)((yHosh+400)*h/720),(int)((width+100)*w/1280),(int)(height*h/720));
-		
-		g.setColor(Color.LIGHT_GRAY);
-		for(int y = 0; y < height; y += 200)
-		{
-			for(int x = 0; x < width; x += 200)
-				g.drawRect((int)((xHosh+x)*w/1280),(int)((yHosh+y)*h/720),(int)(200*w/1280),(int)(200*h/720));
-		}
-		
 		if(d)
 		{
-			g.setColor(Color.DARK_GRAY);
-			g.drawRect((int)(xHosh*w/1280),(int)(yHosh*h/720),(int)(width*w/1280),(int)(height*h/720));
+			g.setColor(new Color(255,255,255,35));
+			g.fillRect((int)((xHosh-50)*w/1280),(int)((yHosh+400)*h/720),(int)((width+100)*w/1280),(int)(height*h/720));
+			
+			g.setColor(Color.LIGHT_GRAY);
+			for(int y = 0; y < height; y += 200)
+			{
+				for(int x = 0; x < width; x += 200)
+					g.drawRect((int)((xHosh+x)*w/1280),(int)((yHosh+y)*h/720),(int)(200*w/1280),(int)(200*h/720));
+			}
 		}
+		
+		//TEST
+		g.setColor(Color.DARK_GRAY);
+		g.drawRect((int)(xHosh*w/1280),(int)(yHosh*h/720),(int)(width*w/1280),(int)(height*h/720));
 	}
 	
 	public void update(ArrayList<Floor> f)
