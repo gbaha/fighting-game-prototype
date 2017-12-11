@@ -12,6 +12,7 @@ public class Main
 	Gui gui;
 	Logic logic;
 	Hoshua jas;
+	Klamoth klam;
 	int xCoord, yCoord, width, height;
 	double fps;
 	boolean gamePaused, debugging;
@@ -44,6 +45,7 @@ public class Main
 		
 		logic = new Logic(stage,p1,p2,xCoord,yCoord,gamePaused/*,w,h*/);
 		jas = new Hoshua(stage,gui,xCoord,yCoord+window.getInsets().top,w,h,fps,6,gamePaused);
+		klam = new Klamoth();
 	}
 	
 	public void run()
@@ -87,15 +89,12 @@ public class Main
 			stage.update(p1,p2,gui.hDamage);
 		//	director.update();
 			gui.update(width,height,gamePaused);
-			
-			if(logic.hitStop == 0)
-				logic.update(xCoord,yCoord,gamePaused/*,width,height*/);
-			else
-				logic.hitStop--;
+			logic.update(xCoord,yCoord,gamePaused/*,width,height*/);
 			gamePaused = logic.gamePaused;
 			
 		//	geebs.defyLogic();
 			jas.update(xCoord,yCoord+window.getInsets().top,width,height,fps,gamePaused);
+			klam.play();
 			
 			double end = System.currentTimeMillis();
 			fps = 1000.0/(end-start);

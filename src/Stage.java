@@ -72,6 +72,9 @@ public class Stage
 		puppets.add(player2);
 		player1.target = player2;
 		player2.target = player1;
+		
+		
+		
 		player2.sTint.set(0,new double[]{100,100,255,255});
 		//END OF LINE
 		//-----------

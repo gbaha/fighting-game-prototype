@@ -3,6 +3,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.io.File;
 
 public class Roo extends Player
 {
@@ -24,6 +25,8 @@ public class Roo extends Player
 	public Roo(int x, int y, boolean r)
 	{
 		super(x,y,100,250,150,50,/*100,*/6,3,2,2,50,r);
+		sheet = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/roo.gif"));
+//		sheet = Toolkit.getDefaultToolkit().getImage(System.getProperty("user.dir")+"\\resources\\roo.gif");
 		flinchPoints = new int[]{1,0,0,0,0,1,1,1,0};
 		spriteParams = new int[]{345,180,290,178};
 		
@@ -674,15 +677,15 @@ public class Roo extends Player
 		movelist.add(new int[][]{{6},{-1},{0},{8,0}});
 		movelist.add(new int[][]{{8},{-1},{0},{8,0}});
 		movelist.add(new int[][]{{2},{-1},{0},{8,0}});
-		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,0},{0,-1,10,10}});	//{0,7,4,3}});
-		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,1},{0,-1,10,10}});
-		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,2},{0,-1,10,10}});
-		movelist.add(new int[][]{{2,1,4,-1},{-1,-1,-1,3},{0,-1,10,10}});
-		movelist.add(new int[][]{{2,1,4,-1},{-1,-1,-1,4},{0,-1,10,10}});
-		movelist.add(new int[][]{{2,1,4,-1},{-1,-1,-1,5},{0,-1,10,10}});
-		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,0},{0,-1,10,10}});
-		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,1},{0,-1,10,10}});
-		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,2},{0,-1,10,10}});
+		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,0},{0,10,10,10}});	//{0,7,4,3}});
+		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,1},{0,10,10,10}});
+		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,2},{0,10,10,10}});
+		movelist.add(new int[][]{{2,1,4,-1},{-1,-1,-1,3},{0,10,10,10}});
+		movelist.add(new int[][]{{2,1,4,-1},{-1,-1,-1,4},{0,10,10,10}});
+		movelist.add(new int[][]{{2,1,4,-1},{-1,-1,-1,5},{0,10,10,10}});
+		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,0},{0,10,10,10}});
+		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,1},{0,10,10,10}});
+		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,2},{0,10,10,10}});
 		movelist.add(new int[][]{{-1,-1,4,-1,-1},{0,1,-1,3,4},{0,10,15,10,10}});
 		
 		normals = new Action[]{new LightPunch(this), new MediumPunch(this), new HeavyPunch(this), new LightKick(this), new MediumKick(this), new HeavyKick(this)};
@@ -695,13 +698,17 @@ public class Roo extends Player
 	
 	public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean[] d)
 	{
-		if(currState.getPosition() < hitboxArchiver.size())
+		if(spriteIndex == -1)
+			spriteIndex = s.addSprite();
+		if(spriteIndex != -1 && currState.getPosition() < hitboxArchiver.size())
 		{
 			try
 			{
-				Image sheet = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/roo.png"));
+		//		g.drawString(getClass().getResource("/resources/roo.png")+"",(int)(xHosh*w/1280),(int)((yHosh-100)*h/720));
+		//		g.drawString((int)sIndex+" "+hitboxArchiver.get(currState.getPosition())[0][0],(int)(xHosh*w/1280),(int)((yHosh-75)*h/720));
+				
 				int f = (int)sIndex;
-				s.read(g,i,xHosh,yHosh,width,800,490,f,hitboxArchiver.get(currState.getPosition())[0][0],xOffset,yOffset,spriteParams,!isFacingRight,sAngle,sTint,sheet);
+				s.read(g,i,sheet,spriteIndex,xHosh,yHosh,width,800,490,f,hitboxArchiver.get(currState.getPosition())[0][0],xOffset,yOffset,spriteParams,!isFacingRight,sAngle,sTint);
 			}
 			catch(java.lang.IndexOutOfBoundsException e)
 			{
@@ -719,7 +726,7 @@ public class Roo extends Player
 		
 		switch(currState.getState())
 		{
-			case "FIREBALL_LAUNCH":
+			case "FIREBALL_LAUNCH":	
 			case "FIREBALL_RECOVER":
 			case "TATSU_START":
 			case "TATSU_SPIN":
@@ -1497,7 +1504,7 @@ public class Roo extends Player
 						target.bounds.forceArchiver.clear();
 						
 						Puppet t = target;
-						setAction(actions[11]);
+						setAction(actions[13]);
 						currAction.target = t;
 						fCounter = -1;
 						sIndex = hitboxArchiver.get(currState.getPosition())[0][1];

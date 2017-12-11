@@ -439,7 +439,7 @@ public class Logic
 				}
 			}
 			
-			if(stage.player1 != null && stage.player2 != null && stage.player1.health > 0 && stage.player2.health > 0)
+			if(stage.player1 != null && stage.player2 != null) //&& stage.player1.health > 0 && stage.player2.health > 0)
 			{
 				if(h1 == stage.player1.bounds || h1 == stage.player2.bounds)
 				{
@@ -2019,137 +2019,126 @@ public class Logic
 		
 		if(!gamePaused)
 		{
-			for(Floor f: stage.floors)
-				f.update(stage.floors);
-			for(Puppet p: stage.puppets)
+			if(hitStop == 0)
 			{
-		//		p.getHitboxes();
-				for(int i = 0; i < p.plebsOut.size(); i++)
+				for(Floor f: stage.floors)
+					f.update(stage.floors);
+				for(Puppet p: stage.puppets)
 				{
-					stage.plebs.add(p.plebsOut.get(0));
-					p.plebsOut.remove(0);
-				}
-				for(int i = 0; i < p.propArchiver.size(); i++)
-				{
-					stage.props.add(p.propArchiver.get(0));
-					p.propArchiver.remove(0);
-				}
-				p.canBlock = false;
-		//		p.updateBounds();
-			}
-			
-			applyForces();
-			checkCollisions();
-			checkDamage();	//MIGHT BE UNNECESSARY, might actually need to keep hitboxes aligned if forces push bounds in which case remove getHitboxes() prior to applyForces()
-			checkTechs();
-			
-			for(Puppet p: stage.puppets)
-			{
-				p.applyProperties();
-				p.getHitboxes();
-				if(p.hitStop > hitStop)
-				{
-					hitStop = p.hitStop;
-					p.hitStop = 0;
-				}
-				p.isThrowing = false;
-				p.throwInvul = false;
-			}
-			
-			int pLimit = stage.props.size();
-			for(int p= 0; p < pLimit; p++)
-			{
-				stage.props.get(p).move();
-				stage.props.get(p).update();
-		/*		if(stage.props.get(p).bounds.isMoving || stage.props.get(p).bounds.wasMoving || stage.props.get(p).health == 0)
-					stage.updateTrail(p);
-		*/		
-				for(int i = 0; i < stage.props.get(p).plebsOut.size(); i++)
-				{
-					stage.plebs.add(stage.props.get(p).plebsOut.get(0));
-					stage.props.get(p).plebsOut.remove(0);
-				}
-				if(stage.props.get(p).health == 0)
-				{
-					int qLimit = stage.plebs.size();
-					for(int q = 0; q < qLimit; q++)
+			//		p.getHitboxes();
+					for(int i = 0; i < p.plebsOut.size(); i++)
 					{
-						if(stage.plebs.get(q).bounds == stage.props.get(p).bounds)
+						stage.plebs.add(p.plebsOut.get(0));
+						p.plebsOut.remove(0);
+					}
+					for(int i = 0; i < p.propArchiver.size(); i++)
+					{
+						stage.props.add(p.propArchiver.get(0));
+						p.propArchiver.remove(0);
+					}
+					p.canBlock = false;
+			//		p.updateBounds();
+				}
+				
+				applyForces();
+				checkCollisions();
+				checkDamage();	//MIGHT BE UNNECESSARY, might actually need to keep hitboxes aligned if forces push bounds in which case remove getHitboxes() prior to applyForces()
+				checkTechs();
+				
+				for(Puppet p: stage.puppets)
+				{
+					p.applyProperties();
+					p.getHitboxes();
+					if(p.hitStop > hitStop)
+					{
+						hitStop = p.hitStop;
+						p.hitStop = 0;
+					}
+					p.isThrowing = false;
+					p.throwInvul = false;
+				}
+				
+				int pLimit = stage.props.size();
+				for(int p= 0; p < pLimit; p++)
+				{
+					stage.props.get(p).move();
+					stage.props.get(p).update();
+			/*		if(stage.props.get(p).bounds.isMoving || stage.props.get(p).bounds.wasMoving || stage.props.get(p).health == 0)
+						stage.updateTrail(p);
+			*/		
+					for(int i = 0; i < stage.props.get(p).plebsOut.size(); i++)
+					{
+						stage.plebs.add(stage.props.get(p).plebsOut.get(0));
+						stage.props.get(p).plebsOut.remove(0);
+					}
+					if(stage.props.get(p).health == 0)
+					{
+						int qLimit = stage.plebs.size();
+						for(int q = 0; q < qLimit; q++)
 						{
-							stage.plebs.remove(q);
-							qLimit = stage.plebs.size();
-							q--;
+							if(stage.plebs.get(q).bounds == stage.props.get(p).bounds)
+							{
+								stage.plebs.remove(q);
+								qLimit = stage.plebs.size();
+								q--;
+							}
+						}
+						stage.props.remove(p);
+						pLimit = stage.props.size();
+						p--;
+					}
+				}
+				
+				pLimit = stage.puppets.size();
+				for(int p = 0; p < pLimit; p++)
+				{
+					stage.puppets.get(p).checkState();
+					stage.puppets.get(p).update();
+					
+					if(stage.puppets.get(p).jDirections[1] == 1 && !stage.puppets.get(p).bounds.isGrounded)
+					{
+						for(Force f: stage.puppets.get(p).bounds.forceArchiver)
+						{
+							if(f.type.equals("yJump") && f.magnitude*9/10 < gravity)
+								stage.puppets.get(p).jDirections[1] = -1;
 						}
 					}
-					stage.props.remove(p);
-					pLimit = stage.props.size();
-					p--;
+					else if(stage.puppets.get(p).jDirections[1] == -1 && stage.puppets.get(p).preFrames == 0)	// && stage.puppets.get(p).bounds.isGrounded)
+						stage.puppets.get(p).jDirections[1] = 0;
 				}
-			}
-			
-			pLimit = stage.puppets.size();
-			for(int p = 0; p < pLimit; p++)
-			{
-				stage.puppets.get(p).checkState();
-				stage.puppets.get(p).update();
 				
-				if(stage.puppets.get(p).jDirections[1] == 1 && !stage.puppets.get(p).bounds.isGrounded)
+				pLimit = stage.plebs.size();
+				for(int p = 0; p < pLimit; p++)
 				{
-					for(Force f: stage.puppets.get(p).bounds.forceArchiver)
+				//	stage.plebs.get(p).move();
+					stage.plebs.get(p).update();
+					
+					if(stage.plebs.get(p).duration <= 0)
 					{
-						if(f.type.equals("yJump") && f.magnitude*9/10 < gravity)
-							stage.puppets.get(p).jDirections[1] = -1;
+						stage.plebs.remove(p);
+						pLimit = stage.plebs.size();
+						p--;
 					}
+				/*	if(p.xVel > 0 || p.yVel > 0)
+						stage.updateTrail("pleb",stage.plebs.indexOf(p));*/
 				}
-				else if(stage.puppets.get(p).jDirections[1] == -1 && stage.puppets.get(p).preFrames == 0)	// && stage.puppets.get(p).bounds.isGrounded)
-					stage.puppets.get(p).jDirections[1] = 0;
-			}
-			
-			pLimit = stage.plebs.size();
-			for(int p = 0; p < pLimit; p++)
-			{
-			//	stage.plebs.get(p).move();
-				stage.plebs.get(p).update();
 				
-				if(stage.plebs.get(p).duration <= 0)
+				for(Puppet p: stage.puppets)
 				{
-					stage.plebs.remove(p);
-					pLimit = stage.plebs.size();
-					p--;
+					if(p.target != null && p.bounds.isGrounded && !p.isThrowing && !p.isThrown && p.health > 0)
+						p.isFacingRight = p.xCoord+p.width/2 <= p.target.getBounds().xCoord+p.target.getBounds().width/2;
 				}
-			/*	if(p.xVel > 0 || p.yVel > 0)
-					stage.updateTrail("pleb",stage.plebs.indexOf(p));*/
+		//		resetFocus();
+				setFocus();
+				
+				focus();
+				
+				
+					
 			}
-			
-			for(Puppet p: stage.puppets)
-			{
-				if(p.target != null && p.bounds.isGrounded && !p.isThrowing && !p.isThrown && p.health > 0)
-					p.isFacingRight = p.xCoord+p.width/2 <= p.target.getBounds().xCoord+p.target.getBounds().width/2;
-			}
-	//		resetFocus();
-			setFocus();
-			
-			focus();
-			
-			if(hitStop > 0)
+			else
 				hitStop--;
 		}
-		
-		boolean p = false;
-		for(Hand h: hands)
-		{
-			if(h.player != null)
-			{
-				h.pullStrings(xWindow,yWindow);
-				if(h.buttonArchiver[9])
-				{
-					p = true;
-					h.buttonArchiver[9] = false;
-				}
-			}
-		}
-		if(p)
-			gamePaused = !gamePaused;
 		
 		//TEST
 		if(recovery[0] == 0)
@@ -2178,5 +2167,21 @@ public class Logic
 				recovery = new int[]{-1,-1,-1};
 			}
 		}
+		
+		boolean p = false;
+		for(Hand h: hands)
+		{
+			if(h.player != null)
+			{
+				h.pullStrings(xWindow,yWindow);
+				if(h.buttonArchiver[9])
+				{
+					p = true;
+					h.buttonArchiver[9] = false;
+				}
+			}
+		}
+		if(p)
+			gamePaused = !gamePaused;
 	}
 }

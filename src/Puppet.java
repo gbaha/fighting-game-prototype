@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.Toolkit;
 import java.net.URL;
@@ -21,10 +22,11 @@ abstract class Puppet implements Punchable
 	Organ bounds;
 	State currState, prevState;
 	Action currAction;
+	Image sheet;
 	int id, xCoord, yCoord, xHosh, yHosh, xOffset, yOffset, width, height, crHeight, kdHeight;
 	int maxHp, maxSp, maxMp, maxSpd;
 	int health, stamina, meter, speed;
-	int preFrames, fCounter, blockStun, hitStun, hitStop, sCooldown;
+	int spriteIndex, preFrames, fCounter, blockStun, hitStun, hitStop, sCooldown;
 	int kdCounter, kdLimit, kdStun, launchPoint;
 	double sIndex, sAngle, jForce, jump, juggleDamp, hitstunDamp, damageDamp;
 	boolean isFacingRight, isPerformingAction, isCrouching, canBlock, isGuardBroken, isCounterhit, isTaunted;
@@ -114,6 +116,7 @@ abstract class Puppet implements Punchable
 		speed = maxSpd;
 		jump = jForce;
 		
+		spriteIndex = -1;
 		preFrames = 0;
 		fCounter = 0;
 		sIndex = 0;
@@ -1310,7 +1313,7 @@ abstract class Puppet implements Punchable
 		{
 			try
 			{
-				Image taylor = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/lithead.png"));
+				Image taylor = Toolkit.getDefaultToolkit().getImage(System.getProperty("user.dir")+"\\resources\\lithead.png");
 				g.drawImage(taylor,(int)((anatomy.get(0).xHosh+anatomy.get(0).width/2+spriteParams[0])*w/1280),(int)((anatomy.get(0).yHosh+anatomy.get(0).height/2+spriteParams[1])*h/720),(int)(spriteParams[2]*w/1280),(int)(spriteParams[3]*h/720),i);
 			}
 			catch(java.lang.IndexOutOfBoundsException e)

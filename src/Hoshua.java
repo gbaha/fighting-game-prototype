@@ -123,7 +123,9 @@ public class Hoshua extends JPanel
 				if(canvas.settings[0])
 					p.draw(g,width,height);
 			}
-			sReader.backup(g2,canvas.settings);
+			
+		//	sReader.backup(g2,canvas.settings);
+			sReader.update();
 		}
 		catch(java.util.ConcurrentModificationException e)
 		{

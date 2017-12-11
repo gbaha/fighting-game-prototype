@@ -1,3 +1,4 @@
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -13,27 +14,37 @@ import java.util.ArrayList;
 
 public class SpriteReader// extends JPanel
 {
-//	ArrayList<BufferedImage> sprites;
 	ArrayList<double[]> spriteArchiver;	//[xCoord,yCoord,r,g,b]
+	ArrayList<Boolean> isOpen;
+	BufferedImage[] spriteCache;
+	boolean[] isDrawn;
 	int timer;
 	double width, height;
 	
-	public SpriteReader(double w, double h, int t)
+	public SpriteReader( double w, double h, int t)
 	{
-//		sprites = new ArrayList<BufferedImage>();
 		spriteArchiver = new ArrayList<double[]>();
+		isOpen = new ArrayList<Boolean>();
+		spriteCache = new BufferedImage[100];
+		isDrawn = new boolean[100];
+		for(int i = 0; i < 100; i++)
+		{
+			spriteCache[i] = new BufferedImage((int)w,(int)h,BufferedImage.TYPE_INT_ARGB);
+			isOpen.add(true);
+			isDrawn[i] = false;
+		}
+		
 		width = w;
 		height = h;
 		timer = t;
 	}
 	
 	
-	public void read(Graphics2D g, ImageObserver i, int x1, int y1, int w1, int w2, int h, int x2, int y2, int x3, int y3, int[] p, boolean r, double a, ArrayList<double[]> t, Image s)
+	public void read(Graphics2D g, ImageObserver i, Image s1, int s2, int x1, int y1, int w1, int w2, int h, int x2, int y2, int x3, int y3, int[] p, boolean r, double a, ArrayList<double[]> t)
 	{
-		if(s.getWidth(i) > 0 && s.getHeight(i) > 0)
+		if(s1.getWidth(i) > 0 && s1.getHeight(i) > 0)
 		{
-			BufferedImage sprite = new BufferedImage((int)(w2*width/1280),(int)(h*height/720),BufferedImage.TYPE_INT_ARGB);
-			Graphics2D sRead = sprite.createGraphics();	//sprites.get(sprites.size()-1).createGraphics();
+			Graphics2D sRead = spriteCache[s2].createGraphics();	//sprites.get(sprites.size()-1).createGraphics();
 			
 			AffineTransform sTrans = new AffineTransform();
 			sTrans.translate((w2/2)*width/1280,(h-p[2]*3/5)*height/720);
@@ -41,7 +52,10 @@ public class SpriteReader// extends JPanel
 			sTrans.translate(-(w2/2)*width/1280,(p[2]*3/5-h)*height/720);
 			sRead.setTransform(sTrans);
 			
-			sRead.drawImage(s,0,0,(int)(w2*width/1280),(int)(h*height/720),x2*p[2],y2*p[3],(x2+1)*p[2],(y2+1)*p[3],i);
+			sRead.setComposite(AlphaComposite.Clear);
+			sRead.fillRect(0,0,spriteCache[s2].getWidth(),spriteCache[s2].getHeight());
+			sRead.setComposite(AlphaComposite.SrcOver);
+			sRead.drawImage(s1,0,0,(int)(w2*width/1280),(int)(h*height/720),x2*p[2],y2*p[3],(x2+1)*p[2],(y2+1)*p[3],i);
 			sRead.dispose();
 			
 			double[] tint = new double[]{t.get(0)[0],t.get(0)[1],t.get(0)[2],t.get(0)[3]};
@@ -61,40 +75,37 @@ public class SpriteReader// extends JPanel
 					u--;
 				}
 			}
+			recolor(s2,tint[0],tint[1],tint[2],tint[3]);
 			
-			recolor(sprite,tint[0],tint[1],tint[2],tint[3]);
 		/*	g.setColor(Color.LIGHT_GRAY);
 			g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),100));
-			g.fillRect(r?(int)((x1-p[0])*width/1280):(int)((x1+w1+p[0])*width/1280),(int)((y1-p[1])*height/720),(r)?(int)(w2*width/1280):-(int)(w2*width/1280),(int)(h*height/720));*/
-			
-			g.drawImage(sprite,r?(int)((x1+x3-p[0])*width/1280):(int)((x1+x3+w1+p[0])*width/1280),(int)((y1+y3-p[1])*height/720),r?(int)(w2*width/1280):-(int)(w2*width/1280),(int)(h*height/720),i);
+			g.fillRect(r?(int)((x1+x3-p[0])*width/1280):(int)((x1+x3+w1+p[0])*width/1280),(int)((y1+y3-p[1])*height/720),r?(int)(w2*width/1280):-(int)(w2*width/1280),(int)(h*height/720));
+		*/
+			g.drawImage(spriteCache[s2],r?(int)((x1+x3-p[0])*width/1280):(int)((x1+x3+w1+p[0])*width/1280),(int)((y1+y3-p[1])*height/720),r?spriteCache[s2].getWidth():-spriteCache[s2].getWidth(),spriteCache[s2].getHeight(),i);
+			isDrawn[s2] = true;
 		}
 	}
 	
-	public void backup(Graphics2D g, boolean[] d)
+	public int addSprite()
 	{
-	/*	if(width > 0 && height > 0)
-		{
-			BufferedImage back = new BufferedImage((int)width,(int)height,BufferedImage.TYPE_INT_ARGB);
-			if(!d)
-			{
-				Graphics2D sBack = back.createGraphics();
-				for(BufferedImage s: sprites)
-				{
-					sBack.drawImage(s,null,(int)spriteArchiver.get(sprites.indexOf(s))[0],(int)spriteArchiver.get(sprites.indexOf(s))[1]);
-					recolor(s,spriteArchiver.get(sprites.indexOf(s))[2],spriteArchiver.get(sprites.indexOf(s))[3],spriteArchiver.get(sprites.indexOf(s))[4],spriteArchiver.get(sprites.indexOf(s))[5]);
-				}
-				sBack.dispose();
-			}
-			
-			sprites = new ArrayList<BufferedImage>();
-			spriteArchiver = new ArrayList<double[]>();
-			
-			g.drawImage(back,null,0,0);
-		}*/
+		int s = isOpen.indexOf(true);
+		isOpen.set(s,false);
+		return s;	
 	}
 	
-	private void recolor(BufferedImage s, double r, double g, double b, double a)
+	public void update()
+	{
+		for(int i = 0; i < 100; i++)
+		{
+			if(isDrawn[i])
+				isDrawn[i] = false;
+			else if(!isOpen.get(i))
+				isOpen.set(i,true);
+		}
+	}
+	
+	
+	private void recolor(int s, double r, double g, double b, double a)
 	{
 		float[] c = new float[]{1f,1f,1f,1f};
 		
@@ -118,7 +129,10 @@ public class SpriteReader// extends JPanel
 		c[2] = (float)(b/127.5);
 		c[3] = (float)(a/255);
 		
-		RescaleOp rec = new RescaleOp(c,new float[]{0,0,0,0},null);
-		s = rec.filter(s,s);
+		if(c[0] != 1f || c[1] != 1f || c[2] != 1f || c[3] != 1f)
+		{
+			RescaleOp rec = new RescaleOp(c,new float[]{0,0,0,0},null);
+			spriteCache[s] = rec.filter(spriteCache[s],spriteCache[s]);
+		}
 	}
 }

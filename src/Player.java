@@ -434,7 +434,7 @@ public class Player extends Puppet
 					break;
 			}
 			
-			if(jDirections[2] == 2)
+			if(jDirections[2] >= 2)
 			{
 				int fLimit = bounds.forceArchiver.size();
 				for(int f = 0; f < fLimit; f++)
@@ -470,7 +470,7 @@ public class Player extends Puppet
 		{
 			currState = (bounds.isGrounded)? ((isBlocking[0])? PuppetState.GUARD_STANDING:PuppetState.GUARD_CROUCHING):PuppetState.GUARD_JUMPING;
 			return;
-		}
+		}//System.out.println(jDirections[1]+" "+bounds.isGrounded);
 		
 		if(jDirections[1] == 0 && !bounds.isGrounded)
 		{
@@ -695,6 +695,8 @@ public class Player extends Puppet
 						isHoming = true;
 						if(!bounds.isGrounded)
 							jDirections[0] = (isFacingRight)? 1:-1;
+						if(f == 12)
+							jCount++;
 						
 						currState = PlayerState.JUMP_HOMING2;
 						bounds.forceArchiver.add(new Force("xHoming",(x > 0)? 3:1,Math.abs(x),Math.abs(x)));

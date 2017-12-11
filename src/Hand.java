@@ -350,7 +350,11 @@ public class Hand implements KeyListener	//, MouseListener
 					bInputs.addLast(new int[]{-1,1});
 				}
 				else if(s == 5 && sInputs.size() > 1 && order.getFirst() && j == 0)
+				{
 					j = sInputs.getFirst()[1];
+					sInputs.removeFirst();
+					i++;
+				}
 				else
 					c = false;
 				
