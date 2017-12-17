@@ -1,10 +1,14 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Pleb extends Hitbox
 {
 	ArrayList<Force> forceArchiver, appliedForces;
+	LinkedList<String> soundArchiver;
+	LinkedList<float[]> soundInfo;
+	
 	Puppet puppet;
 	Organ bounds;
 	Action action;
@@ -49,6 +53,9 @@ public class Pleb extends Hitbox
 		forceArchiver = new ArrayList<Force>();
 		appliedForces = new ArrayList<Force>();
 		
+		soundArchiver = new LinkedList<String>();
+		soundInfo = new LinkedList<float[]>();
+		
 		if(bounds != null)
 		{
 			if(xKnockback != 0)
@@ -87,10 +94,15 @@ public class Pleb extends Hitbox
 		forceArchiver = new ArrayList<Force>();
 		appliedForces = new ArrayList<Force>();
 		
+		soundArchiver = new LinkedList<String>();
+		soundInfo = new LinkedList<float[]>();
+		
 		if(puppet != null && bounds != null)
 		{
 			xDist = xCoord-bounds.xCoord;
 			yDist = yCoord-bounds.yCoord;
+			if(!puppet.isFacingRight)
+				xCoord = bounds.xCoord+bounds.width-xDist-width;
 		}
 	}
 	
@@ -134,6 +146,10 @@ public class Pleb extends Hitbox
 		
 		forceArchiver = new ArrayList<Force>();
 		appliedForces = new ArrayList<Force>();
+
+		soundArchiver = new LinkedList<String>();
+		soundInfo = new LinkedList<float[]>();
+		
 		if(puppet != null && bounds != null)
 		{
 			if(xKnockback != 0)
@@ -247,6 +263,12 @@ public class Pleb extends Hitbox
 			yDrag = 0;
 	}
 */	
+	public void addSound(String s, float[] i)
+	{
+		soundArchiver.addLast(s);
+		soundInfo.addLast(i);
+	}
+	
 	public void update()
 	{
 		super.update(xVel,yVel,xDir,yDir,xDrag,yDrag,speed);

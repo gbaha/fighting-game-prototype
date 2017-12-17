@@ -1,5 +1,7 @@
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Logic
 {
@@ -78,8 +80,10 @@ public class Logic
 		}
 		for(Pleb p3: stage.plebs)
 		{
-			stage.plebs.get(stage.plebs.indexOf(p3)).xHosh = stage.plebs.get(stage.plebs.indexOf(p3)).xCoord+stage.xFocus;
-			stage.plebs.get(stage.plebs.indexOf(p3)).yHosh = stage.plebs.get(stage.plebs.indexOf(p3)).yCoord+stage.yFocus;
+			p3.xHosh = p3.xCoord+stage.xFocus;
+			p3.yHosh = p3.yCoord+stage.yFocus;
+	//		stage.plebs.get(stage.plebs.indexOf(p3)).xHosh = stage.plebs.get(stage.plebs.indexOf(p3)).xCoord+stage.xFocus;
+	//		stage.plebs.get(stage.plebs.indexOf(p3)).yHosh = stage.plebs.get(stage.plebs.indexOf(p3)).yCoord+stage.yFocus;
 		}
 	}
 	
@@ -1807,7 +1811,7 @@ public class Logic
 				}
 			}
 		}
-			
+		
 		for(Pleb p1: stage.plebs)
 		{
 			for(Puppet p2: stage.puppets)
@@ -2009,7 +2013,7 @@ public class Logic
 		}
 	}
 	
-	public void update(int x, int y, boolean g/*, int w, int h*/)
+	public void update(Director d, int x, int y, boolean g/*, int w, int h*/)
 	{
 		xWindow = x;
 		yWindow = y;
@@ -2130,11 +2134,7 @@ public class Logic
 				}
 		//		resetFocus();
 				setFocus();
-				
 				focus();
-				
-				
-					
 			}
 			else
 				hitStop--;
@@ -2173,7 +2173,8 @@ public class Logic
 		{
 			if(h.player != null)
 			{
-				h.pullStrings(xWindow,yWindow);
+				if(!d.handLock)
+					h.pullStrings(xWindow,yWindow);
 				if(h.buttonArchiver[9])
 				{
 					p = true;

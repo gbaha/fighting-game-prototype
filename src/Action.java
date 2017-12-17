@@ -69,8 +69,8 @@ abstract class Action
 						else
 						{
 							boolean[][] cancel = new boolean[][]{isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable, isSpecialCancelable};
-							if(cancel[t-1][i])
-								return true;
+							if(cancel[t-1][i]){
+								return true;}
 						}
 					}
 				}

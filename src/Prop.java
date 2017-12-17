@@ -2,8 +2,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-abstract class Prop implements Punchable
+abstract class Prop implements Punchable	//, Audible
 {
 	ArrayList<Pleb> plebsIn, plebsOut;
 	ArrayList<int[]> spriteArchiver;
@@ -87,6 +88,12 @@ abstract class Prop implements Punchable
 	{
 		bounds.move();
 	}
+	
+/*	public void addSound(String s, float[] i)
+	{
+		soundArchiver.addLast(s);
+		soundInfo.addLast(i);
+	}*/
 	
 	public void update()
 	{

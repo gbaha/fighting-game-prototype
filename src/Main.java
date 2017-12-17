@@ -7,7 +7,7 @@ public class Main
 	Stage stage;
 //	Curtains curtains;
 //	Beaman geebs;
-//	Director director;
+	Director director;
 	Hand p1, p2;
 	Gui gui;
 	Logic logic;
@@ -33,7 +33,6 @@ public class Main
 		
 		stage = new Stage(Stage.TRAINING,2);
 //		geebs = new Beaman(stage);
-//		director = new Director(stage,geebs);
 		p1 = new Hand(xCoord,yCoord,width,height,new int[]{87,68,83,65},new int[]{73,79,80,74,75,76,91,59,32,49,50,51});
 		p2 = new Hand(xCoord,yCoord,width,height,new int[]{38,39,40,37},new int[]{90,88,67,86,66,78,999,999,999,8,999,999});
 		gui = new Gui(p1,p2,gamePaused);
@@ -45,6 +44,7 @@ public class Main
 		
 		logic = new Logic(stage,p1,p2,xCoord,yCoord,gamePaused/*,w,h*/);
 		jas = new Hoshua(stage,gui,xCoord,yCoord+window.getInsets().top,w,h,fps,6,gamePaused);
+		director = new Director(stage,jas);
 		klam = new Klamoth();
 	}
 	
@@ -66,6 +66,7 @@ public class Main
 			{
 				stage.type = (stage.type == Stage.TRAINING)? Stage.VERSUS:Stage.TRAINING;
 				stage.settings = (stage.type == Stage.TRAINING)? new boolean[]{true,true}:new boolean[]{false,false};
+				stage.reset(director,p1,p2);
 				p1.buttonArchiver[9] = false;
 			}
 			if(p1.buttonArchiver[10])
@@ -86,10 +87,11 @@ public class Main
 				stage.isResetting = false;
 			}
 			
-			stage.update(p1,p2,gui.hDamage);
-		//	director.update();
+			stage.update(director,p1,p2,gui.hDamage);
+			director.direct();
+			klam.buildQueue(stage,director);
 			gui.update(width,height,gamePaused);
-			logic.update(xCoord,yCoord,gamePaused/*,width,height*/);
+			logic.update(director,xCoord,yCoord,gamePaused/*,width,height*/);
 			gamePaused = logic.gamePaused;
 			
 		//	geebs.defyLogic();

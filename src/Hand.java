@@ -318,15 +318,14 @@ public class Hand implements KeyListener	//, MouseListener
 					}
 				}
 				
-				if((s == m[0][i] || m[0][i] == -1) && (bInputs.getFirst()[0] == m[1][i] || m[1][i] == -1))
+				if((s == m[0][i] || m[0][i] == -1 || (s == 5 && m[0][i] != 5)) && (bInputs.getFirst()[0] == m[1][i] || m[1][i] == -1))
 				{
 					if(m[0][i] != -1)
 					{
-						if(((m[2][0] == 0 && (m[2][i] >= sInputs.getFirst()[1]+j || m[2][i] == -1)) || (m[2][0] == 1 && (m[2][i] <= sInputs.getFirst()[1]+j || m[2][i] == -1))) || i == 0)
-						{
-							sInputs.removeFirst();
+						if(s != 5)
 							j = 0;
-						}
+						if(((m[2][0] == 0 && (m[2][i] >= sInputs.getFirst()[1]+j || m[2][i] == -1)) || (m[2][0] == 1 && (m[2][i] <= sInputs.getFirst()[1]+j || m[2][i] == -1))) || i == 0)
+							sInputs.removeFirst();
 						else
 							c = false;
 					}
@@ -337,7 +336,7 @@ public class Hand implements KeyListener	//, MouseListener
 					{
 						if(((m[2][0] == 0 && (m[2][i] >= bInputs.getFirst()[1] || m[2][i] == -1)) || (m[2][0] == 1 && (m[2][i] <= bInputs.getFirst()[1] || m[2][i] == -1))) || i == 0)
 						{
-							if(player.actions[player.movelist.indexOf(m)].type != Action.TAUNT || bInputs.getFirst()[1] > 1 || m[2][i] == 1)
+					//		if(player.actions[player.movelist.indexOf(m)].type != Action.TAUNT || bInputs.getFirst()[1] > 1 || m[2][i] == 1)
 								bInputs.removeFirst();
 						}
 						else
@@ -349,19 +348,28 @@ public class Hand implements KeyListener	//, MouseListener
 					sInputs.addLast(new int[]{5,1});
 					bInputs.addLast(new int[]{-1,1});
 				}
-				else if(s == 5 && sInputs.size() > 1 && order.getFirst() && j == 0)
+		/*		else if(s == 5 && sInputs.size() > 1 && order.getFirst() && j == 0)
 				{
 					j = sInputs.getFirst()[1];
 					sInputs.removeFirst();
 					i++;
-				}
+				}*/
 				else
 					c = false;
 				
 				if(!c)
 					i = 0;
 				else
+				{
 					order.removeFirst();
+					if(order.size() > 0)
+					{
+						if(order.getFirst())
+							j += sInputs.getFirst()[1];
+						else
+							j += bInputs.getFirst()[1];
+					}
+				}
 				i--;
 			}
 			
@@ -377,11 +385,16 @@ public class Hand implements KeyListener	//, MouseListener
 					boolean n = (m.length < 4);
 					if(!n)
 					{
-						for(int o = 0; o < m[3].length; o += 2)
+						if(m[3][0] == -1)
+							n = player.currAction.isCancelable(player.hitInfo[0],player.fCounter,player.actions[player.movelist.indexOf(m)].type,currButton,player.bounds.isGrounded);
+						else
 						{
-							boolean[] p = new boolean[]{(player.bounds.isGrounded && !player.currAction.cLock),player.currAction.cLock,!player.bounds.isGrounded};
-							if(((m[3][o] < player.normals.length && player.currAction.getClass() == player.normals[m[3][o]].getClass()) || (m[3][o] >= player.normals.length && player.currAction.getClass() == player.actions[m[3][o]].getClass())) && p[m[3][o+1]])
-								n = true;
+							for(int o = 0; o < m[3].length; o += 2)
+							{
+								boolean[] p = new boolean[]{(player.bounds.isGrounded && !player.currAction.cLock),player.currAction.cLock,!player.bounds.isGrounded};
+								if(((m[3][o] < player.normals.length && player.currAction.getClass() == player.normals[m[3][o]].getClass()) || (m[3][o] >= player.normals.length && player.currAction.getClass() == player.actions[m[3][o]].getClass())) && p[m[3][o+1]] && player.hitInfo[0] >= player.actions[player.movelist.indexOf(m)].cancelType)
+									n = true;
+							}
 						}
 					}
 					if(n)

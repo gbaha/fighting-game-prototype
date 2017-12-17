@@ -673,10 +673,10 @@ public class Roo extends Player
 			new int[]{8,33,53,50,	-112,-15,225,130,	-12,80,100,80,	22,160,115,95},
 			new int[]{24,33,53,50,	-72,-15,225,130,	-32,80,120,80,	-52,160,90,95}});
 		
-		movelist.add(new int[][]{{4},{-1},{0},{8,0}});
-		movelist.add(new int[][]{{6},{-1},{0},{8,0}});
-		movelist.add(new int[][]{{8},{-1},{0},{8,0}});
-		movelist.add(new int[][]{{2},{-1},{0},{8,0}});
+		movelist.add(new int[][]{{4},{-1},{0},{11,0}});
+		movelist.add(new int[][]{{6},{-1},{0},{11,0}});
+		movelist.add(new int[][]{{8},{-1},{0},{11,0}});
+		movelist.add(new int[][]{{2},{-1},{0},{11,0}});
 		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,0},{0,10,10,10}});	//{0,7,4,3}});
 		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,1},{0,10,10,10}});
 		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,2},{0,10,10,10}});
@@ -686,11 +686,11 @@ public class Roo extends Player
 		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,0},{0,10,10,10}});
 		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,1},{0,10,10,10}});
 		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,2},{0,10,10,10}});
-		movelist.add(new int[][]{{-1,-1,4,-1,-1},{0,1,-1,3,4},{0,10,15,10,10}});
+		movelist.add(new int[][]{{-1,-1,4,-1,-1},{0,1,-1,3,4},{0,15,15,15,15}});
 		
 		normals = new Action[]{new LightPunch(this), new MediumPunch(this), new HeavyPunch(this), new LightKick(this), new MediumKick(this), new HeavyKick(this)};
-		actions = new Action[]{actions[0], actions[1], actions[2], actions[3], actions[4], actions[5], new Taunt(this), new Taunt(this),
-				new Hug(this), new Hug(this), new HugForward(this,false), new HugForward(this,true), new HugUpward(this), new HugDownward(this),
+		actions = new Action[]{actions[0], actions[1], actions[2], actions[3], actions[4], actions[5], actions[6], actions[7], actions[8],
+				new Taunt(this), new Taunt(this), new Hug(this), new Hug(this), new HugForward(this,false), new HugForward(this,true), new HugUpward(this), new HugDownward(this),
 				new FireBall(this,0), new FireBall(this,1), new FireBall(this,2),
 				new Tatsu(this,0), new Tatsu(this,1), new Tatsu(this,2),
 				new DragonPunch(this,0), new DragonPunch(this,1), new DragonPunch(this,2), new BellaTaunt(this)};
@@ -751,7 +751,7 @@ public class Roo extends Player
 				new int[][]{new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}, new int[]{1,2,4,5}},
 				new boolean[]{true,true,true},
 				new boolean[]{true,true,true},
-				new boolean[]{false,false,false},
+				new boolean[]{false,false,true},
 				new boolean[]{false,false,true},
 				new int[]{3,10,3,10,4,30},	//new int[]{5,10,5,10,7,30},
 				new boolean[]{true,true,true});
@@ -828,11 +828,11 @@ public class Roo extends Player
 		public MediumPunch(Roo r)
 		{
 			super(Action.NORMAL,1,
-				new int[][]{new int[]{2,5}, new int[]{2,5}, new int[]{1,2,4,5}},
+				new int[][]{new int[]{2,5}, new int[]{2,5}, new int[]{2,5}},
 				new boolean[]{true,true,true},
 				new boolean[]{true,true,true},
-				new boolean[]{false,false,false},
-				new boolean[]{false,false,false},
+				new boolean[]{false,false,true},
+				new boolean[]{false,false,true},
 				new int[]{6,18,5,14,4,30},	//new int[]{8,18,8,14,9,30},
 				new boolean[]{true,true,true});
 			roo = r;
@@ -940,12 +940,12 @@ public class Roo extends Player
 		public HeavyPunch(Roo r)
 		{
 			super(Action.NORMAL,1,
-				new int[][]{new int[]{}, new int[]{}, new int[]{2,5}},
+				new int[][]{new int[]{}, new int[]{}, new int[]{}},
 				new boolean[]{true,true,true},
 				new boolean[]{true,true,true},
-				new boolean[]{false,false,false},
-				new boolean[]{false,false,false},
-				new int[]{4,28,5,26,-1,-1},	//new int[]{6,28,6,26,10,14},
+				new boolean[]{false,false,true},
+				new boolean[]{false,false,true},
+				new int[]{4,28,5,26,10,14},
 				new boolean[]{true,true,true});
 			roo = r;
 			scaling = 0.03;
@@ -1067,11 +1067,11 @@ public class Roo extends Player
 		public LightKick(Roo r)
 		{
 			super(Action.NORMAL,1,
-				new int[][]{new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}, new int[]{0,1,2,4,5}},
+				new int[][]{new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}, new int[]{0,1,2,3,4,5}},
 				new boolean[]{true,true,true},
 				new boolean[]{true,true,true},
-				new boolean[]{false,false,false},
-				new boolean[]{false,false,false},
+				new boolean[]{false,false,true},
+				new boolean[]{false,false,true},
 				new int[]{5,15,5,14,5,30},
 				new boolean[]{true,true,true});
 			roo = r;
@@ -1148,11 +1148,11 @@ public class Roo extends Player
 		public MediumKick(Roo r)
 		{
 			super(Action.NORMAL,1,
-				new int[][]{new int[]{2,5}, new int[]{2,5}, new int[]{1,2,4,5}},
+				new int[][]{new int[]{2,5}, new int[]{2,5}, new int[]{2,5}},
 				new boolean[]{true,true,true},
 				new boolean[]{true,true,true},
-				new boolean[]{false,false,false},
-				new boolean[]{false,false,false},
+				new boolean[]{false,false,true},
+				new boolean[]{false,false,true},
 				new int[]{6,20,6,22,6,20},
 				new boolean[]{true,true,true});
 			roo = r;
@@ -1244,11 +1244,11 @@ public class Roo extends Player
 		public HeavyKick(Roo r)
 		{
 			super(Action.NORMAL,1,
-				new int[][]{new int[]{}, new int[]{}, new int[]{2,5}},
+				new int[][]{new int[]{}, new int[]{}, new int[]{2}},
 				new boolean[]{false,false,true},
 				new boolean[]{false,false,true},
-				new boolean[]{false,false,false},
-				new boolean[]{false,false,false},
+				new boolean[]{false,false,true},
+				new boolean[]{false,false,true},
 				new int[]{-1,-1,-1,-1,5,38},
 				new boolean[]{true,true,true});
 			roo = r;
@@ -1504,7 +1504,7 @@ public class Roo extends Player
 						target.bounds.forceArchiver.clear();
 						
 						Puppet t = target;
-						setAction(actions[13]);
+						setAction(actions[16]);
 						currAction.target = t;
 						fCounter = -1;
 						sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
@@ -1672,7 +1672,7 @@ public class Roo extends Player
 				if(f > 10 && sInputs[0] && ((isFacingRight && !sInputs[3]) || (!isFacingRight && !sInputs[1])))
 				{
 					Puppet t = target;
-					setAction(actions[4]);
+					setAction(actions[7]);
 					currAction.target = t;
 					fCounter = -1;
 					sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
@@ -1843,6 +1843,7 @@ public class Roo extends Player
 						
 					case 9:
 						propArchiver.add(new Ninja(roo,bounds.xCoord+((isFacingRight)? bounds.width+105:-105),bounds.yCoord+42,120,50,360,1,strength));
+						addSound("ninja_breh.wav",new float[]{0.0f});
 						break;
 					
 					case 29:
@@ -2029,7 +2030,7 @@ public class Roo extends Player
 						{
 							currState = RooState.DP;
 							hashCounter = "";
-							frames = 8+((strength < 2)? ((strength == 0)? 22:28):32);
+							frames = 60;	//8+((strength < 2)? ((strength == 0)? 22:28):32);
 						}
 						else
 							frames = 1;
@@ -2064,6 +2065,14 @@ public class Roo extends Player
 						{
 							currState = RooState.DP_RECOVER;
 							sIndex = 0;
+							
+							if(target == null)
+								addSound("freehandouts.wav",new float[]{0.0f});
+							else
+							{
+								if(target.hitStun == 0 && target.kdStun == 0 && target.health > 0 && target.stamina > 0)
+									addSound("freehandouts.wav",new float[]{0.0f});
+							}
 						}
 						break;
 						
@@ -2072,6 +2081,14 @@ public class Roo extends Player
 						{
 							currState = RooState.DP_RECOVER;
 							sIndex = 0;
+							
+							if(target == null)
+								addSound("freehandouts.wav",new float[]{0.0f});
+							else
+							{
+								if(target.blockStun == 0 && target.kdStun == 0 && target.health > 0 && target.stamina > 0)
+									addSound("freehandouts.wav",new float[]{0.0f});
+							}
 						}
 						break;
 				}
@@ -2087,6 +2104,8 @@ public class Roo extends Player
 						a.pInvul = true;
 					throwInvul = true;
 				}
+				else if(bounds.isGrounded)
+					fCounter = frames;
 			}
 		}
 	}
@@ -2158,11 +2177,14 @@ public class Roo extends Player
 							if(player.target instanceof Puppet)
 							{
 								Puppet t = (Puppet)player.target;
-								t.propertyArchiver.add(new double[]{Pleb.TAYLOR,900,0,0,0});
-								if(t.kdStun > 0 && t.bounds.isGrounded)
-									t.stamina -= 200;
-								
-								propertyArchiver.add(new double[]{Pleb.TAYLOR,900,0,0,1});
+								if(t.health > 0)
+								{
+									t.propertyArchiver.add(new double[]{Pleb.TAYLOR,900,0,0,0});
+									if(t.kdStun > 0 && t.bounds.isGrounded)
+										t.stamina -= 200;
+									
+									propertyArchiver.add(new double[]{Pleb.TAYLOR,900,0,0,1});
+								}
 							}
 						}
 						break;
@@ -2207,7 +2229,7 @@ public class Roo extends Player
 					break;
 			}
 			
-			spriteParams = new int[]{940,653,640,480};
+			spriteParams = new int[]{940,638,640,480};
 			spriteArchiver.add(new int[]{0,0,0,0,2});
 		}
 		

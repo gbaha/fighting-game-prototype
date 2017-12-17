@@ -15,13 +15,16 @@ import javax.swing.JPanel;
 
 public class Gui extends JPanel
 {
+	public static final int LEFT = 0;
+	public static final int RIGHT = 1;
+	public static final int CENTER = 2;
 	private final Font FONT;
+	
 	ArrayList<Splash> splashes;
 	Hand hand1, hand2;
 	int[][] hitCounter;
 	double[] hDamage;
 //	double hTick, eTick;
-	long pTick;
 	boolean gamePaused;
 	
 	public Gui(Hand h1, Hand h2, boolean p)
@@ -34,7 +37,6 @@ public class Gui extends JPanel
 		hDamage = new double[2];
 //		hTick = 0;
 //		eTick = 0;
-		pTick = 0;
 		gamePaused = p;
 		
 /*		try
@@ -126,23 +128,11 @@ public class Gui extends JPanel
 		for(int s = 0; s < sLimit; s++)
 		{
 			splashes.get(s).draw(g,w,h);
-			if(pTick > 0)
+			if(splashes.get(s).fCounter >= splashes.get(s).length)
 			{
-				if((pTick-splashes.get(s).start)/1000 >= splashes.get(s).time)
-				{
-					splashes.remove(s);
-					sLimit = splashes.size();
-					s--;
-				}
-			}
-			else
-			{
-				if((System.currentTimeMillis()-splashes.get(s).start)/1000 >= splashes.get(s).time)
-				{
-					splashes.remove(s);
-					sLimit = splashes.size();
-					s--;
-				}
+				splashes.remove(s);
+				sLimit = splashes.size();
+				s--;
 			}
 		}
 		
@@ -453,9 +443,9 @@ public class Gui extends JPanel
 		g.setStroke(new BasicStroke((int)(1*w/1280)));
 	}
 	
-	public void displaySplash(String s, int t, int f)
+	public void displaySplash(String t, int a, int x, int y, int s, int l, int f)
 	{
-		splashes.add(new Splash(s,t,f));
+		splashes.add(new Splash(t,a,x,y,s,l,f));
 	}
 	
 	
@@ -496,103 +486,58 @@ public class Gui extends JPanel
 					hDamage[1] = hand2.player.health;
 			}
 			
+			for(Splash s: splashes)
+				s.fCounter++;
+			
 /*			if(eTick == 0)
 				eTick = 20;
 			else
 				eTick--;*/
-			
-			for(Splash s: splashes)
-			{
-				if(pTick > 0)
-					s.start += System.currentTimeMillis()-pTick;
-			}
-			pTick = 0;
 		}
-		else if(pTick == 0)
-				pTick = System.currentTimeMillis();
-	}
-	
-	
-	private BufferedImage buffedImage(String s, ImageObserver i, double p, int w, int h, int r, int g, int b)
-	{
-/*		Image butt = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/"+s));
-		
-		if(butt.getWidth(i) > 0 && butt.getHeight(i) > 0)
-		{
-			BufferedImage bButt = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
-			bButt = bButt.getSubimage(0,0,(int)(bButt.getWidth(i)*p+0.5),bButt.getHeight(i));
-			
-			Graphics2D gButt = bButt.createGraphics();
-			gButt.drawImage(butt,0,0,w,h,i);
-			gButt.dispose();
-			
-		/*	for(int x = 0; x < bButt.getWidth(i); x++)
-			{
-				for(int y = 0; y < bButt.getHeight(i); y++)
-				{
-					if(bButt.getRGB(x,y) != 0)
-						bButt.setRGB(x,y,new Color(r,g,b,200).getRGB());
-				}
-			}*/
-			
-/*			RescaleOp rec = new RescaleOp(new float[]{(float)(r/255),(float)(g/255),(float)(b/255),1},new float[]{0,0,0,0},null);
-			bButt = rec.filter(bButt,bButt);
-			
-			return bButt;
-		}
-		else*/
-			return null;
 	}
 	
 	
 	private class Splash
 	{
 		String text;
-		int time, fade;
-		long start;
+		int alignment, xCoord, yCoord, size, length, fadePoint, fCounter;
 		
-		public Splash(String s, int t, int f)
+		public Splash(String t, int a, int x, int y, int s, int l, int f)
 		{
-			text = s;
-			time = t;
-			fade = f;
-			start = 0;
+			alignment = a;
+			xCoord = x;
+			yCoord = y;
+			text = t;
+			size = s;
+			length = l;
+			fadePoint = f;
+			fCounter = 0;
 		}
 		
 		
 		public void draw(Graphics2D g, double w, double h)
 		{
-			if(start == 0)
-			{
-				if(pTick > 0)
-					start = pTick;
-				else
-					start = System.currentTimeMillis();
-			}
-			
-			Font sFont = new Font("Prototype",Font.PLAIN,(int)(48*w/1280));
+			Font sFont = new Font("Fontnamehere",Font.BOLD,(int)(size*w/1280));
 			g.setFont(sFont);
 			
-			int alpha = 255;
-			if(pTick > 0)
-			{
-				if((pTick-start)/1000 >= fade && (pTick-start)/1000 <= time)
-					alpha = 255-(int)(255*((double)(pTick-start)/1000-fade)/(time-fade));
-			}
-			else
-			{
-				if((System.currentTimeMillis()-start)/1000 >= fade && (System.currentTimeMillis()-start)/1000 <= time)
-					alpha = 255-(int)(255*((double)(System.currentTimeMillis()-start)/1000-fade)/(time-fade));
-			}
-			if(alpha < 0)
-				alpha = 0;
-			g.setColor(new Color(35,70,255,alpha));
+			float alpha = (fCounter >= length)? 0.0f:((fCounter < fadePoint)? 1.0f:((float)length-fCounter)/(length-fadePoint));
+			g.setColor(new Color(1.0f,0.72f,0.07f,alpha));
 			
-			if(alpha > 0)
+			int sWidth = g.getFontMetrics(sFont).stringWidth(text);
+			int sHeight = g.getFontMetrics(sFont).getAscent()-g.getFontMetrics(sFont).getDescent();
+			switch(alignment)
 			{
-				int sWidth = g.getFontMetrics(sFont).stringWidth(text);
-				int sHeight = g.getFontMetrics(sFont).getHeight();
-				g.drawString(text,(int)(w/2-sWidth/2),(int)(h/4-sHeight/2));
+				case Gui.LEFT:
+					g.drawString(text,(int)(xCoord*w/1280)-sWidth/2,(int)(yCoord*h/720)+sHeight/2);
+					break;
+					
+				case Gui.RIGHT:
+					g.drawString(text,(int)(xCoord*w/1280)-sWidth/2,(int)(yCoord*h/720)+sHeight/2);
+					break;
+					
+				case Gui.CENTER:
+					g.drawString(text,(int)(xCoord*w/1280)-sWidth/2,(int)(yCoord*h/720)+sHeight/2);
+					break;
 			}
 			g.setFont(FONT);
 		}

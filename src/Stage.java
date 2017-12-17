@@ -89,7 +89,7 @@ public class Stage
 //		buildFairyTrail();
 	}
 	
-	public void reset(Hand h1, Hand h2)
+	public void reset(Director d, Hand h1, Hand h2)
 	{
 		timer = new int[]{99,100};
 		puppets.clear();
@@ -117,12 +117,15 @@ public class Stage
 		h2.player = player2;
 		isResetting = true;
 		
+		if(type == VERSUS)
+			d.addScript(Director.ROUNDSTART);
+		
 		//TEST
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < 3; i++)
 			System.out.println();
 	}
 	
-	public void update(Hand h1, Hand h2, double hd[])
+	public void update(Director d, Hand h1, Hand h2, double hd[])
 	{
 		switch(type)
 		{
@@ -137,7 +140,7 @@ public class Stage
 				break;
 				
 			case VERSUS:
-				if(wins[0][0] < rounds && wins[1][0] < rounds)
+				if((wins[0][0] < rounds && wins[1][0] < rounds) || (wins[0][0] == rounds && wins[1][0] == rounds))
 				{
 					if(timer[0] == 0)
 					{
@@ -152,21 +155,35 @@ public class Stage
 							wins[1][0]++;
 						}
 						if(wins[0][0] < rounds && wins[1][0] < rounds)
-							reset(h1,h2);
+							reset(d,h1,h2);
 					}
-					else if(player1.health <= 0 && player1.kdStun == 0)
+					else if(player1.health <= 0)
 					{
-						wins[1][wins[1][0]+1] = 1;
-						wins[1][0]++;
-						if(wins[1][0] < rounds)
-							reset(h1,h2);
+						if(wins[1][wins[1][0]+1] == 0)
+						{
+							d.addScript(Director.ROUNDEND);
+							wins[1][wins[1][0]+1] = 1;
+						}
+						if(d.currScript == null && d.scriptQueue.size() == 0)
+						{
+							wins[1][0]++;
+							if(wins[1][0] < rounds)
+								reset(d,h1,h2);
+						}
 					}
-					else if(player2.health <= 0 && player2.kdStun == 0)
+					else if(player2.health <= 0)
 					{
-						wins[0][wins[0][0]+1] = 1;
-						wins[0][0]++;
-						if(wins[0][0] < rounds)
-							reset(h1,h2);
+						if(wins[0][wins[0][0]+1] == 0)
+						{
+							d.addScript(Director.ROUNDEND);
+							wins[0][wins[0][0]+1] = 1;
+						}
+						if(d.currScript == null && d.scriptQueue.size() == 0)
+						{
+							wins[0][0]++;
+							if(wins[0][0] < rounds)
+								reset(d,h1,h2);
+						}
 					}
 					
 					if(timer[1] > 0)

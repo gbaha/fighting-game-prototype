@@ -35,7 +35,7 @@ abstract class Projectile extends Prop
 			try
 			{
 				int f = (int)fIndex;
-				s.read(g,i,sheet,spriteIndex,bounds.xHosh,bounds.yHosh,bounds.width,1760,1320,f,spriteArchiver.get(currState.getPosition())[0],0,0,spriteParams,!isFacingRight,0,sTint);
+				s.read(g,i,sheet,spriteIndex,bounds.xHosh,bounds.yHosh,bounds.width,1760,1300,f,spriteArchiver.get(currState.getPosition())[0],0,0,spriteParams,!isFacingRight,0,sTint);
 			}
 			catch(java.lang.IndexOutOfBoundsException e)
 			{
