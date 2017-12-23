@@ -15,7 +15,7 @@ public class Klamoth	//SOUND AND SHIT
 		queue = new LinkedList<String>();
 		beatInfo = new LinkedList<float[]>();
 		
-		try
+	/*	try
 		{
 			fire = AudioSystem.getClip();			
 			fire.open(AudioSystem.getAudioInputStream(getClass().getResource("/resources/firetest.wav")));
@@ -35,7 +35,7 @@ public class Klamoth	//SOUND AND SHIT
 		catch(UnsupportedAudioFileException  e3)
 		{
 			 e3.printStackTrace();
-		}
+		}*/
 	}
 	
 	public void buildQueue(Stage s, Director d)

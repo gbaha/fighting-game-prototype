@@ -97,13 +97,13 @@ public class Director
 				case 180:
 					if(stage.player1.health == 0 && stage.player2.health > 0)
 					{
-						stage.player2.currAction = stage.player2.actions[6];
+						stage.player2.currAction = stage.player2.actions[11];
 						stage.player2.fCounter = 0;
 						stage.player2.sIndex = stage.player2.hitboxArchiver.get(stage.player2.currState.getPosition())[0][1];
 					}
 					else if(stage.player2.health == 0 && stage.player1.health > 0)
 					{
-						stage.player1.currAction = stage.player1.actions[6];
+						stage.player1.currAction = stage.player1.actions[11];
 						stage.player1.fCounter = 0;
 						stage.player1.sIndex = stage.player1.hitboxArchiver.get(stage.player1.currState.getPosition())[0][1];
 					}

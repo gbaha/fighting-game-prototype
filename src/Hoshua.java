@@ -14,7 +14,7 @@ public class Hoshua extends JPanel
 	Stage canvas;
 	SpriteReader sReader;
 	Gui gui;
-	int xFocus, yFocus, xCoord, yCoord, fSkip, fCounter;
+	int xFocus, yFocus, xCoord, yCoord, fSkip, fCounter, sTimer;
 	double width, height, fps;
 	boolean gamePaused;
 	
@@ -34,6 +34,7 @@ public class Hoshua extends JPanel
 		fps = f;
 		fSkip = s;
 		fCounter = 0;
+		sTimer = 0;
 		
 		gamePaused = p;
 	//	this.add(gui);
@@ -46,6 +47,9 @@ public class Hoshua extends JPanel
 		
 		for(Floor f: canvas.floors)
 			f.draw(g,this,width,height,canvas.settings[1]);	
+		int a = (sTimer > 0)? ((sTimer < 3)? (int)(105.0*sTimer/3):105):0;
+		g.setColor(new Color(6,8,8,a));
+		g.fillRect(0,0,(int)width,(int)height);
 		
 		xFocus = (int)(canvas.xFocus*width/1280);
 		yFocus = (int)(canvas.yFocus*height/720);
@@ -138,7 +142,7 @@ public class Hoshua extends JPanel
 		
 		if(canvas.settings[1])
 		{
-		g.setColor(Color.GRAY);
+			g.setColor(Color.GRAY);
 			g.drawString(fps+"",5,20);
 		//	g.setColor(new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255)));
 		//	g.fillRect((int)(width-20*width/1280),0,(int)(20*width/1280),(int)(20*height/720));
@@ -162,12 +166,13 @@ public class Hoshua extends JPanel
 	}
 	
 	
-	public void update(int x, int y, int w, int h, double f, boolean p)
+	public void update(int x, int y, int w, int h, int s, double f, boolean p)
 	{
 		xCoord = x;
 		yCoord = y;
 		width = w;
 		height = h;
+		sTimer = s;
 		fps = f;
 		gamePaused = p;
 		

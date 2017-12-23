@@ -196,12 +196,12 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,75,	-32,80,125,70,	-52,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,75,	-32,75,125,80,	-42,155,160,95}});
 		//MIDAIR FLINCH(LAUNCH)
-		hitboxArchiver.add(new int[][]{new int[]{10,0,5,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{10,0,4,0,2},
 			new int[]{24,0,53,50,	-48,15,165,75,	-72,95,135,55,	-42,155,150,95},
 			new int[]{0,33,53,50,	-80,33,200,85,	-96,95,135,55,	-72,155,150,95},
 			new int[]{16,12,53,50,	-72,18,175,90,	-56,100,135,55,	-56,155,150,95},
 			new int[]{32,0,53,50,	-64,12,175,75,	-48,95,135,50,	-56,155,175,95},
-			new int[]{32,-23,53,50,	-32,0,150,75,	-32,80,125,70,	-52,155,160,95},
+	//		new int[]{32,-23,53,50,	-32,0,150,75,	-32,80,125,70,	-52,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,75,	-32,75,125,80,	-42,155,160,95}});
 		//MIDAIR FLINCH(SPIKE)
 		hitboxArchiver.add(new int[][]{new int[]{14,2,4,0,2},
@@ -359,8 +359,33 @@ public class Roo extends Player
 			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{52,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		
+		//SLIP(PARRY)
+		hitboxArchiver.add(new int[][]{new int[]{42,0,6,0,2},
+			new int[]{32,13,53,50,	-32,55,125,40,	-32,95,125,50,	-72,145,225,105,	93,55,115,75},
+			new int[]{32,13,53,50,	-32,55,125,40,	-32,95,125,50,	-72,145,225,105,	93,55,115,75},
+			new int[]{32,13,53,50,	-32,55,125,40,	-32,95,125,50,	-72,145,225,105,	93,55,115,75},
+			new int[]{32,13,53,50,	-32,55,125,40,	-32,95,125,50,	-72,145,225,105,	93,55,115,75},
+			new int[]{32,13,53,50,	-32,55,125,40,	-32,95,125,50,	-72,145,225,105,	93,55,115,75},
+			new int[]{32,13,53,50,	-32,55,125,40,	-32,95,125,50,	-72,145,225,105,	93,55,115,75},
+			new int[]{32,13,53,50,	-32,55,125,40,	-32,95,125,50,	-72,145,225,105,	93,55,115,75}});
+		//SLIP(DODGE A)
+		hitboxArchiver.add(new int[][]{new int[]{43,0,0,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//SLIP(DODGE B)
+		hitboxArchiver.add(new int[][]{new int[]{43,1,1,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//SLIP(DODGE C)
+		hitboxArchiver.add(new int[][]{new int[]{43,2,2,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//SLIP(DODGE D)
+		hitboxArchiver.add(new int[][]{new int[]{43,3,3,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		//SLIP(DODGE E)
+		hitboxArchiver.add(new int[][]{new int[]{43,4,4,0,2},
+			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
+		
 		//TAUNT
-		hitboxArchiver.add(new int[][]{new int[]{48,0,3,0,3},
+		hitboxArchiver.add(new int[][]{new int[]{49,0,3,0,3},
 			new int[]{32,13,53,50,	-32,30,150,40,	-32,80,125,60,	-62,150,190,100},
 			new int[]{32,13,53,50,	-32,55,180,40,	-32,95,125,50,	-72,145,225,105,	148,20,60,75},
 			new int[]{32,13,53,50,	-32,55,125,40,	-32,95,125,50,	-72,145,225,105,	93,55,115,75},
@@ -606,7 +631,7 @@ public class Roo extends Player
 			new int[]{24,-56,53,50,	-16,-20,155,70,	-20,50,185,120}});
 		
 		//FIREBALL LAUNCH
-		hitboxArchiver.add(new int[][]{new int[]{42,0,9,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{44,0,9,0,2},
 			new int[]{56,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,180,95},
 			new int[]{56,0,53,50,	-32,10,125,100,	-32,85,120,65,	-52,135,200,125},
 			new int[]{64,15,53,50,	-52,20,165,80,	-22,90,110,50,	-52,135,200,125},
@@ -618,12 +643,12 @@ public class Roo extends Player
 			new int[]{72,15,53,50,	0,30,220,75,	-22,90,110,50,	-52,135,200,125},
 			new int[]{72,15,53,50,	0,30,220,75,	-22,90,110,50,	-52,135,200,125}});
 		//FIREBALL RECOVER
-		hitboxArchiver.add(new int[][]{new int[]{43,0,2,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{45,0,2,0,2},
 			new int[]{72,15,53,50,	0,30,220,75,	-22,90,110,50,	-52,135,200,125},
 			new int[]{64,0,53,50,	0,30,180,75,	-22,90,110,50,	-52,135,200,125},
 			new int[]{56,-23,53,50,	0,0,135,75,	-12,80,120,70,	-32,155,160,95}});
 		//TATSU START
-		hitboxArchiver.add(new int[][]{new int[]{44,0,10,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{46,0,10,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	0,55,155,100,	12,155,70,95},
 			new int[]{16,-83,53,50,	-32,-40,132,60,	0,20,100,60,	-42,80,160,150},
@@ -636,7 +661,7 @@ public class Roo extends Player
 			new int[]{16,-83,53,50,	0,-40,132,60,	0,20,100,60,	0,80,100,90,	100,20,100,50},
 			new int[]{16,-83,53,50,	0,-40,132,60,	0,20,100,60,	0,80,100,90}});
 		//TATSU SPIN
-		hitboxArchiver.add(new int[][]{new int[]{44,3,10,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{46,3,10,0,2},
 			new int[]{16,-83,53,50,	0,-40,132,60,	0,20,100,60,	0,80,100,90},
 			new int[]{16,-83,53,50,	0,-40,132,60,	0,20,100,60,	0,80,100,90},
 			new int[]{16,-83,53,50,	0,-40,132,60,	0,20,100,60,	0,80,100,90,	100,20,100,50},
@@ -646,13 +671,13 @@ public class Roo extends Player
 			new int[]{16,-83,53,50,	0,-40,132,60,	0,20,100,60,	0,80,100,90,	100,20,100,50},
 			new int[]{16,-83,53,50,	0,-40,132,60,	0,20,100,60,	0,80,100,90}});
 		//TATSU RECOVER
-		hitboxArchiver.add(new int[][]{new int[]{45,0,3,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{47,0,3,0,2},
 			new int[]{8,-53,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{8,-53,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{16,0,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		//DP
-		hitboxArchiver.add(new int[][]{new int[]{46,0,7,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{48,0,7,0,2},
 			new int[]{72,0,53,50,	0,25,125,50,	0,85,140,50,	-42,145,185,105},
 			new int[]{88,36,53,50,	24,50,100,50,	0,95,140,50,	-42,145,185,105},
 			new int[]{88,58,53,50,	24,80,100,50,	0,120,140,70,	-42,145,185,105},
@@ -662,34 +687,34 @@ public class Roo extends Player
 			new int[]{0,-80,53,50,	-32,-40,130,80,	0,0,160,125,	0,125,80,125},
 			new int[]{0,-80,53,50,	-32,-40,130,80,	0,0,160,125,	0,125,80,125}});
 		//DP RECOVER
-		hitboxArchiver.add(new int[][]{new int[]{47,0,3,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{49,0,3,0,2},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		
 		//BELLA TAUNT
-		hitboxArchiver.add(new int[][]{new int[]{49,0,0,0,10},
+		hitboxArchiver.add(new int[][]{new int[]{51,0,0,0,10},
 			new int[]{8,33,53,50,	-112,-15,225,130,	-12,80,100,80,	22,160,115,95},
 			new int[]{24,33,53,50,	-72,-15,225,130,	-32,80,120,80,	-52,160,90,95}});
 		
-		movelist.add(new int[][]{{4},{-1},{0},{11,0}});
-		movelist.add(new int[][]{{6},{-1},{0},{11,0}});
-		movelist.add(new int[][]{{8},{-1},{0},{11,0}});
-		movelist.add(new int[][]{{2},{-1},{0},{11,0}});
+		movelist.add(new int[][]{{4},{-1},{0},{13,0}});
+		movelist.add(new int[][]{{6},{-1},{0},{13,0}});
+		movelist.add(new int[][]{{8},{-1},{0},{13,0}});
+		movelist.add(new int[][]{{2},{-1},{0},{13,0}});
 		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,0},{0,10,10,10}});	//{0,7,4,3}});
 		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,1},{0,10,10,10}});
 		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,2},{0,10,10,10}});
 		movelist.add(new int[][]{{2,1,4,-1},{-1,-1,-1,3},{0,10,10,10}});
 		movelist.add(new int[][]{{2,1,4,-1},{-1,-1,-1,4},{0,10,10,10}});
 		movelist.add(new int[][]{{2,1,4,-1},{-1,-1,-1,5},{0,10,10,10}});
-		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,0},{0,10,10,10}});
-		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,1},{0,10,10,10}});
-		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,2},{0,10,10,10}});
+		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,0},{0,15,10,10}});
+		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,1},{0,15,10,10}});
+		movelist.add(new int[][]{{6,2,3,-1},{-1,-1,-1,2},{0,15,10,10}});
 		movelist.add(new int[][]{{-1,-1,4,-1,-1},{0,1,-1,3,4},{0,15,15,15,15}});
 		
 		normals = new Action[]{new LightPunch(this), new MediumPunch(this), new HeavyPunch(this), new LightKick(this), new MediumKick(this), new HeavyKick(this)};
-		actions = new Action[]{actions[0], actions[1], actions[2], actions[3], actions[4], actions[5], actions[6], actions[7], actions[8],
+		actions = new Action[]{actions[0], actions[1], actions[2], actions[3], actions[4], actions[5], actions[6], actions[7], actions[8], actions[9], actions[10],
 				new Taunt(this), new Taunt(this), new Hug(this), new Hug(this), new HugForward(this,false), new HugForward(this,true), new HugUpward(this), new HugDownward(this),
 				new FireBall(this,0), new FireBall(this,1), new FireBall(this,2),
 				new Tatsu(this,0), new Tatsu(this,1), new Tatsu(this,2),
@@ -795,11 +820,11 @@ public class Roo extends Player
 						
 					case 1:
 						if(!bounds.isGrounded)
-							addGuardTrigger(roo,bounds.xCoord+100,bounds.yCoord-10,150,160,29,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+100,bounds.yCoord-10,150,160,29,roo.isFacingRight,true,true);
 						else if(isCrouching)
-							addGuardTrigger(roo,bounds.xCoord+110,bounds.yCoord-10,200,35,4,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+110,bounds.yCoord-10,200,35,4,roo.isFacingRight,true,true);
 						else
-							addGuardTrigger(roo,bounds.xCoord+130,bounds.yCoord+10,180,35,4,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+130,bounds.yCoord+10,180,35,4,roo.isFacingRight,true,true);
 						break;
 						
 					case 2:
@@ -879,11 +904,11 @@ public class Roo extends Player
 						
 					case 1:
 						if(!bounds.isGrounded)
-							addGuardTrigger(roo,bounds.xCoord+90,bounds.yCoord-130,175,280,12,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+90,bounds.yCoord-130,175,280,3,roo.isFacingRight,true,true);
 						else if(isCrouching)
-							addGuardTrigger(roo,bounds.xCoord+110,bounds.yCoord-10,200,35,7,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+110,bounds.yCoord-10,200,35,7,roo.isFacingRight,true,true);
 						else
-							addGuardTrigger(roo,bounds.xCoord+130,bounds.yCoord+10,210,35,8,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+130,bounds.yCoord+10,210,35,8,roo.isFacingRight,true,true);
 						break;
 					
 					case 3:
@@ -896,6 +921,7 @@ public class Roo extends Player
 					case 4:
 						if(!bounds.isGrounded)
 						{
+							addGuardTrigger(roo,1,bounds.xCoord+90,bounds.yCoord-130,175,280,8,roo.isFacingRight,true,true);
 							if(j)
 								addPleb(roo,1,bounds.xCoord+110,bounds.yCoord-85,100,135,2,Pleb.HIGH,1,35,10,2,0,0.8,true,false,false,true,new double[][]{new double[]{Pleb.LAUNCH,1,-2,1,25,1,25}});
 							else
@@ -987,17 +1013,17 @@ public class Roo extends Player
 						
 					case 1:
 						if(!bounds.isGrounded)
-							addGuardTrigger(roo,bounds.xCoord+115,bounds.yCoord,225,175,11,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+115,bounds.yCoord,225,175,11,roo.isFacingRight,true,true);
 						else if(isCrouching)
 						{
-							addGuardTrigger(roo,bounds.xCoord+70,bounds.yCoord-185,160,335,10,roo.isFacingRight,true,true);
-							addGuardTrigger(roo,bounds.xCoord+70,bounds.yCoord-310,80,250,10,roo.isFacingRight,true,true);
-							addGuardTrigger(roo,bounds.xCoord+110,bounds.yCoord-250,80,250,10,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+70,bounds.yCoord-185,160,335,10,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+70,bounds.yCoord-310,80,250,10,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+110,bounds.yCoord-250,80,250,10,roo.isFacingRight,true,true);
 						}
 						else
 						{
-							addGuardTrigger(roo,bounds.xCoord+130,bounds.yCoord+6,165,135,9,roo.isFacingRight,true,true);
-							addGuardTrigger(roo,bounds.xCoord+150,bounds.yCoord-150,80,195,9,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+130,bounds.yCoord+6,165,135,9,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+150,bounds.yCoord-150,80,195,9,roo.isFacingRight,true,true);
 						}
 						break;
 						
@@ -1114,11 +1140,11 @@ public class Roo extends Player
 						
 					case 1:
 						if(!bounds.isGrounded)
-							addGuardTrigger(roo,bounds.xCoord+80,bounds.yCoord+60,150,160,12,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+80,bounds.yCoord+60,150,160,12,roo.isFacingRight,true,true);
 						else if(isCrouching)
-							addGuardTrigger(roo,bounds.xCoord+130,bounds.yCoord+85,175,65,6,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+130,bounds.yCoord+85,175,65,6,roo.isFacingRight,true,true);
 						else
-							addGuardTrigger(roo,bounds.xCoord+130,bounds.yCoord+165,195,75,6,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+130,bounds.yCoord+165,195,75,6,roo.isFacingRight,true,true);
 						break;
 						
 					case 4:
@@ -1195,11 +1221,11 @@ public class Roo extends Player
 						
 					case 1:
 						if(!bounds.isGrounded)
-							addGuardTrigger(roo,bounds.xCoord-50,bounds.yCoord+30,350,200,15,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord-50,bounds.yCoord+30,350,200,15,roo.isFacingRight,true,true);
 						else if(isCrouching)
-							addGuardTrigger(roo,bounds.xCoord+130,bounds.yCoord+60,215,95,6,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+130,bounds.yCoord+60,215,95,6,roo.isFacingRight,true,true);
 						else
-							addGuardTrigger(roo,bounds.xCoord+153,bounds.yCoord+10,168,135,9,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+153,bounds.yCoord+10,168,135,9,roo.isFacingRight,true,true);
 						break;
 						
 					case 2:
@@ -1245,11 +1271,11 @@ public class Roo extends Player
 		{
 			super(Action.NORMAL,1,
 				new int[][]{new int[]{}, new int[]{}, new int[]{2}},
+				new boolean[]{true,false,true},
 				new boolean[]{false,false,true},
 				new boolean[]{false,false,true},
 				new boolean[]{false,false,true},
-				new boolean[]{false,false,true},
-				new int[]{-1,-1,-1,-1,5,38},
+				new int[]{9,26,-1,-1,5,38},
 				new boolean[]{true,true,true});
 			roo = r;
 			scaling = 0.03;
@@ -1291,13 +1317,13 @@ public class Roo extends Player
 						
 					case 1:
 						if(!bounds.isGrounded)
-							addGuardTrigger(roo,bounds.xCoord+75,bounds.yCoord+10,320,180,14,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+75,bounds.yCoord+10,320,180,14,roo.isFacingRight,true,true);
 						else if(isCrouching)
-							addGuardTrigger(roo,bounds.xCoord+145,bounds.yCoord+60,215,95,6,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+145,bounds.yCoord+60,215,95,6,roo.isFacingRight,true,true);
 						else
 						{
-							addGuardTrigger(roo,bounds.xCoord+125,bounds.yCoord-130,130,210,13,roo.isFacingRight,true,true);
-							addGuardTrigger(roo,bounds.xCoord+125,bounds.yCoord-50,210,150,13,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+125,bounds.yCoord-130,130,210,13,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,0,bounds.xCoord+125,bounds.yCoord-50,210,150,13,roo.isFacingRight,true,true);
 						}
 						break;
 						
@@ -1332,7 +1358,7 @@ public class Roo extends Player
 						
 					case 15:
 						if(!bounds.isGrounded)
-							addGuardTrigger(roo,bounds.xCoord+75,bounds.yCoord-110,295,210,18,roo.isFacingRight,true,true);
+							addGuardTrigger(roo,1,bounds.xCoord+75,bounds.yCoord-110,295,210,18,roo.isFacingRight,true,true);
 						else if(isCrouching){}
 						else{}
 						break;
@@ -1504,7 +1530,7 @@ public class Roo extends Player
 						target.bounds.forceArchiver.clear();
 						
 						Puppet t = target;
-						setAction(actions[16]);
+						setAction(actions[18]);
 						currAction.target = t;
 						fCounter = -1;
 						sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
@@ -1522,7 +1548,7 @@ public class Roo extends Player
 		
 		public HugForward(Roo r, boolean d)
 		{
-			super(Action.GRAB,0,
+			super(Action.GRAB,2,
 					new int[][]{new int[]{}, new int[]{}, new int[]{}},
 					new boolean[]{false,false,false},
 					new boolean[]{false,false,false},
@@ -1567,7 +1593,7 @@ public class Roo extends Player
 						
 					case 2:
 						target.currState = PuppetState.HUGGED3;
-						target.isFacingRight = isFacingRight;
+						target.isFacingRight = !isFacingRight;
 						target.bounds.forceArchiver.clear();
 						target.directTo(bounds.xCoord+bounds.width/2-target.bounds.width/2+((isFacingRight)? -1:1)*(bounds.width/3+target.bounds.width/2),bounds.yCoord-bounds.height/5);
 						target.sAngle = 210;
@@ -1616,7 +1642,7 @@ public class Roo extends Player
 		
 		public HugUpward(Roo r)
 		{
-			super(Action.GRAB,0,
+			super(Action.GRAB,2,
 					new int[][]{new int[]{}, new int[]{}, new int[]{}},
 					new boolean[]{false,false,false},
 					new boolean[]{false,false,false},
@@ -1687,7 +1713,7 @@ public class Roo extends Player
 		
 		public HugDownward(Roo r)
 		{
-			super(Action.GRAB,0,
+			super(Action.GRAB,2,
 					new int[][]{new int[]{}, new int[]{}, new int[]{}},
 					new boolean[]{false,false,false},
 					new boolean[]{false,false,false},
@@ -1871,7 +1897,8 @@ public class Roo extends Player
 				new int[]{-1,-1,-1,-1,-1,-1},
 				new boolean[]{true,true,false});
 			roo = r;
-			strength = s;spins = 1;
+			strength = s;
+			spins = 1;
 			scaling = 0.1;
 		}
 		
@@ -1905,6 +1932,7 @@ public class Roo extends Player
 					}
 					else
 					{
+						boolean g = true;
 						switch((f-6)%14)
 						{
 							case 0:
@@ -1914,11 +1942,14 @@ public class Roo extends Player
 								if(speed > maxSpeed)
 									speed = maxSpeed;
 								
-								addGuardTrigger(roo,bounds.xCoord+60,bounds.yCoord-10,290,180,14,roo.isFacingRight,true,true);
+								addGuardTrigger(roo,f,bounds.xCoord+60,bounds.yCoord-10,290,180,14,roo.isFacingRight,true,true);
 								break;
 							
 							case 4:
-								addPleb(roo,f,bounds.xCoord+150,bounds.yCoord+35,130,60,4,Pleb.MID,1,18,18,speed*2,0,0.1,true,false,(strength == 2),true,new double[][]{});
+								if(target != null)
+									g = (strength != 1 || target.hitStun != 0);
+								addPleb(roo,f,bounds.xCoord+150,bounds.yCoord+35,130,60,4,Pleb.MID,1,18,18,(g)?speed*2:0,0,0.1,true,false,(strength == 2),true,new double[][]{});
+								
 								if(target != null)
 								{
 									if(target.hitStun == 0)
@@ -1927,7 +1958,10 @@ public class Roo extends Player
 								break;
 								
 							case 10:
-								addPleb(roo,f,bounds.xCoord+150,bounds.yCoord+35,130,60,4,Pleb.MID,1,18,18,speed*2,0,0.1,true,false,(strength == 2),true,new double[][]{});
+								if(target != null)
+									g = (strength != 1 || target.hitStun != 0);
+								addPleb(roo,f,bounds.xCoord+150,bounds.yCoord+35,130,60,4,Pleb.MID,1,18,18,(g)?speed*2:0,0,0.1,true,false,(strength == 2),true,new double[][]{});
+								
 								if(target != null)
 								{
 									if(target.hitStun == 0)
@@ -1948,9 +1982,9 @@ public class Roo extends Player
 						
 						if(strength == 1)
 						{
-							bounds.isGhost = true;
 							if(target != null)
 							{
+								bounds.isGhost = (target.hitStun == 0);
 								if((bounds.xCoord > target.bounds.xCoord+target.bounds.width/2 && isFacingRight) || (bounds.xCoord+bounds.width < target.bounds.xCoord+target.bounds.width/2 && !isFacingRight))
 									fCounter = 22+14*(spins-1);
 							}
@@ -2037,9 +2071,9 @@ public class Roo extends Player
 						break;
 						
 					case 1:
-						addGuardTrigger(roo,bounds.xCoord+70,bounds.yCoord-230,160,340,(strength == 0)? 21:24,roo.isFacingRight,true,true);
-						addGuardTrigger(roo,bounds.xCoord+70,bounds.yCoord-275,80,385,(strength == 0)? 21:24,roo.isFacingRight,true,true);
-						addGuardTrigger(roo,bounds.xCoord+70,bounds.yCoord-185,180,365,9,roo.isFacingRight,true,true);
+						addGuardTrigger(roo,0,bounds.xCoord+70,bounds.yCoord-230,160,340,(strength == 0)? 21:24,roo.isFacingRight,true,true);
+						addGuardTrigger(roo,0,bounds.xCoord+70,bounds.yCoord-275,80,385,(strength == 0)? 21:24,roo.isFacingRight,true,true);
+						addGuardTrigger(roo,0,bounds.xCoord+70,bounds.yCoord-185,180,365,9,roo.isFacingRight,true,true);
 						break;
 						
 					case 8:

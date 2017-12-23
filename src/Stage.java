@@ -54,11 +54,11 @@ public class Stage
 		switch(type)
 		{
 			case TRAINING:
-				settings = new boolean[]{true,true};	//[hitboxes, debugging]
+				settings = new boolean[]{true,true,true};	//[hitboxes, debugging, inputs]
 				break;
 				
 			case VERSUS:
-				settings = new boolean[]{false,false};
+				settings = new boolean[]{false,false,false};	//[hitboxes, debugging, inputs]
 				break;
 		}
 		timer = new int[]{99,100};
@@ -159,6 +159,7 @@ public class Stage
 					}
 					else if(player1.health <= 0)
 					{
+						player1.kdCounter = 0;
 						if(wins[1][wins[1][0]+1] == 0)
 						{
 							d.addScript(Director.ROUNDEND);
@@ -173,6 +174,7 @@ public class Stage
 					}
 					else if(player2.health <= 0)
 					{
+						player2.kdCounter = 0;
 						if(wins[0][wins[0][0]+1] == 0)
 						{
 							d.addScript(Director.ROUNDEND);

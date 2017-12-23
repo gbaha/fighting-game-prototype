@@ -23,7 +23,7 @@ public class Hand implements KeyListener	//, MouseListener
 		stickBindings = new int[4];
 		buttonBindings = new int[12];
 		stickArchiver = new boolean[4];
-		buttonArchiver = new boolean[12];
+		buttonArchiver = new boolean[13];
 		buttonHeld = new boolean[8];
 		
 		xMouse = 0;
@@ -45,7 +45,7 @@ public class Hand implements KeyListener	//, MouseListener
 		stickBindings = s;
 		buttonBindings = b;
 		stickArchiver = new boolean[4];
-		buttonArchiver = new boolean[12];
+		buttonArchiver = new boolean[13];
 		buttonHeld = new boolean[8];
 		
 		xMouse = MouseInfo.getPointerInfo().getLocation().x-x;
@@ -67,11 +67,11 @@ public class Hand implements KeyListener	//, MouseListener
 		{
 			if(player.hitStun == 0 || !player.bounds.isGrounded)
 				player.isCrouching = false;
-			player.isDashing = false;
+	//		player.isDashing = false;
 			player.isBlocking = new boolean[]{false,false};
 			player.sInputs = stickArchiver;
 			
-			for(Force f: player.bounds.forceArchiver)
+	/*		for(Force f: player.bounds.forceArchiver)
 			{
 				if(f.type.equals("dash") && (f.direction == 1 || f.direction == 3))
 					player.isDashing = true;
@@ -83,7 +83,7 @@ public class Hand implements KeyListener	//, MouseListener
 					if(f.type.equals("yJump"))
 						f.decay = f.magnitude;
 				}
-			}
+			}*/
 	//		currButton = -1;
 			if(fTimer < 1000)
 				fTimer++;
@@ -278,8 +278,10 @@ public class Hand implements KeyListener	//, MouseListener
 			LinkedList<int[]> sInputs = (LinkedList<int[]>)stickInputs.clone();
 			LinkedList<int[]> bInputs = (LinkedList<int[]>)buttonInputs.clone();
 			LinkedList<Boolean> order = (LinkedList<Boolean>)inputOrder.clone();
-			sInputs.addLast(new int[]{5,1});
-			bInputs.addLast(new int[]{-1,1});
+			if(sInputs.size() < 2)
+				sInputs.addLast(new int[]{5,1});
+			if(bInputs.size() < 2)
+				bInputs.addLast(new int[]{-1,1});
 			
 			int i = m[0].length-1;
 			int j = 0;
@@ -318,67 +320,87 @@ public class Hand implements KeyListener	//, MouseListener
 					}
 				}
 				
-				if((s == m[0][i] || m[0][i] == -1 || (s == 5 && m[0][i] != 5)) && (bInputs.getFirst()[0] == m[1][i] || m[1][i] == -1))
+				if((s == m[0][i] || m[0][i] == -1 /*|| (s == 5 && m[0][i] != 5 && i > 0)*/) && (bInputs.getFirst()[0] == m[1][i] || m[1][i] < 0))
 				{
 					if(m[0][i] != -1)
 					{
-						if(s != 5)
-							j = 0;
-						if(((m[2][0] == 0 && (m[2][i] >= sInputs.getFirst()[1]+j || m[2][i] == -1)) || (m[2][0] == 1 && (m[2][i] <= sInputs.getFirst()[1]+j || m[2][i] == -1))) || i == 0)
-							sInputs.removeFirst();
-						else
-							c = false;
-					}
-					else if(order.getFirst() && i == m[0].length-1)
-						c = false;
-					
-					if(m[1][i] != -1)
-					{
-						if(((m[2][0] == 0 && (m[2][i] >= bInputs.getFirst()[1] || m[2][i] == -1)) || (m[2][0] == 1 && (m[2][i] <= bInputs.getFirst()[1] || m[2][i] == -1))) || i == 0)
+						if(i == m[0].length-1)
 						{
-					//		if(player.actions[player.movelist.indexOf(m)].type != Action.TAUNT || bInputs.getFirst()[1] > 1 || m[2][i] == 1)
+							j = sInputs.getFirst()[1];
+							sInputs.removeFirst();
+						}
+						else if((m[2][0] == 0 && (m[2][i+1] >= j || m[2][i+1] == -1)) || (m[2][0] == 1 && (m[2][i+1] <= j || m[2][i+1] == -1)))
+						{
+							j = sInputs.getFirst()[1];
+							sInputs.removeFirst();
+						}
+						else
+							c = false;	
+					}
+					else if(order.getFirst())
+					{
+						if(i == m[0].length-1)
+							c = false;
+						j += sInputs.getFirst()[1];
+					}
+					
+					if(m[1][i] >= 0)
+					{
+						if(i == m[0].length-1)
+						{
+							if(player.actions[player.movelist.indexOf(m)].type != Action.TAUNT || bInputs.getFirst()[1] > 1 || m[2][i] == 1)
+							{
+								j = bInputs.getFirst()[1];
 								bInputs.removeFirst();
+							}
+						}
+						else if((m[2][0] == 0 && (m[2][i+1] >= j || m[2][i+1] == -1)) || (m[2][0] == 1 && (m[2][i+1] <= j || m[2][i+1] == -1)))
+						{
+							if(player.actions[player.movelist.indexOf(m)].type != Action.TAUNT || bInputs.getFirst()[1] > 1 || m[2][i] == 1)
+							{
+								j = bInputs.getFirst()[1];
+								bInputs.removeFirst();
+							}
 						}
 						else
 							c = false;
 					}
-					else if(!order.getFirst() && i == m[0].length-1)
-						c = false;
+					else if(!order.getFirst())
+					{
+						if(m[1][i] == -2)
+							c = false;
+						j += bInputs.getFirst()[1];
+					}
 					
-					sInputs.addLast(new int[]{5,1});
-					bInputs.addLast(new int[]{-1,1});
+					if(sInputs.size() < 2)
+						sInputs.addLast(new int[]{5,1});
+					if(bInputs.size() < 2)
+						bInputs.addLast(new int[]{-1,1});
 				}
-		/*		else if(s == 5 && sInputs.size() > 1 && order.getFirst() && j == 0)
+				else if(s == 5 && sInputs.size() > 1 && order.getFirst())
 				{
-					j = sInputs.getFirst()[1];
+					j += sInputs.getFirst()[1];
 					sInputs.removeFirst();
 					i++;
-				}*/
+				}
 				else
 					c = false;
 				
 				if(!c)
 					i = 0;
 				else
-				{
 					order.removeFirst();
-					if(order.size() > 0)
-					{
-						if(order.getFirst())
-							j += sInputs.getFirst()[1];
-						else
-							j += bInputs.getFirst()[1];
-					}
-				}
 				i--;
 			}
 			
 			if(c && ((player.bounds.isGrounded && player.actions[player.movelist.indexOf(m)].groundOk) || (!player.bounds.isGrounded && player.actions[player.movelist.indexOf(m)].airOk)))
-			{//System.out.println(">> "+player.movelist.indexOf(m)+" "+player.actions[player.movelist.indexOf(m)]);
+			{
 				if(player.currAction == null)
 				{
 					if(m.length < 4)
+					{//System.out.println(">> "+player.movelist.indexOf(m)+" "+player.actions[player.movelist.indexOf(m)]);
 						player.setAction(player.actions[player.movelist.indexOf(m)]);
+					}
 				}
 				else if(player.currAction.cancelOk && (player.currAction.isCancelable(player.hitInfo[0],player.fCounter,player.actions[player.movelist.indexOf(m)].type,currButton,player.bounds.isGrounded) || m.length >= 4))
 				{
@@ -398,7 +420,7 @@ public class Hand implements KeyListener	//, MouseListener
 						}
 					}
 					if(n)
-					{
+					{//System.out.println(">> "+player.movelist.indexOf(m)+" "+player.actions[player.movelist.indexOf(m)]);
 						Puppet t = player.currAction.target;
 						player.setAction(player.actions[player.movelist.indexOf(m)]);
 						if(player.currAction.type != Action.SPECIAL && player.currAction.type != Action.SUPER)

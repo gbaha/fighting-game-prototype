@@ -15,12 +15,13 @@ abstract class Action
 	double scaling;
 	boolean[] isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable;
 	boolean cancelOk, groundOk, airOk, aLock, cLock;
-	String hashCounter;
+	String hashCounter, guardCounter;
 	
 	public Action(int t, int ct, int[][] b, boolean[] c1, boolean[] c2, boolean[] c3, boolean[] c4, int[] cw, boolean[] ok)
 	{
 		target = null;
 		hashCounter = "";
+		guardCounter = "";
 		button = -1;
 		type = t;
 		cancelType = ct;	// 0 = on whiff, 1 = on block, 2 = on hit
@@ -69,8 +70,8 @@ abstract class Action
 						else
 						{
 							boolean[][] cancel = new boolean[][]{isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable, isSpecialCancelable};
-							if(cancel[t-1][i]){
-								return true;}
+							if(cancel[t-1][i])
+								return true;
 						}
 					}
 				}
@@ -84,9 +85,9 @@ abstract class Action
 		Pleb p = new Pleb(pu,pu.bounds,(a)? this:null,x,y,w,h,d,t,s,hd,sd,kx,ky,hs,ia,ip,pb,pr);
 		
 		if(hashCounter.equals(""))
-			hashCounter = p.toString()+hc;
-		else if(Integer.parseInt(hashCounter.substring(hashCounter.length()-1)) != hc)
-			hashCounter = p.toString()+hc;
+			hashCounter = p.toString()+"p"+hc;
+		else if(Integer.parseInt(hashCounter.substring(hashCounter.lastIndexOf('p')+1)) != hc)
+			hashCounter = p.toString()+"p"+hc;
 		p.hash = hashCounter;
 		
 		pu.plebsOut.add(p);
@@ -95,14 +96,21 @@ abstract class Action
 	protected void addGrab(Puppet pu, int x, int y, int w, int h, int d, boolean r, boolean ia, boolean a)
 	{
 		Pleb p = new Pleb(pu,pu.bounds,(a)? this:null,x,y,w,h,d,Pleb.GRAB,r,ia);
-		hashCounter = "huggies0";
+		hashCounter = "huggiesp0";
 		p.hash = hashCounter;
 		pu.plebsOut.add(p);
 	}
 	
-	protected void addGuardTrigger(Puppet pu, int x, int y, int w, int h, int d, boolean r, boolean ia, boolean a)
+	protected void addGuardTrigger(Puppet pu, int hc, int x, int y, int w, int h, int d, boolean r, boolean ia, boolean a)
 	{
 		Pleb p = new Pleb(pu,pu.bounds,(a)? this:null,x,y,w,h,d,Pleb.GUARD,r,ia);
+		
+		if(guardCounter.equals(""))
+			guardCounter = p.toString()+"g"+hc;
+		else if(Integer.parseInt(guardCounter.substring(guardCounter.lastIndexOf('g')+1)) != hc)
+			guardCounter = p.toString()+"g"+hc;
+		p.hash = guardCounter;
+		
 		pu.plebsOut.add(p);
 	}
 	

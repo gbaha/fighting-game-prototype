@@ -27,7 +27,9 @@ public class Pleb extends Hitbox
 	public static final int KNOCKDOWN = 0;	//[air only?, kd counter, upward force magnitude, upward force decay, down time]
 	public static final int LAUNCH = 1;		//[interruptible?, xforce magnitude, xforce decay, yforce magnitude, yforce decay, hitstun]
 	public static final int SPIKE = 2;		//[downward force, ground bounce force, down time]
-	public static final int TAUNT = 3;		//[duration, phase, tint pulse]
+	public static final int WALLBOUNCE = 3;	//[air only?, kd counter, hit force magnitude, hit force decay, bounce force magnitude, bounce force decay magnitude, down time]
+	public static final int TAUNT = 4;		//[duration, phase, tint pulse]
+	public static final int FLOAT = 5;		//[]
 	public static final int TAYLOR = 99;	//[ITS JOKE]
 	
 	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d, int t, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, boolean pb, double[][] pr)

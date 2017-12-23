@@ -33,8 +33,8 @@ public class Main
 		
 		stage = new Stage(Stage.TRAINING,2);
 //		geebs = new Beaman(stage);
-		p1 = new Hand(xCoord,yCoord,width,height,new int[]{87,68,83,65},new int[]{73,79,80,74,75,76,91,59,32,49,50,51});
-		p2 = new Hand(xCoord,yCoord,width,height,new int[]{38,39,40,37},new int[]{90,88,67,86,66,78,999,999,999,8,999,999});
+		p1 = new Hand(xCoord,yCoord,width,height,new int[]{87,68,83,65},new int[]{73,79,80,74,75,76,91,59,32,49,50,51,52});
+		p2 = new Hand(xCoord,yCoord,width,height,new int[]{38,39,40,37},new int[]{90,88,67,86,66,78,999,999,999,8,999,999,999});
 		gui = new Gui(p1,p2,gamePaused);
 		
 		if(stage.player1 != null)
@@ -65,7 +65,7 @@ public class Main
 			if(p1.buttonArchiver[9])
 			{
 				stage.type = (stage.type == Stage.TRAINING)? Stage.VERSUS:Stage.TRAINING;
-				stage.settings = (stage.type == Stage.TRAINING)? new boolean[]{true,true}:new boolean[]{false,false};
+				stage.settings = (stage.type == Stage.TRAINING)? new boolean[]{true,true,true}:new boolean[]{false,false,false};
 				stage.reset(director,p1,p2);
 				p1.buttonArchiver[9] = false;
 			}
@@ -78,6 +78,11 @@ public class Main
 			{
 				stage.settings[1] = !stage.settings[1];
 				p1.buttonArchiver[11] = false;
+			}
+			if(p1.buttonArchiver[12])
+			{
+				stage.settings[2] = !stage.settings[2];
+				p1.buttonArchiver[12] = false;
 			}
 			if(stage.isResetting)
 			{
@@ -95,7 +100,7 @@ public class Main
 			gamePaused = logic.gamePaused;
 			
 		//	geebs.defyLogic();
-			jas.update(xCoord,yCoord+window.getInsets().top,width,height,fps,gamePaused);
+			jas.update(xCoord,yCoord+window.getInsets().top,width,height,logic.slip[0],fps,gamePaused);
 			klam.play();
 			
 			double end = System.currentTimeMillis();

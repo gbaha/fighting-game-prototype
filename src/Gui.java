@@ -117,7 +117,7 @@ public class Gui extends JPanel
 		}
 		
 		//INPUTS
-		if(c.type == Stage.TRAINING)
+		if(c.settings[2])
 		{
 			drawInputs(g,hand1,w,h,true);
 			drawInputs(g,hand2,w,h,false);
