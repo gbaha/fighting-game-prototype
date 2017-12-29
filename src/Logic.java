@@ -138,7 +138,7 @@ public class Logic
 			{
 				if(!p.bounds.isFloating && !p.floatOverride)
 				{
-					p.bounds.forceArchiver.add(new Force("gravity",0,gravity,0));
+					p.bounds.forceArchiver.add(new Force("gravity",0,gravity,gravity));
 					if(p.bounds.wasFloating)
 						p.bounds.forceArchiver.add(new Force("postFloat",2,gravity,gravity/10));
 				}
@@ -443,6 +443,9 @@ public class Logic
 			if(h1.yDrag != 0)
 				y1 -= h1.yDrift;
 			
+			if(hitboxes.indexOf(h1) < stage.puppets.size() && forces[hitboxes.indexOf(h1)][2] == 0)
+				stage.puppets.get(hitboxes.indexOf(h1)).isJuggled = false;
+			
 			for(Floor f: stage.floors)
 			{
 				if(h1.xCoord == f.xCoord)
@@ -481,7 +484,8 @@ public class Logic
 							if(x+h1.width >= 1280-xFocus-focusWidth[0] && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280-focusWidth[0]*2)
 							{
 								stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
-							
+								stage.puppets.get(hitboxes.indexOf(h1)).bDirection = 1;
+								
 								if(h1.blocked[1] > 1280-xFocus-focusWidth[0]  || h1.xCoord+h1.width > 1280-xFocus-focusWidth[0] || h1.blocked[1] == h1.xCoord+h1.width/2)
 									h1.xCoord = 1280-xFocus-h1.width-focusWidth[0];
 								x = x1;
@@ -507,6 +511,7 @@ public class Logic
 							if(x <= focusWidth[0]-xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280-focusWidth[0]*2)
 							{
 								stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
+								stage.puppets.get(hitboxes.indexOf(h1)).bDirection = -1;
 								
 								if(h1.blocked[3] < focusWidth[0]-xFocus || h1.xCoord < focusWidth[0]-xFocus || h1.blocked[3] == h1.xCoord+h1.width/2)
 									h1.xCoord = focusWidth[0]-xFocus;
@@ -1006,6 +1011,8 @@ public class Logic
 												stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.xVel = 0;
 									*/		
 											h1.xVel = 0;
+											if(hitboxes.indexOf(h1) < stage.puppets.size())
+												stage.puppets.get(hitboxes.indexOf(h1)).bDirection = 1;
 											
 											if(h1.blocked[1] > f.xCoord+f.width  || h1.xCoord+h1.width > f.xCoord+f.width || h1.blocked[1] == h1.xCoord+h1.width/2)
 												h1.xCoord = f.xCoord+f.width-h1.width;	//f.xCoord+f.width-h1.xCoord-h1.width+h1.xCoord;
@@ -1048,6 +1055,8 @@ public class Logic
 												stage.props.get(hitboxes.indexOf(h1)-stage.puppets.size()).bounds.xVel = 0;
 									*/		
 											h1.xVel = 0;
+											if(hitboxes.indexOf(h1) < stage.puppets.size())
+												stage.puppets.get(hitboxes.indexOf(h1)).bDirection = -1;
 											
 											if(h1.blocked[3] < f.xCoord || h1.xCoord < f.xCoord || h1.blocked[3] == h1.xCoord+h1.width/2)
 												h1.xCoord = f.xCoord;	//f.xCoord-h1.xCoord+h1.xCoord;
@@ -2064,6 +2073,7 @@ public class Logic
 							stage.props.add(p.propArchiver.get(0));
 							p.propArchiver.remove(0);
 						}
+						p.bDirection = 0;
 						p.canBlock = false;
 					}
 				}

@@ -284,7 +284,7 @@ public class Hand implements KeyListener	//, MouseListener
 				bInputs.addLast(new int[]{-1,1});
 			
 			int i = m[0].length-1;
-			int j = 0;
+			int[] j = new int[2];
 			boolean c = true;
 			
 			while(i >= 0)
@@ -326,12 +326,17 @@ public class Hand implements KeyListener	//, MouseListener
 					{
 						if(i == m[0].length-1)
 						{
-							j = sInputs.getFirst()[1];
+							j = new int[]{sInputs.getFirst()[1],0};
 							sInputs.removeFirst();
 						}
-						else if((m[2][0] == 0 && (m[2][i+1] >= j || m[2][i+1] == -1)) || (m[2][0] == 1 && (m[2][i+1] <= j || m[2][i+1] == -1)))
+						else if(i == 0 && j[1] == 0)
 						{
-							j = sInputs.getFirst()[1];
+							j = new int[]{sInputs.getFirst()[1],0};
+							sInputs.removeFirst();
+						}
+						else if((m[2][0] == 0 && (m[2][i+1] >= j[0]+j[1] || m[2][i+1] == -1)) || (m[2][0] == 1 && (m[2][i+1] <= j[0]+j[1] || m[2][i+1] == -1)))
+						{
+							j = new int[]{sInputs.getFirst()[1],0};
 							sInputs.removeFirst();
 						}
 						else
@@ -341,7 +346,8 @@ public class Hand implements KeyListener	//, MouseListener
 					{
 						if(i == m[0].length-1)
 							c = false;
-						j += sInputs.getFirst()[1];
+						j[0] += sInputs.getFirst()[1];
+						
 					}
 					
 					if(m[1][i] >= 0)
@@ -350,15 +356,23 @@ public class Hand implements KeyListener	//, MouseListener
 						{
 							if(player.actions[player.movelist.indexOf(m)].type != Action.TAUNT || bInputs.getFirst()[1] > 1 || m[2][i] == 1)
 							{
-								j = bInputs.getFirst()[1];
+								j = new int[]{bInputs.getFirst()[1],0};
 								bInputs.removeFirst();
 							}
 						}
-						else if((m[2][0] == 0 && (m[2][i+1] >= j || m[2][i+1] == -1)) || (m[2][0] == 1 && (m[2][i+1] <= j || m[2][i+1] == -1)))
+					/*	else if(i == 0 && j[1] == 0)
 						{
 							if(player.actions[player.movelist.indexOf(m)].type != Action.TAUNT || bInputs.getFirst()[1] > 1 || m[2][i] == 1)
 							{
-								j = bInputs.getFirst()[1];
+								j = new int[]{sInputs.getFirst()[1],0};
+								bInputs.removeFirst();
+							}
+						}*/
+						else if((m[2][0] == 0 && (m[2][i+1] >= j[0]+j[1] || m[2][i+1] == -1)) || (m[2][0] == 1 && (m[2][i+1] <= j[0]+j[1] || m[2][i+1] == -1)))
+						{
+							if(player.actions[player.movelist.indexOf(m)].type != Action.TAUNT || bInputs.getFirst()[1] > 1 || m[2][i] == 1)
+							{
+								j = new int[]{bInputs.getFirst()[1],0};
 								bInputs.removeFirst();
 							}
 						}
@@ -369,7 +383,7 @@ public class Hand implements KeyListener	//, MouseListener
 					{
 						if(m[1][i] == -2)
 							c = false;
-						j += bInputs.getFirst()[1];
+						j[0] += bInputs.getFirst()[1];
 					}
 					
 					if(sInputs.size() < 2)
@@ -379,7 +393,7 @@ public class Hand implements KeyListener	//, MouseListener
 				}
 				else if(s == 5 && sInputs.size() > 1 && order.getFirst())
 				{
-					j += sInputs.getFirst()[1];
+					j[1] += sInputs.getFirst()[1];
 					sInputs.removeFirst();
 					i++;
 				}
