@@ -193,6 +193,58 @@ public class Player extends Puppet
 			slipFloat = 5;
 	}
 	
+	public void flinch()
+	{
+		int u = -1;
+		if(currAction != null)
+			u = currAction.button;
+		
+		if(ukemi[0] > 0 && bounceStun > 0)
+		{
+			if(ukemi[1] == 0 && u == -1 && ((isFacingRight && !sInputs[3]) || (!isFacingRight && !sInputs[1])))
+			{
+				ukemi[0]++;
+				ukemi[1]++;
+			}
+			else if(ukemi[1] == 1 && (u != -1 || (isFacingRight && sInputs[3]) || (!isFacingRight && sInputs[1])))
+			{
+				hitStun = 0;
+				ukemi[1] += (sInputs[2])? 1:((sInputs[0])? 3:2);
+				
+				bounds.isGrounded = false;
+				bounds.forceArchiver.add(new Force("xUkemi",(isFacingRight)? 3:1,(sInputs[0] || sInputs[2])? 5:10,-10*(ukemi[1])));
+				bounds.forceArchiver.add(new Force("yUkemi",2,20*(ukemi[1]-1)+10,2));
+			}
+		}
+		
+		super.flinch();
+		if(ukemi[1] > 1)
+			currState = (ukemi[1] == 2)? PuppetState.UKEMI_STAND:PuppetState.UKEMI_REBOUND;
+	}
+	
+	public void knockdown()
+	{
+		int u = -1;
+		if(currAction != null)
+			u = currAction.button;
+		
+		if(ukemi[0] > 0)
+		{
+			if(ukemi[1] == 0 && u == -1 && !sInputs[2])
+			{
+				ukemi[0]++;
+				ukemi[1]++;
+			}
+			else if(ukemi[1] == 1 && (u != -1 || sInputs[2]))
+			{
+				hitStun = 0;
+				kdStun = 0;
+				ukemi[1] += ((isFacingRight && sInputs[3]) || (!isFacingRight && sInputs[1]))? 2:1;	
+			}
+		}
+		super.knockdown();
+	}
+	
 	public void getHitboxes()
 	{
 		super.getHitboxes(currState.getPosition());

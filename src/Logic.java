@@ -2073,7 +2073,8 @@ public class Logic
 							stage.props.add(p.propArchiver.get(0));
 							p.propArchiver.remove(0);
 						}
-						p.bDirection = 0;
+						if(p.bounceStun == 0)
+							p.bDirection = 0;
 						p.canBlock = false;
 					}
 				}
