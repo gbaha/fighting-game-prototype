@@ -267,6 +267,13 @@ public class Player extends Puppet
 			bounds.xDrag = 0;
 		}
 		
+		if(sJump[0] <= 10 && sInputs[2])
+			sJump[0]++;
+		else if(sJump[0] > 0 && !sInputs[2])
+			sJump[1]++;
+		if(sJump[1] > 10)
+			sJump = new int[2];
+		
 		boolean f = !bounds.isGrounded && (isJuggled || isDashing || isHoming || isThrown || isTeching || slipFloat > 0); // || other isFloating checks;
 		bounds.wasFloating = bounds.isFloating  && !f;
 		bounds.isFloating = f;
@@ -492,11 +499,12 @@ public class Player extends Puppet
 					new int[]{-1,-1,-1,-1,-1,-1},
 					new boolean[]{true,true,true});
 			frames = 12;
+			cost[0] = 100;
 		}
 		
 		public void perform(int f)
 		{
-			isPerformingAction = (stamina >= 100);
+			isPerformingAction = true;
 			if(target != null)
 				f = frames;
 			
@@ -504,7 +512,6 @@ public class Player extends Puppet
 			{
 				if(target == null)
 				{
-					stamina -= 100;
 					sCooldown = 60;
 					isPerformingAction = false;
 				}

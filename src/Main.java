@@ -100,7 +100,8 @@ public class Main
 			gamePaused = logic.gamePaused;
 			
 		//	geebs.defyLogic();
-			jas.update(xCoord,yCoord+window.getInsets().top,width,height,logic.slip[0],fps,gamePaused);
+			int stop = (logic.superStop[0] > 0)? logic.superStop[0]:logic.slipStop[0];
+			jas.update(xCoord,yCoord+window.getInsets().top,width,height,stop,fps,gamePaused);
 			klam.play();
 			
 			double end = System.currentTimeMillis();

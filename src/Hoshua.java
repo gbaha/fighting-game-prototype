@@ -15,14 +15,14 @@ public class Hoshua extends JPanel
 	SpriteReader sReader;
 	Gui gui;
 	int xFocus, yFocus, xCoord, yCoord, fSkip, fCounter, sTimer;
-	double width, height, fps;
+	double width, height, xZoom, yZoom, fps;
 	boolean gamePaused;
 	
 	public Hoshua(Stage c, Gui g, int x, int y, double w, double h, double f, int s, boolean p)
 	{
 		super(true);
 		canvas = c;
-		sReader = new SpriteReader(w,h,2);
+		sReader = new SpriteReader(w,h,1,1,2);
 		gui = g;
 		xFocus = c.xFocus;
 		yFocus = c.yFocus;
@@ -30,6 +30,8 @@ public class Hoshua extends JPanel
 		yCoord = y;
 		width = w;
 		height = h;
+		xZoom = 1;
+		yZoom = 1;
 		
 		fps = f;
 		fSkip = s;
@@ -46,13 +48,23 @@ public class Hoshua extends JPanel
 		super.paintComponent(g);
 		
 		for(Floor f: canvas.floors)
-			f.draw(g,this,width,height,canvas.settings[1]);	
+			f.draw(g,this,width*xZoom,height*yZoom,canvas.settings[1]);	
 		int a = (sTimer > 0)? ((sTimer < 3)? (int)(105.0*sTimer/3):105):0;
 		g.setColor(new Color(6,8,8,a));
 		g.fillRect(0,0,(int)width,(int)height);
 		
 		xFocus = (int)(canvas.xFocus*width/1280);
 		yFocus = (int)(canvas.yFocus*height/720);
+		if(canvas.zOverride)
+		{
+			xZoom = canvas.xZoom;
+			yZoom = canvas.yZoom;
+		}
+		else
+		{
+			canvas.xZoom = xZoom;
+			canvas.yZoom = yZoom;
+		}
 		
 		try
 		{
@@ -113,23 +125,43 @@ public class Hoshua extends JPanel
 				}
 			}
 			
+			if(!gamePaused)
+			{
+				double z = (players.get(0).bounds.xCoord < players.get(1).bounds.xCoord+players.get(1).bounds.width)? players.get(1).bounds.xCoord+players.get(1).bounds.width-players.get(0).bounds.xCoord:players.get(0).bounds.xCoord+players.get(0).bounds.width-players.get(1).bounds.xCoord;
+			
+				if(Math.abs(1280/(z+100)-xZoom) >= 0.02)	// && xZoom < 1280/(z+100))
+					xZoom += 0.02*((1280/(z+100) > xZoom)? 1:-1);
+				else
+					xZoom = 1280/(z+100);
+				
+				if(Math.abs(1280/(z+100)-yZoom) >= 0.02)	// && yZoom < 1280/(z+100))
+					yZoom += 0.02*((1280/(z+100) > yZoom)? 1:-1);
+				else
+					yZoom = 1280/(z+100);
+				
+				if(xZoom > 1)
+					xZoom = 1;
+				if(yZoom > 1)
+					yZoom = 1;
+			}
+			
 			for(Puppet p: puppets)
-				p.draw(g2,this,sReader,width,height,canvas.settings);
+				p.draw(g2,this,sReader,width*xZoom,height*yZoom,canvas.settings);
 			for(Puppet p: players)
-				p.draw(g2,this,sReader,width,height,canvas.settings);
+				p.draw(g2,this,sReader,width*xZoom,height*yZoom,canvas.settings);
 			for(Prop p: canvas.props)
-				p.draw(g2,this,sReader,width,height,canvas.settings);
+				p.draw(g2,this,sReader,width*xZoom,height*yZoom,canvas.settings);
 			
 			gui.drawFront(g2,this,canvas,width,height);
 			
 			for(Pleb p: canvas.plebs)
 			{
 				if(canvas.settings[0])
-					p.draw(g,width,height);
+					p.draw(g,width*xZoom,height*yZoom);
 			}
 			
 		//	sReader.backup(g2,canvas.settings);
-			sReader.update();
+			sReader.update(xZoom,yZoom);
 		}
 		catch(java.util.ConcurrentModificationException e)
 		{
@@ -138,12 +170,13 @@ public class Hoshua extends JPanel
 		
 		//TEST
 /*		for(BlueFairy b: canvas.fairies)
-			b.draw(g,canvas.xFocus,canvas.yFocus,width,height);*/
+			b.draw(g,canvas.xFocus,canvas.yFocus,width*xZoom,height*yZoom);*/
 		
 		if(canvas.settings[1])
 		{
 			g.setColor(Color.GRAY);
 			g.drawString(fps+"",5,20);
+			g.drawString(yZoom+"",5,(int)height-10);
 		//	g.setColor(new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255)));
 		//	g.fillRect((int)(width-20*width/1280),0,(int)(20*width/1280),(int)(20*height/720));
 			
@@ -158,7 +191,7 @@ public class Hoshua extends JPanel
 			else if(hqz2 > height)
 				hqz2 = (int)height-45;
 			
-			g.drawString("("+(int)((MouseInfo.getPointerInfo().getLocation().x-xCoord-xFocus)*1280/width)+","+(int)((MouseInfo.getPointerInfo().getLocation().y-yCoord-yFocus-25)*720/height+40)+")",hqz1,hqz2+15);
+			g.drawString("("+(int)((MouseInfo.getPointerInfo().getLocation().x-xCoord-xFocus)*1280/xZoom/width)+","+(int)((MouseInfo.getPointerInfo().getLocation().y-yCoord-yFocus-25)*720/yZoom/height+40)+")",hqz1,hqz2+15);
 			g.setColor(Color.DARK_GRAY);
 			g.drawString("("+(MouseInfo.getPointerInfo().getLocation().x-xCoord)+","+(MouseInfo.getPointerInfo().getLocation().y-yCoord)+")",hqz1,hqz2);
 		}

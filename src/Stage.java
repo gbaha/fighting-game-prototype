@@ -26,7 +26,8 @@ public class Stage
 	int[][] wins;
 	Player player1, player2;
 	int type, rounds, rCounter, xFocus, yFocus;
-	boolean isResetting;
+	double xZoom, yZoom;
+	boolean isResetting, zOverride;
 	
 	public Stage(int t, int r)
 	{
@@ -35,6 +36,8 @@ public class Stage
 		rCounter = 0;
 		xFocus = 0;
 		yFocus = 0;
+		xZoom = 1;
+		yZoom = 1;
 		isResetting = false;
 		floors = new ArrayList<Floor>();
 		

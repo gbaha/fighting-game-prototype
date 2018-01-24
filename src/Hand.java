@@ -407,13 +407,15 @@ public class Hand implements KeyListener	//, MouseListener
 				i--;
 			}
 			
-			if(c && ((player.bounds.isGrounded && player.actions[player.movelist.indexOf(m)].groundOk) || (!player.bounds.isGrounded && player.actions[player.movelist.indexOf(m)].airOk)))
+			if(c && player.actions[player.movelist.indexOf(m)].cost[0] <= player.stamina && player.actions[player.movelist.indexOf(m)].cost[1] <= player.meter && ((player.bounds.isGrounded && player.actions[player.movelist.indexOf(m)].groundOk) || (!player.bounds.isGrounded && player.actions[player.movelist.indexOf(m)].airOk)))
 			{
 				if(player.currAction == null)
 				{
 					if(m.length < 4)
 					{//System.out.println(">> "+player.movelist.indexOf(m)+" "+player.actions[player.movelist.indexOf(m)]);
 						player.setAction(player.actions[player.movelist.indexOf(m)]);
+						player.stamina -= player.actions[player.movelist.indexOf(m)].cost[0];
+						player.meter -= player.actions[player.movelist.indexOf(m)].cost[1];
 					}
 				}
 				else if(player.currAction.cancelOk && (player.currAction.isCancelable(player.hitInfo[0],player.fCounter,player.actions[player.movelist.indexOf(m)].type,currButton,player.bounds.isGrounded) || m.length >= 4))
@@ -437,6 +439,9 @@ public class Hand implements KeyListener	//, MouseListener
 					{//System.out.println(">> "+player.movelist.indexOf(m)+" "+player.actions[player.movelist.indexOf(m)]);
 						Puppet t = player.currAction.target;
 						player.setAction(player.actions[player.movelist.indexOf(m)]);
+						player.stamina -= player.actions[player.movelist.indexOf(m)].cost[0];
+						player.meter -= player.actions[player.movelist.indexOf(m)].cost[1];
+						
 						if(player.currAction.type != Action.SPECIAL && player.currAction.type != Action.SUPER)
 							player.currAction.target = t;
 						player.fCounter = 0;

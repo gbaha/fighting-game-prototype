@@ -60,9 +60,9 @@ abstract class Projectile extends Prop
 			health = 0;
 	}
 	
-	protected void addPleb(int hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, boolean pb, double[][] pr)
+	protected void addPleb(int hc, int x, int y, int w, int h, int d1, int d2, int s, int hd, int sd, int kx, int ky, int j, double hs, boolean ia, boolean ip, boolean pb, double[][] pr)
 	{
-		Pleb p = new Pleb(puppet,bounds,null,x,y,w,h,d1,d2,s,hd,sd,kx,ky,hs,ia,ip,pb,pr);
+		Pleb p = new Pleb(puppet,bounds,null,x,y,w,h,d1,d2,s,hd,sd,kx,ky,j,hs,ia,ip,pb,pr);
 		
 		if(hashCounter.equals(""))
 			hashCounter = this.toString()+hc;

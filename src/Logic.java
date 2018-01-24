@@ -10,7 +10,7 @@ public class Logic
 	Stage stage;
 	Hand[] hands;
 	Cricket cricket;
-	int[] focusWidth, slip;
+	int[] focusWidth, slipStop, superStop;
 	int xWindow, yWindow, /*winWidth, winHeight,*/ xFocus, yFocus, focusHeight, lastHit, hitStop;
 	double gravity;
 	boolean gamePaused;
@@ -31,10 +31,11 @@ public class Logic
 		xFocus = 0;
 		yFocus = 0;
 		focusWidth = new int[]{50,250};
-		focusHeight = 4400;//,4850};
+		focusHeight = 4500;	//,4850};
 		lastHit = 0;
 		hitStop = 0;
-		slip = new int[]{0,-1,0,0};	// [timer, slipper, counter, slow magnitude]
+		slipStop = new int[]{0,-1,0,0};	// [timer, slipper, counter, slow magnitude]
+		superStop = new int[]{0,-1,0,0};
 		gravity = 24.5;
 		gamePaused = p;
 		
@@ -44,47 +45,57 @@ public class Logic
 	
 	public void focus()
 	{
-		if(Math.abs(stage.xFocus-xFocus) < 15)
-			stage.xFocus = xFocus;
+		if(Math.abs(stage.xFocus-xFocus) < 15 || stage.xZoom != 1)
+			stage.xFocus = (int)(xFocus*stage.xZoom);
 		else 
-			stage.xFocus += (xFocus-stage.xFocus)/5;
+			stage.xFocus += (int)((xFocus*stage.xZoom-stage.xFocus)/5);
 		
-		if(Math.abs(stage.yFocus-yFocus) < 15)
+		if(Math.abs(stage.yFocus-yFocus) < 15 || stage.yZoom != 1)
+			stage.yFocus = yFocus;	//(int)(5000*(1-stage.yZoom)-(5000*(1-stage.yZoom)-yFocus)*stage.yZoom);
+		else
+			stage.yFocus += (yFocus-stage.yFocus)/5;	//((int)(5000*(1-stage.yZoom)-(5000*(1-stage.yZoom)-yFocus)*stage.yZoom)-stage.yFocus)/5;
+		
+	/*	int x = (int)((xFocus*stage.xZoom-stage.xFocus)/5);
+		int y = (yFocus-stage.yFocus)/5;
+		
+		if((x > 0 && stage.xFocus+x > xFocus) || (x < 0 && stage.xFocus+x < xFocus))
+			stage.xFocus = (int)(xFocus*stage.xZoom);
+		else
+			stage.xFocus += x;
+		if((y > 0 && stage.yFocus+y > yFocus) || (y < 0 && stage.yFocus+y < yFocus))
 			stage.yFocus = yFocus;
 		else
-			stage.yFocus += (yFocus-stage.yFocus)/5;
-	
+			stage.yFocus += y;	System.out.println(y+" "+yFocus+"	"+stage.yZoom);*/
+		
 		for(Floor f: stage.floors)
 		{
-			f.xHosh = f.xCoord+stage.xFocus;
-			f.yHosh = f.yCoord+stage.yFocus;
+			f.xHosh = (int)(f.xCoord+stage.xFocus/stage.xZoom);
+			f.yHosh = (int)(f.yCoord+stage.yFocus/stage.yZoom);
 		}
 		for(Puppet p1: stage.puppets)
 		{
-			p1.xHosh = p1.xCoord+stage.xFocus;
-			p1.yHosh = p1.yCoord+stage.yFocus;
-			p1.bounds.xHosh = p1.bounds.xCoord+stage.xFocus;
-			p1.bounds.yHosh = p1.bounds.yCoord+stage.yFocus;
+			p1.xHosh = (int)(p1.xCoord+stage.xFocus/stage.xZoom);
+			p1.yHosh = (int)(p1.yCoord+stage.yFocus/stage.yZoom);
+			p1.bounds.xHosh = (int)(p1.bounds.xCoord+stage.xFocus/stage.xZoom);
+			p1.bounds.yHosh = (int)(p1.bounds.yCoord+stage.yFocus/stage.yZoom);
 			
 			for(Organ o: p1.anatomy)
 			{
-				o.xHosh = o.xCoord+stage.xFocus;
-				o.yHosh = o.yCoord+stage.yFocus;
+				o.xHosh = (int)(o.xCoord+stage.xFocus/stage.xZoom);
+				o.yHosh = (int)(o.yCoord+stage.yFocus/stage.yZoom);
 			}
 		}
 		for(Prop p2: stage.props)
 		{
-			p2.xHosh = p2.xCoord+stage.xFocus;
-			p2.yHosh = p2.yCoord+stage.yFocus;
-			p2.bounds.xHosh = p2.bounds.xCoord+stage.xFocus;
-			p2.bounds.yHosh = p2.bounds.yCoord+stage.yFocus;							
+			p2.xHosh = (int)(p2.xCoord+stage.xFocus/stage.xZoom);
+			p2.yHosh = (int)(p2.yCoord+stage.yFocus/stage.yZoom);
+			p2.bounds.xHosh = (int)(p2.bounds.xCoord+stage.xFocus/stage.xZoom);
+			p2.bounds.yHosh = (int)(p2.bounds.yCoord+stage.yFocus/stage.yZoom);			
 		}
 		for(Pleb p3: stage.plebs)
 		{
-			p3.xHosh = p3.xCoord+stage.xFocus;
-			p3.yHosh = p3.yCoord+stage.yFocus;
-	//		stage.plebs.get(stage.plebs.indexOf(p3)).xHosh = stage.plebs.get(stage.plebs.indexOf(p3)).xCoord+stage.xFocus;
-	//		stage.plebs.get(stage.plebs.indexOf(p3)).yHosh = stage.plebs.get(stage.plebs.indexOf(p3)).yCoord+stage.yFocus;
+			p3.xHosh = (int)(p3.xCoord+stage.xFocus/stage.xZoom);
+			p3.yHosh = (int)(p3.yCoord+stage.yFocus/stage.yZoom);
 		}
 	}
 	
@@ -95,32 +106,74 @@ public class Logic
 			Puppet[] players = new Puppet[]{stage.player1,stage.player2};
 			for(int p = 0; p < players.length; p++)
 			{
-				if(players[p].bounds.xCoord < focusWidth[0]-xFocus && players[p].bounds.xCoord > stage.floors.get(0).xCoord)
-					xFocus = focusWidth[0]-players[p].bounds.xCoord;
-				if(players[p].bounds.xCoord+players[p].bounds.width > 1280-xFocus-focusWidth[0] && players[p].bounds.xCoord+players[p].bounds.width < stage.floors.get(0).xCoord+stage.floors.get(0).width)
-					xFocus = 1280-(players[p].bounds.xCoord+players[p].bounds.width)-focusWidth[0];
-				
+				if(stage.xZoom == 1)
+				{
+					if(players[p].bounds.xCoord <= focusWidth[0]-xFocus)// && players[p].bounds.xCoord > stage.floors.get(0).xCoord) || stage.xZoom != 1)
+						xFocus = focusWidth[0]-players[p].bounds.xCoord;
+					if(players[p].bounds.xCoord+players[p].bounds.width >= 1280-xFocus-focusWidth[0]) //&& players[p].bounds.xCoord+players[p].bounds.width < stage.floors.get(0).xCoord+stage.floors.get(0).width)
+						xFocus = 1280-(players[p].bounds.xCoord+players[p].bounds.width)-focusWidth[0];
+				}
 				if(players[p].hitStun > players[lastHit].hitStun || (players[p].hitStun == players[lastHit].hitStun && players[p].bounds.yCoord < players[lastHit].bounds.yCoord))
 					lastHit = p;
 			}
 			
-			if(players[lastHit].bounds.yCoord < focusHeight)
-				yFocus = focusHeight-players[lastHit].bounds.yCoord-4350;
+			if(players[lastHit].bounds.yCoord < focusHeight)//+5000*(stage.yZoom-1))
+				yFocus = (int)(focusHeight-players[lastHit].bounds.yCoord+5000*(1-stage.yZoom)-4350);
 			else
-				yFocus = -4350;
+				yFocus = (int)(5000*(1-stage.yZoom)-4350);
+			
+			if(stage.xZoom != 1)
+			{
+				if(stage.player1.bounds.xCoord < stage.player2.bounds.yCoord)
+				{
+					players[0] = stage.player2;
+					players[1] = stage.player1;
+				}
+				xFocus = (int)((1280/stage.xZoom)/2-players[0].bounds.xCoord-(players[1].bounds.xCoord+players[1].bounds.width-players[0].bounds.xCoord)/2);
+			}
 		}
+		
+	/*	int c = 0;
+		stage.zOverride = false;
+		for(Puppet p: stage.puppets)
+		{
+			if(c < p.camCall[0])
+			{
+				if(Math.abs(p.camCall[3]-stage.xZoom) >= 0.03)
+					stage.xZoom += 0.03*((p.camCall[3] > stage.xZoom)? 1:-1);
+				else
+					stage.xZoom = p.camCall[3];
+				if(Math.abs(p.camCall[3]-stage.yZoom) >= 0.03)
+					stage.yZoom += 0.03*((p.camCall[3] > stage.yZoom)? 1:-1);
+				else
+					stage.yZoom = p.camCall[4];
+				
+				if(Math.abs(640-p.camCall[1]*stage.xZoom-xFocus) < 15)
+					xFocus = (int)(640-p.camCall[1]*stage.xZoom);
+				else 
+					xFocus += (int)((640-p.camCall[1]*stage.xZoom-xFocus)/5);
+				
+				int y = (p.camCall[2] < focusHeight)? (int)(focusHeight-p.camCall[2]+5000*(1-stage.yZoom)-4750):(int)(5000*(1-stage.yZoom)-4350);
+				if(Math.abs(y-yFocus) < 15)
+					yFocus = y;
+				else 
+					yFocus += (int)((y-yFocus)/5);
+				stage.zOverride = true;
+			}
+			p.camCall = new double[5];
+		}*/
 	}
 	
 	public void setFocusTo(int x, int y)
 	{
 		xFocus = 640-x;
-		yFocus = 400-y;
+		yFocus = 360-y;
 	}
 	
 	public void setFocusTo(Hitbox h)
 	{
 		xFocus = 640-(h.xCoord+h.width/2);
-		yFocus = 400-(h.yCoord+h.height);
+		yFocus = 360-(h.yCoord+h.height);
 	}
 	
 	public void resetFocus()
@@ -134,8 +187,8 @@ public class Logic
 		for(Puppet p: stage.puppets)
 		{
 			int fLimit = p.bounds.forceArchiver.size();
-			if(slip[2] == 0 || slip[1] == p.id)
-			{
+			if((superStop[2] == 0 && slipStop[2] == 0) || superStop[1] == p.id || slipStop[1] == p.id)
+			{	
 				if(!p.bounds.isFloating && !p.floatOverride)
 				{
 					p.bounds.forceArchiver.add(new Force("gravity",0,gravity,gravity));
@@ -190,7 +243,7 @@ public class Logic
 		for(Prop p: stage.props)
 		{
 			int fLimit = p.bounds.forceArchiver.size();
-			if(slip[2] == 0)
+			if(superStop[2] == 0 && slipStop[2] == 0)
 			{
 				if(!p.bounds.isGrounded && !p.bounds.isFloating)
 					p.bounds.forceArchiver.add(new Force("gravity",0,9.8,0));
@@ -326,8 +379,8 @@ public class Logic
 				}
 				if(hitboxes.indexOf(h) < stage.puppets.size())
 				{
-					if(slip[0] > 0 && slip[1] != stage.puppets.get(hitboxes.indexOf(h)).id)
-						sDamp /= slip[3];
+					if(slipStop[0] > 0 && slipStop[1] != stage.puppets.get(hitboxes.indexOf(h)).id)
+						sDamp /= slipStop[3];
 				}
 				
 				if(h.forceArchiver.get(f).magnitude > 0)
@@ -338,7 +391,7 @@ public class Logic
 							if(!h.forceArchiver.get(f).type.equals("gravity") || (h.forceArchiver.get(f).type.equals("gravity") && !h.isFloating))
 								forces[hitboxes.indexOf(h)][0] += h.forceArchiver.get(f).magnitude*hDamp*sDamp;
 							
-							if(sDamp == 1 || slip[2] == 0)
+							if(sDamp == 1 || (superStop[2] == 0 && slipStop[2] == 0))
 							{
 								if(h.forceArchiver.get(f).decay > 0)
 									h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
@@ -349,7 +402,7 @@ public class Logic
 							
 						case 1:
 							forces[hitboxes.indexOf(h)][1] += h.forceArchiver.get(f).magnitude*hDamp*sDamp;
-							if(sDamp == 1 || slip[2] == 0)
+							if(sDamp == 1 || (superStop[2] == 0 && slipStop[2] == 0))
 							{
 								if((!h.forceArchiver.get(f).type.equals("xKnockback") && !h.forceArchiver.get(f).type.equals("xPursuit")) || h.isGrounded || hDamp < 1)
 								{
@@ -372,7 +425,7 @@ public class Logic
 							
 						case 2:
 							forces[hitboxes.indexOf(h)][2] += h.forceArchiver.get(f).magnitude*hDamp*sDamp;
-							if(sDamp == 1 || slip[2] == 0)
+							if(sDamp == 1 || (superStop[2] == 0 && slipStop[2] == 0))
 							{
 								if(h.forceArchiver.get(f).decay > 0)
 									h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
@@ -384,7 +437,7 @@ public class Logic
 							
 						case 3:
 							forces[hitboxes.indexOf(h)][3] += h.forceArchiver.get(f).magnitude*hDamp*sDamp;
-							if(sDamp == 1 || slip[2] == 0)
+							if(sDamp == 1 || (superStop[2] == 0 && slipStop[2] == 0))
 							{
 								if(!h.forceArchiver.get(f).type.equals("xKnockback") || h.isGrounded || hDamp < 1)
 								{
@@ -448,22 +501,22 @@ public class Logic
 			
 			for(Floor f: stage.floors)
 			{
-				if(h1.xCoord == f.xCoord)
+				if(h1.xCoord <= f.xCoord+75)
 				{
 					if(f.cornered[0] == null)
 						f.cornered[0] = h1;
-					else if(h1 != f.cornered[0] && y1+h1.height+h1.botOffset > f.cornered[0].yCoord && h1.yCoord <= f.cornered[0].yCoord)
+					else if(h1 != f.cornered[0] && h1.xCoord+h1.width/2 > f.cornered[0].xCoord+f.cornered[0].width && y1+h1.height+h1.botOffset > f.cornered[0].yCoord && h1.yCoord <= f.cornered[0].yCoord)
 					{
 						h1.xCoord = f.cornered[0].xCoord+f.cornered[0].width;
 						h1.blocked[1] = f.cornered[0].xCoord+f.cornered[0].width;
 					}
 					cornerOccupied[0] = true;
 				}
-				if(h1.xCoord+h1.width == f.xCoord+f.width)
+				if(h1.xCoord+h1.width  >= f.xCoord+f.width-75)
 				{
 					if(f.cornered[1] == null)
 						f.cornered[1] = h1;
-					else if(h1 != f.cornered[1] && y1+h1.height+h1.botOffset > f.cornered[1].yCoord && h1.yCoord <= f.cornered[1].yCoord)
+					else if(h1 != f.cornered[1] && h1.xCoord+h1.width/2 < f.cornered[1].xCoord && y1+h1.height+h1.botOffset > f.cornered[1].yCoord && h1.yCoord <= f.cornered[1].yCoord)
 					{
 						h1.xCoord = f.cornered[1].xCoord-h1.width;
 						h1.blocked[1] = f.cornered[1].xCoord-h1.width;
@@ -481,7 +534,7 @@ public class Logic
 					{
 						for(int x = h1.xCoord; x <= x1; x++)
 						{
-							if(x+h1.width >= 1280-xFocus-focusWidth[0] && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280-focusWidth[0]*2)
+				/*			if(x+h1.width >= 1280-xFocus-focusWidth[0] && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280-focusWidth[0]*2)
 							{
 								stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
 								stage.puppets.get(hitboxes.indexOf(h1)).bDirection = 1;
@@ -495,7 +548,7 @@ public class Logic
 							{
 								h1.blocked[1] = 1280-xFocus-focusWidth[0];
 								xBlocked = true;
-							}
+							}*/
 							
 							if(x <= focusWidth[1]-xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280-focusWidth[1] && stage.floors.get(0).xCoord+stage.floors.get(0).width-x >= 1280)
 							{
@@ -508,7 +561,7 @@ public class Logic
 					{
 						for(int x = h1.xCoord; x >= x1; x--)
 						{
-							if(x <= focusWidth[0]-xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280-focusWidth[0]*2)
+				/*			if(x <= focusWidth[0]-xFocus && x < hitboxes.get(p).xCoord && hitboxes.get(p).xCoord+hitboxes.get(p).width-x >= 1280-focusWidth[0]*2)
 							{
 								stage.puppets.get(hitboxes.indexOf(h1)).bounds.xVel = 0;
 								stage.puppets.get(hitboxes.indexOf(h1)).bDirection = -1;
@@ -522,7 +575,7 @@ public class Logic
 							{
 								h1.blocked[3] = focusWidth[0]-xFocus;
 								xBlocked = true;
-							}
+							}*/
 							
 							if(x+h1.width >= 1280-xFocus-focusWidth[1] && x+h1.width > hitboxes.get(p).xCoord+hitboxes.get(p).width && x+h1.width-hitboxes.get(p).xCoord >= 1280-focusWidth[1] && x+h1.width-stage.floors.get(0).xCoord >= 1280)
 							{
@@ -609,10 +662,6 @@ public class Logic
 								{
 									if(y+h1.height+h1.botOffset >= y2 && h1.yCoord <= y2)
 									{
-									/*	if(stage.floors.get(0).cornered[0] == h1)
-											h2.xCoord = h1.xCoord+h1.width;
-										else if(stage.floors.get(0).cornered[1] == h1)
-											h2.xCoord = h1.xCoord-h2.width;*/
 										if(stage.floors.get(0).cornered[0] == h1)
 										{
 											h2.xCoord += 20;
@@ -624,6 +673,7 @@ public class Logic
 											h2.xCoord -= 20;
 											if(h2.xCoord < x1-h2.width)
 												h2.xCoord = x1-h2.width;
+							//				System.out.println(stage.floors.get(0).cornered[1]+" "+stage.player1.bounds+"	"+stage.player1.xCoord+" "+x1);
 										}
 										else if(stage.floors.get(0).cornered[0] == h2)
 										{
@@ -636,6 +686,7 @@ public class Logic
 											h1.xCoord -= 20;
 											if(h1.xCoord < x2-h1.width)
 												h1.xCoord = x2-h1.width;
+							//				System.out.println(stage.floors.get(0).cornered[1]+" "+stage.player1.bounds+"	"+stage.player1.xCoord+" <");
 										}
 										else
 										{
@@ -666,66 +717,11 @@ public class Logic
 								}
 							}
 						}
-					/*	if(y2 > h2.yCoord || h2.yDir > 0 || h2.yDrag > 0)
-						{
-							if((h2.xCoord < h1.xCoord+h1.width && h2.blocked[3] != h1.xCoord+h1.width) || (h2.xCoord+h2.width > h1.xCoord && h2.blocked[1] != h1.xCoord))
-							{
-								for(int y = h2.yCoord; y <= y2; y++)
-								{
-									if(y+h2.height+h2.botOffset >= y1 && h2.yCoord <= y1)
-									{
-					*/				/*	if(stage.floors.get(0).cornered[0] == h2)
-											h1.xCoord = h2.xCoord+h2.width;
-										else if(stage.floors.get(0).cornered[1] == h2)
-											h1.xCoord = h2.xCoord-h1.width;*/
-					/*					if(stage.floors.get(0).cornered[0] == h2)
-										{
-											h2.xCoord += 20;
-											if(h2.xCoord > x1+h1.width)
-												h2.xCoord = x1+h1.width;
-										}
-										else if(stage.floors.get(0).cornered[1] == h2)
-										{
-											h2.xCoord -= 20;
-											if(h2.xCoord < x1-h2.width)
-												h2.xCoord = x1-h2.width;
-										}
-										else
-										{
-											if(x2+h2.width/2 >= x1+h1.width/2)
-											{
-												h2.xCoord += 10;
-												if(h2.xCoord > x1+h1.width)
-													h2.xCoord = x1+h1.width;
-											}
-											else
-											{
-												h2.xCoord -= 10;
-												if(h2.xCoord < x1-h2.width)
-													h2.xCoord = x1-h2.width;
-											}
-										}
-										
-								/*		if(h1.blocked[2] > y2 || h1.yCoord+h1.height+h1.botOffset > y2 || h1.blocked[2] == h1.yCoord+h1.height/2)
-											h1.yCoord = y2-h1.height+h1.botOffset-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
-								*/
-					/*					y = y2;
-									}
-								}
-								
-								if(h2.yCoord == y1-h2.height+h2.botOffset-(int)(gravity+0.5)*((h1.isGrounded)? 0:1))
-								{
-							//		h1.blocked[2] = y2-(int)(gravity.magnitude+0.5)*((h2.isGrounded)? 0:1);
-									yBlocked = true;
-								}
-							}
-						}
-					*/
 					}
 					
 					if(h1.yCoord != h2.yCoord+h2.height+h2.botOffset && h1.yCoord+h1.height+h1.botOffset != h2.yCoord && ((h1.yCoord >= h2.yCoord && h1.yCoord < h2.yCoord+h2.height+h2.botOffset) || (h1.yCoord+h1.height+h1.botOffset > h2.yCoord && h1.yCoord+h1.height <= h2.yCoord+h2.height) || (h1.yCoord <= h2.yCoord && h1.yCoord+h1.height+h1.botOffset >= h2.yCoord+h2.height+h2.botOffset) /*|| (y1 == y2 || y1+h1.height+h1.botOffset == y2+h2.height+h2.botOffset)*/))
 					{
-						if(x1 > h1.xCoord || h1.xDir > 0 || h1.xDrag > 0)
+						if((x1 > h1.xCoord || h1.xDir > 0 || h1.xDrag > 0) && stage.floors.get(0).cornered[0] != h2)
 						{
 							for(int x = h1.xCoord; x <= x1; x++)
 							{
@@ -751,6 +747,8 @@ public class Logic
 								h1.blocked[1] = h2.xCoord;
 								h2.blocked[3] = h1.xCoord+h1.width;
 								xBlocked = true;
+								if(stage.floors.get(0).cornered[1] == h1)
+									stage.floors.get(0).cornered[1] = h2;
 								
 								if(h2.isMovable/* && h2.blocked[1] != h2.xCoord+h2.width*/)
 								{
@@ -783,7 +781,7 @@ public class Logic
 								}
 							}
 						}
-						else if(x1 < h1.xCoord || h1.xDir < 0 || h1.xDrag < 0)
+						else if((x1 < h1.xCoord || h1.xDir < 0 || h1.xDrag < 0) && stage.floors.get(0).cornered[1] != h2)
 						{
 							for(int x = h1.xCoord; x >= x1; x--)
 							{
@@ -809,6 +807,8 @@ public class Logic
 								h2.blocked[1] = h1.xCoord;
 								h1.blocked[3] = h2.xCoord+h2.width;
 								xBlocked = true;
+								if(stage.floors.get(0).cornered[0] == h1)
+									stage.floors.get(0).cornered[0] = h2;
 								
 								if(h2.isMovable/* && h2.blocked[1] != h2.xCoord+h2.width*/)
 								{
@@ -841,7 +841,7 @@ public class Logic
 								}
 							}
 						}
-						if(x2 < h2.xCoord || h2.xDir < 0 || h2.xDrag < 0)
+						if((x2 < h2.xCoord || h2.xDir < 0 || h2.xDrag < 0) && stage.floors.get(0).cornered[1] != h1)
 						{
 							for(int x = h2.xCoord; x >= x2; x--)
 							{
@@ -890,7 +890,7 @@ public class Logic
 								}*/
 							}
 						}
-						else if(x2 > h2.xCoord || h2.xDir > 0 || h2.xDrag > 0)
+						else if((x2 > h2.xCoord || h2.xDir > 0 || h2.xDrag > 0) && stage.floors.get(0).cornered[0] != h1)
 						{
 							for(int x = h2.xCoord; x <= x2; x++)
 							{
@@ -1860,9 +1860,9 @@ public class Logic
 													if(!p2.isThrown || !t)
 													{
 														p2.plebArchiver.add(p1.hash);
-														if(p2.isSlipping && slip[0] == 0 && (slip[1] == p2.id || slip[1] == -1))
+														if(p2.isSlipping && slipStop[0] == 0 && (slipStop[1] == p2.id || slipStop[1] == -1))
 														{
-															slip = new int[]{15,p2.id,0,2};	//60,p2.id,0,5};
+															slipStop = new int[]{15,p2.id,0,2};	//60,p2.id,0,5};
 															p2.currAction.target = p1.puppet;
 															for(Organ a: p2.anatomy)
 															{
@@ -2061,7 +2061,7 @@ public class Logic
 					f.update(stage.floors);
 				for(Puppet p: stage.puppets)
 				{
-					if(slip[2] == 0 || slip[1] == p.id)
+					if((superStop[2] == 0 && slipStop[2] == 0) || superStop[1] == p.id || slipStop[1] == p.id)
 					{
 						for(int i = 0; i < p.plebsOut.size(); i++)
 						{
@@ -2079,15 +2079,27 @@ public class Logic
 					}
 				}
 				
-				applyForces();
-				checkCollisions();
-				checkDamage();	//MIGHT BE UNNECESSARY, might actually need to keep hitboxes aligned if forces push bounds in which case remove getHitboxes() prior to applyForces()
-				checkTechs();
+				if(superStop[2] == 0)
+				{
+					applyForces();
+					checkCollisions();
+					checkDamage();	//MIGHT BE UNNECESSARY, might actually need to keep hitboxes aligned if forces push bounds in which case remove getHitboxes() prior to applyForces()
+					checkTechs();
+				}
 				
 				for(Puppet p: stage.puppets)
 				{
-					if(slip[2] == 0 || slip[1] == p.id)
+					if((superStop[2] == 0 && slipStop[2] == 0) || superStop[1] == p.id || slipStop[1] == p.id)
 					{
+						if(p.currAction != null)
+						{
+							if(p.currAction.superflash > 0)
+							{
+								superStop = new int[]{1,p.id,0,p.currAction.superflash};
+								p.currAction.superflash = 0;
+							}
+						}
+						
 						p.applyProperties();
 						p.getHitboxes();
 						if(p.hitStop > hitStop)
@@ -2106,7 +2118,7 @@ public class Logic
 				int pLimit = stage.props.size();
 				for(int p= 0; p < pLimit; p++)
 				{
-					if(slip[2] == 0)
+					if(superStop[2] == 0 && slipStop[2] == 0)
 					{
 						stage.props.get(p).move();
 						stage.props.get(p).update();
@@ -2140,10 +2152,13 @@ public class Logic
 				pLimit = stage.puppets.size();
 				for(int p = 0; p < pLimit; p++)
 				{
-					if(slip[2] == 0 || slip[1] == p)
+					if((superStop[2] == 0 && slipStop[2] == 0) || superStop[1] == p || slipStop[1] == p)
 					{
 						stage.puppets.get(p).checkState();
 						stage.puppets.get(p).update();
+						
+						if(stage.puppets.get(p).hitInfo[2] > 0 && !stage.puppets.get(p).isThrowing && superStop[2] == 0)
+							stage.puppets.get(p).hitInfo[2]--;
 						
 						if(stage.puppets.get(p).jDirections[1] == 1 && !stage.puppets.get(p).bounds.isGrounded)
 						{
@@ -2161,7 +2176,7 @@ public class Logic
 				pLimit = stage.plebs.size();
 				for(int p = 0; p < pLimit; p++)
 				{
-					if(slip[2] == 0)
+					if(superStop[2] == 0 && slipStop[2] == 0)
 					{
 					//	stage.plebs.get(p).move();
 						stage.plebs.get(p).update();
@@ -2179,27 +2194,48 @@ public class Logic
 				
 				for(Puppet p: stage.puppets)
 				{
-					if(slip[2] == 0 || slip[1] == p.id)
+					if((superStop[2] == 0 && slipStop[2] == 0) || superStop[1] == p.id || slipStop[1] == p.id)
 					{
-						if(p.target != null && (p.bounds.isGrounded || p.slipFloat > 0) && !p.isThrowing && !p.isThrown && p.health > 0)
+						if(p.target != null && p.currAction == null && (p.bounds.isGrounded || p.jDirections[2] > 0 || p.slipFloat > 0) && !p.isThrowing && !p.isThrown && p.health > 0)
 							p.isFacingRight = p.xCoord+p.width/2 <= p.target.getBounds().xCoord+p.target.getBounds().width/2;
 					}
 				}
+			}
 		//		resetFocus();
 				setFocus();
 				focus();
 				
-				if(hitStop == 0 && slip[0] > 0)
+			if(hitStop == 0)
+			{
+				if(superStop[0] > 0)
 				{
-					slip[2]++;
-					if(slip[2] >= slip[3])
+					stage.puppets.get(superStop[1]).bounds.forceArchiver.clear();
+					stage.puppets.get(superStop[1]).jDirections[1] = 0;
+					stage.puppets.get(superStop[1]).jDirections[2] = 0;
+					stage.puppets.get(superStop[1]).fCounter--;
+					
+					superStop[2]++;
+					if(superStop[2] >= superStop[3])
 					{
-						slip[2] = 0;
-						slip[0]--;
+						superStop[2] = 0;
+						superStop[0]--;
 					}
 				}
-				else if(slip[0] == 0)
-					slip = new int[]{0,-1,0,0};
+				else
+				{
+					superStop = new int[]{0,-1,0,0};
+					if(slipStop[0] > 0)
+					{
+						slipStop[2]++;
+						if(slipStop[2] >= slipStop[3])
+						{
+							slipStop[2] = 0;
+							slipStop[0]--;
+						}
+					}
+					else if(slipStop[0] == 0)
+						slipStop = new int[]{0,-1,0,0};
+				}
 			}
 			else
 				hitStop--;

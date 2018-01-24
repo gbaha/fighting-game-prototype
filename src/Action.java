@@ -10,8 +10,8 @@ abstract class Action
 	
 	Puppet target;
 	int[][] buttonPath;
-	int[] cancelWindow;
-	int button, type, cancelType, frames;
+	int[] cancelWindow, cost;
+	int button, type, cancelType, frames, superflash;
 	double scaling;
 	boolean[] isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable;
 	boolean cancelOk, groundOk, airOk, aLock, cLock;
@@ -26,6 +26,7 @@ abstract class Action
 		type = t;
 		cancelType = ct;	// 0 = on whiff, 1 = on block, 2 = on hit
 		frames = 1;
+		superflash = 0;
 		scaling = 0;
 		
 		isSpecialCancelable = c1;
@@ -41,6 +42,7 @@ abstract class Action
 		
 		buttonPath = b;
 		cancelWindow = cw;
+		cost = new int[2];	// [stamina, meter]
 	}
 	
 	
@@ -48,7 +50,7 @@ abstract class Action
 	{
 		if(cancelOk)
 		{
-			if(type == Action.NORMAL && t == Action.TAUNT)
+			if((type == Action.NORMAL || type == Action.DASH || type == Action.JUMP) && t == Action.TAUNT)
 				return true;
 			else if(type == Action.NORMAL && t == Action.GRAB)
 				return (f < 2);
@@ -69,7 +71,7 @@ abstract class Action
 						}
 						else
 						{
-							boolean[][] cancel = new boolean[][]{isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable, isSpecialCancelable};
+							boolean[][] cancel = new boolean[][]{isSpecialCancelable, isSuperCancelable, isDashCancelable, isJumpCancelable, isSpecialCancelable, new boolean[]{false,false,false}};
 							if(cancel[t-1][i])
 								return true;
 						}
@@ -80,9 +82,9 @@ abstract class Action
 		return false;
 	}
 	
-	protected void addPleb(Puppet pu, int hc, int x, int y, int w, int h, int d, int t, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, boolean pb, boolean a, double[][] pr)
+	protected void addPleb(Puppet pu, int hc, int x, int y, int w, int h, int d, int t, int s, int hd, int sd, int kx, int ky, int j, double hs, boolean ia, boolean ip, boolean pb, boolean a, double[][] pr)
 	{
-		Pleb p = new Pleb(pu,pu.bounds,(a)? this:null,x,y,w,h,d,t,s,hd,sd,kx,ky,hs,ia,ip,pb,pr);
+		Pleb p = new Pleb(pu,pu.bounds,(a)? this:null,x,y,w,h,d,t,s,hd,sd,kx,ky,j,hs,ia,ip,pb,pr);
 		
 		if(hashCounter.equals(""))
 			hashCounter = p.toString()+"p"+hc;

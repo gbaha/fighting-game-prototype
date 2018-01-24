@@ -13,7 +13,7 @@ public class Pleb extends Hitbox
 	Organ bounds;
 	Action action;
 	String hash;	//action, type;
-	int duration, type, strength, hDamage, sDamage, xKnockback, yKnockback, xDist, yDist;
+	int duration, type, strength, hDamage, sDamage, xKnockback, yKnockback, juggleHeight, xDist, yDist;
 	double hitstunDamp;	//decayRate, piercingRate;
 	boolean isAttached, isProjectile, pBreaker;
 	double[][] properties;	//[[type, parameters], ...]
@@ -29,10 +29,10 @@ public class Pleb extends Hitbox
 	public static final int SPIKE = 2;		//[downward force, ground bounce force, down time]
 	public static final int WALLBOUNCE = 3;	//[air only?, kd counter, xforce magnitude, xforce decay, yforce magnitude, yforce decay, bounce force magnitude, down time]
 	public static final int TAUNT = 4;		//[duration, phase, tint pulse]
-	public static final int FLOAT = 5;		//[]
+	public static final int PULL = 5;		//[xCoord, yCoord, xforce strength, yforce strength, duration]
 	public static final int TAYLOR = 99;	//[ITS JOKE]
 	
-	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d, int t, int s, int hd, int sd, int kx, int ky, double hs, boolean ia, boolean ip, boolean pb, double[][] pr)
+	public Pleb(Puppet p, Organ b, Action a, int x, int y, int w, int h, int d, int t, int s, int hd, int sd, int kx, int ky, int j, double hs, boolean ia, boolean ip, boolean pb, double[][] pr)
 	{
 		super(x,y,w,h);
 		puppet = p;
@@ -46,6 +46,7 @@ public class Pleb extends Hitbox
 		sDamage = sd;
 		xKnockback = kx;
 		yKnockback = ky;
+		juggleHeight = j;
 		hitstunDamp = hs;
 		isAttached = ia;
 		isProjectile = ip;
@@ -87,6 +88,7 @@ public class Pleb extends Hitbox
 		sDamage = 0;
 		xKnockback = 0;
 		yKnockback = 0;
+		juggleHeight = 0;
 		hitstunDamp = 0;
 		isAttached = ia;
 		isProjectile = false;
@@ -109,7 +111,7 @@ public class Pleb extends Hitbox
 	}
 	
 	//MIGHT REMOVE LATER
-	public Pleb(Puppet p, Organ b, Action a, /*String f, String t,*/ String hc, int x, int y, int w, int h, int d, int t, int s, int hd, int kx, int ky, double hs, boolean ia, boolean ip)	//, int d2, int s, double d3, double p)
+	public Pleb(Puppet p, Organ b, Action a, /*String f, String t,*/ String hc, int x, int y, int w, int h, int d, int t, int s, int hd, int kx, int ky, int j, double hs, boolean ia, boolean ij, boolean ip)	//, int d2, int s, double d3, double p)
 	{
 		super(x,y,w,h);
 		puppet = p;
@@ -125,6 +127,7 @@ public class Pleb extends Hitbox
 		sDamage = (int)(hDamage/4.0+0.5);
 		xKnockback = kx;
 		yKnockback = ky;
+		juggleHeight = j;
 		hitstunDamp = hs;
 		isAttached = ia;
 		isProjectile = ip;

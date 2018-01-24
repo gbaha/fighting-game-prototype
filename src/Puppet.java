@@ -39,7 +39,8 @@ abstract class Puppet implements Punchable
 	boolean isDashing, isHoming, isJumping, isSlipping;
 	boolean isBella;	// its joke
 	
-	int[] hitInfo, flinchPoints, ukemi, bounces, jDirections, armor, spriteParams;
+	int[] hitInfo, flinchPoints, ukemi, bounces, jDirections, sJump, armor, spriteParams;
+	double[] camCall;
 	boolean[] isBlocking;
 	
 	public enum PuppetState implements State
@@ -115,7 +116,9 @@ abstract class Puppet implements Punchable
 		ukemi = new int[2];	//[frames, state]
 		bounces = new int[2];
 		jDirections = new int[3];
+		sJump = new int[2];
 		armor = new int[2];	//[hits, duration]
+		camCall = new double[5];	//[priority, xFocus, yFocus, xZoom, yZoom]
 		isBlocking = new boolean[]{false,false};
 		
 		maxHp = hp;
@@ -396,7 +399,7 @@ abstract class Puppet implements Punchable
 	}
 	
 	public void idle()
-	{if(bDirection != 0)System.out.println(ukemi[0]+" "+ukemi[1]);
+	{
 		if(currAction != null && currState != PuppetState.PREJUMP && ukemi[1] == 0)
 		{
 			performAction();
@@ -717,11 +720,16 @@ abstract class Puppet implements Punchable
 						f--;
 					}
 				}
-				bounds.forceArchiver.add(new Force("yJump",2,(aDash+jCount == 0)? jump:jump*9/10,1));
+				
+				double j = (aDash+jCount == 0)? jump:jump*9/10;
+				if(sJump[0] > 0 && sJump[0] < 10 && jCount == 0)
+					j *= 1.3;
+				
+				bounds.forceArchiver.add(new Force("yJump",2,j,1));
 				jDirections[1] = 1;
 				jDirections[2] = -1;
 				isJumping = false;
-				jCount++;
+				jCount += (sJump[0] > 0 && sJump[0] <= 10 && jCount == 0)? jumpLimit:1;
 				preFrames = 5;
 				sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 			}
@@ -903,10 +911,9 @@ abstract class Puppet implements Punchable
 						hitStop = 9;
 						addSound("hit_light.wav",new float[]{-3.0f});
 						break;
-					case 3:	//Change later
+					case 99:
 						hitStun = 10;
-						hitStop = 10;
-						addSound("hit_light.wav",new float[]{-3.0f});
+						hitStop = 0;
 						break;
 				}
 			}
@@ -1025,7 +1032,7 @@ abstract class Puppet implements Punchable
 			armor[0]--;
 		
 		if(!bounds.isGrounded || kdCounter > 0)
-			juggleCheck(p.puppet,hitSuccessful);
+			juggleCheck(p.puppet,hitSuccessful,p.juggleHeight);
 		if(isJuggled )//&& otgDamp == 0)
 		{
 			currState = PuppetState.FLINCH_AERIAL1;
@@ -1206,7 +1213,7 @@ abstract class Puppet implements Punchable
 								bounds.forceArchiver.remove(f);
 								fLimit = bounds.forceArchiver.size();
 								f--;
-							}System.out.println(bDirection+" "+bounces[0]+" "+bounces[1]+" "+bounceLimit);
+							}
 							if((bDirection == -1 && bounces[0] < bounceLimit) || (bDirection == 1 && bounces[1] < bounceLimit))
 							{
 								currState = PuppetState.WALL_BOUNCE;
@@ -1224,6 +1231,22 @@ abstract class Puppet implements Punchable
 							isJuggled = true;
 							t[7] = 0;
 						}
+					}
+					else
+						pCleared = true;
+					break;
+					
+				case Pleb.PULL:
+					if(t[5] > 0)
+					{
+						double x = (t[1]-(bounds.xCoord+bounds.width/2))*t[3];
+						double y = (t[2]-(bounds.yCoord+bounds.height/2))*t[4];
+						if(x != 0)
+							bounds.forceArchiver.add(new Force("xPull",(x < 0)? 1:3,Math.abs(x),-1));
+						if(y != 0)
+							bounds.forceArchiver.add(new Force("yPull",(y > 0)? 0:2,Math.abs(y),-1));
+						floatOverride = true;
+						t[5]--;
 					}
 					else
 						pCleared = true;
@@ -1429,15 +1452,10 @@ abstract class Puppet implements Punchable
 		if(slipFloat > 0)
 			slipFloat--;
 		
-		if(!isThrowing)
+		if(hitInfo[2] == 0)
 		{
-			if(hitInfo[2] > 0)
-				hitInfo[2]--;
-			else
-			{
-				hitInfo[1] = 0;
-				hitInfo[3] = 0;
-			}
+			hitInfo[1] = 0;
+			hitInfo[3] = 0;
 		}
 		
 		if(isPerformingAction)
@@ -1532,9 +1550,9 @@ abstract class Puppet implements Punchable
 		}
 	}
 	
-	private void juggleCheck(Puppet p, boolean h)
+	private void juggleCheck(Puppet p, boolean h1, int h2)
 	{
-		double[] y = new double[]{(h)? ((p.bounds.isGrounded)? 50:30):25,2};
+		double[] y = new double[]{(h1)? ((p.bounds.isGrounded)? h2+20:h2):25,2};
 		for(Force j: p.bounds.forceArchiver)
 		{
 			if(j.direction == 0 && !p.bounds.isGrounded)
@@ -1584,16 +1602,19 @@ abstract class Puppet implements Punchable
 				{
 					if((j.direction == 1 || j.direction == 2) && x[2] != -1)
 						j.magnitude = 0;
-					if(j.type.equals("yPursuit"))
+					if(j.type.equals("yPursuit") && !p.bounds.isGrounded && !p.floatOverride)
 					{
-						j.magnitude = ((h)? 50:25);
+						j.magnitude = ((h1)? 50:25);
 						yExists = true;
 					}
 				}
-				if(x[2] != -1 && ((p.isFacingRight && p.jDirections[0] == 1) || (!p.isFacingRight && p.jDirections[0] == -1)))
-					p.bounds.forceArchiver.add(new Force("xPursuit",(int)x[2],x[0]*0.9,x[1]));
-				if(!yExists && p.bounds.yCoord+p.bounds.height >= bounds.yCoord)
-					p.bounds.forceArchiver.add(new Force("yPursuit",2,((h)? 50:25),2));
+				if(!p.bounds.isGrounded && !p.floatOverride)
+				{
+					if(x[2] != -1 && ((p.isFacingRight && p.jDirections[0] == 1) || (!p.isFacingRight && p.jDirections[0] == -1)))
+						p.bounds.forceArchiver.add(new Force("xPursuit",(int)x[2],x[0]*0.9,x[1]));
+					if(!yExists && p.bounds.yCoord+p.bounds.height >= bounds.yCoord)
+						p.bounds.forceArchiver.add(new Force("yPursuit",2,((h1)? 50:25),2));
+				}
 				
 				kdStun = 0;
 				otgDamp = 0;

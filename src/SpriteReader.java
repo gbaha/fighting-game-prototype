@@ -19,9 +19,9 @@ public class SpriteReader// extends JPanel
 	BufferedImage[] spriteCache;
 	boolean[] isDrawn;
 	int timer;
-	double width, height;
+	double width, height, xZoom, yZoom;
 	
-	public SpriteReader( double w, double h, int t)
+	public SpriteReader( double w, double h, double x, double y, int t)
 	{
 		spriteArchiver = new ArrayList<double[]>();
 		isOpen = new ArrayList<Boolean>();
@@ -36,6 +36,8 @@ public class SpriteReader// extends JPanel
 		
 		width = w;
 		height = h;
+		xZoom = x;
+		yZoom = y;
 		timer = t;
 	}
 	
@@ -47,15 +49,15 @@ public class SpriteReader// extends JPanel
 			Graphics2D sRead = spriteCache[s2].createGraphics();	//sprites.get(sprites.size()-1).createGraphics();
 			
 			AffineTransform sTrans = new AffineTransform();
-			sTrans.translate((w2/2)*width/1280,(h-p[2]*3/5)*height/720);
+			sTrans.translate((w2/2)*width*xZoom/1280,(h-p[2]*3/5)*height*yZoom/720);
 			sTrans.rotate(a/180*Math.PI);
-			sTrans.translate(-(w2/2)*width/1280,(p[2]*3/5-h)*height/720);
+			sTrans.translate(-(w2/2)*width*xZoom/1280,(p[2]*3/5-h)*height*yZoom/720);
 			sRead.setTransform(sTrans);
 			
 			sRead.setComposite(AlphaComposite.Clear);
 			sRead.fillRect(0,0,spriteCache[s2].getWidth(),spriteCache[s2].getHeight());
 			sRead.setComposite(AlphaComposite.SrcOver);
-			sRead.drawImage(s1,0,0,(int)(w2*width/1280),(int)(h*height/720),x2*p[2],y2*p[3],(x2+1)*p[2],(y2+1)*p[3],i);
+			sRead.drawImage(s1,0,0,(int)(w2*width*xZoom/1280),(int)(h*height*yZoom/720),x2*p[2],y2*p[3],(x2+1)*p[2],(y2+1)*p[3],i);
 			sRead.dispose();
 			
 			double[] tint = new double[]{t.get(0)[0],t.get(0)[1],t.get(0)[2],t.get(0)[3]};
@@ -79,9 +81,9 @@ public class SpriteReader// extends JPanel
 			
 		/*	g.setColor(Color.LIGHT_GRAY);
 			g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),100));
-			g.fillRect(r?(int)((x1+x3-p[0])*width/1280):(int)((x1+x3+w1+p[0])*width/1280),(int)((y1+y3-p[1])*height/720),r?(int)(w2*width/1280):-(int)(w2*width/1280),(int)(h*height/720));
-		*/
-			g.drawImage(spriteCache[s2],r?(int)((x1+x3-p[0])*width/1280):(int)((x1+x3+w1+p[0])*width/1280),(int)((y1+y3-p[1])*height/720),r?spriteCache[s2].getWidth():-spriteCache[s2].getWidth(),spriteCache[s2].getHeight(),i);
+			g.fillRect(r?(int)((x1+x3-p[0])*width*xZoom/1280):(int)((x1+x3+w1+p[0])*width*xZoom/1280),(int)((y1+y3-p[1])*height*yZoom/720),r?(int)(w2*width*xZoom/1280):-(int)(w2*width*xZoom/1280),(int)(h*height*yZoom/720));
+			*/
+			g.drawImage(spriteCache[s2],r?(int)((x1+x3-p[0])*width*xZoom/1280):(int)((x1+x3+w1+p[0])*width*xZoom/1280),(int)((y1+y3-p[1])*height*yZoom/720),r?spriteCache[s2].getWidth():-spriteCache[s2].getWidth(),spriteCache[s2].getHeight(),i);
 			isDrawn[s2] = true;
 		}
 	}
@@ -93,8 +95,10 @@ public class SpriteReader// extends JPanel
 		return s;	
 	}
 	
-	public void update()
+	public void update(double x, double y)
 	{
+		xZoom = x;
+		yZoom = y;
 		for(int i = 0; i < 100; i++)
 		{
 			if(isDrawn[i])
