@@ -10,21 +10,21 @@ abstract class Projectile extends Prop
 	Image sheet;
 	String hashCounter;
 	int strength, hDamage, sDamage, speed, spriteIndex;
+	double sAngle;
 	
 	public Projectile(Puppet p, int x, int y, int w1, int h1, int h2, int h3, int s)
 	{
 		super(x,y,w1,h1,h2,h3);
 		puppet = p;
-		
-		sheet = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/ninja.gif"));
-//		sheet = Toolkit.getDefaultToolkit().getImage(System.getProperty("user.dir")+"\\resources\\ninja.gif");
 		hashCounter = "";
 		
 		strength = s;
 		spriteIndex = -1;
+		sAngle = 0;
 		isFacingRight = puppet.isFacingRight;
 		bounds.isFloating = true;
 	}
+	
 	
 	public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean[] d)
 	{
@@ -35,7 +35,9 @@ abstract class Projectile extends Prop
 			try
 			{
 				int f = (int)fIndex;
-				s.read(g,i,sheet,spriteIndex,bounds.xHosh,bounds.yHosh,bounds.width,1760,1300,f,spriteArchiver.get(currState.getPosition())[0],0,0,spriteParams,!isFacingRight,0,sTint);
+				if(puppet.palettes.get(puppet.pIndex).length > 1)
+					sTint.set(0,puppet.palettes.get(puppet.pIndex)[puppet.palettes.get(puppet.pIndex).length-1]);
+				s.read(g,i,sheet,spriteIndex,bounds.xHosh,bounds.yHosh,bounds.width,f,spriteArchiver.get(currState.getPosition())[0],xOffset,yOffset,spriteParams,!isFacingRight,sAngle,sTint);
 			}
 			catch(java.lang.IndexOutOfBoundsException e)
 			{
@@ -73,9 +75,9 @@ abstract class Projectile extends Prop
 		plebsOut.add(p);
 	}
 	
-	protected void addGuardTrigger(int x, int y, int w, int h, int d, boolean r, boolean ia)
+	protected void addGuardTrigger(int hc, int x, int y, int w, int h, int d, boolean ia)
 	{
-		Pleb p = new Pleb(puppet,bounds,null,x,y,w,h,d,-1,r,ia);
+		Pleb p = new Pleb(puppet,bounds,null,x,y,w,h,d,-1,isFacingRight,ia);
 		plebsOut.add(p);
 	}
 }

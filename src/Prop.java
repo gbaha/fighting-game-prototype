@@ -13,7 +13,7 @@ abstract class Prop implements Punchable	//, Audible
 	Puppet puppet;
 	Organ bounds;
 	State currState;
-	int id, xCoord, yCoord, xHosh, yHosh, width, height;
+	int id, xCoord, yCoord, xHosh, yHosh, xOffset, yOffset, width, height;
 	int maxHp, health, hits, fCounter;
 	double fIndex;
 	boolean isFacingRight, isHit;
@@ -49,6 +49,8 @@ abstract class Prop implements Punchable	//, Audible
 		yCoord = y;
 		xHosh = xCoord;
 		yHosh = yCoord;
+		xOffset = 0;
+		yOffset = 0;
 		width = w1;
 		height = h1;
 		maxHp = h2;

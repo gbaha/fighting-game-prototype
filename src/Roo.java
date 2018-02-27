@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -9,7 +10,7 @@ public class Roo extends Player
 {
 	public enum RooState implements State
 	{
-		PlayerState, OVERHEAD_MP, GUTPUNCH_HP, FIREBALL_CHARGE, FIREBALL_LAUNCH, FIREBALL_RECOVER, TATSU_START, TATSU_SPIN, TATSU_RECOVER, DP, DP_RECOVER, DONKEYKICK, DONKEYKICK_RECOVER, SUPERBEAM_LAUNCH, B_TAUNT;
+		PlayerState, OVERHEAD_MP, GUTPUNCH_HP, FIREBALL_CHARGE, FIREBALL_LAUNCH, FIREBALL_RECOVER, TATSU_START, TATSU_SPIN, TATSU_RECOVER, DP, DP_RECOVER, DONKEYKICK, DONKEYKICK_RECOVER, SBEAM_LAUNCH, STATSU_SPIN, B_TAUNT;
 		
 		public String getState()
 		{
@@ -22,13 +23,16 @@ public class Roo extends Player
 		}
 	}
 	
-	public Roo(int x, int y, boolean r)
+	public Roo(int x, int y, int p, boolean r)
 	{
-		super(x,y,100,250,150,50,/*100,*/6,3,2,2,50,r);
+		super(x,y,100,250,150,50,p,/*100,*/6,3,2,2,50,r);
 		sheet = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/roo.gif"));
 //		sheet = Toolkit.getDefaultToolkit().getImage(System.getProperty("user.dir")+"\\resources\\roo.gif");
 		flinchPoints = new int[]{1,0,0,0,0,1,1,1,0};
-		spriteParams = new int[]{345,180,290,178};
+		spriteParams = new int[]{345,180,800,490,290,178,145,115};
+		
+		palettes.add(new double[][]{new double[]{127.5,127.5,127.5,255}, new double[]{255,100,0,255}});
+		palettes.add(new double[][]{new double[]{100,100,255,255}, new double[]{115,115,255,255}});
 		
 		//IDLE
 		hitboxArchiver.add(new int[][]{new int[]{0,0,0,0,4},
@@ -188,12 +192,12 @@ public class Roo extends Player
 			new int[]{-104,90,53,50,	-64,25,100,100,	40,40,110,60,	130,45,100,90},
 			new int[]{-88,120,53,50,	-64,35,100,120,	40,30,100,70,	140,30,100,90}});
 		//MIDAIR FLINCH(STANDARD)
-		hitboxArchiver.add(new int[][]{new int[]{10,0,5,0,2},
+		hitboxArchiver.add(new int[][]{new int[]{10,0,4,0,2},
 			new int[]{24,0,53,50,	-48,15,165,75,	-72,95,135,55,	-42,155,150,95},
 			new int[]{0,33,53,50,	-80,33,200,85,	-96,95,135,55,	-72,155,150,95},
 			new int[]{16,12,53,50,	-72,18,175,90,	-56,100,135,55,	-56,155,150,95},
 			new int[]{32,0,53,50,	-64,12,175,75,	-48,95,135,50,	-56,155,175,95},
-			new int[]{32,-23,53,50,	-32,0,150,75,	-32,80,125,70,	-52,155,160,95},
+	//		new int[]{32,-23,53,50,	-32,0,150,75,	-32,80,125,70,	-52,155,160,95},
 			new int[]{32,-23,53,50,	-32,0,150,75,	-32,75,125,80,	-42,155,160,95}});
 		//MIDAIR FLINCH(LAUNCH)
 		hitboxArchiver.add(new int[][]{new int[]{10,0,4,0,2},
@@ -435,7 +439,7 @@ public class Roo extends Player
 			new int[]{32,-23,53,50,	-32,0,150,55,	-32,55,125,100,	-42,155,160,95}});
 		
 		//TAUNT
-		hitboxArchiver.add(new int[][]{new int[]{54,0,3,0,3},
+		hitboxArchiver.add(new int[][]{new int[]{57,0,3,0,3},
 			new int[]{32,13,53,50,	-32,30,150,40,	-32,80,125,60,	-62,150,190,100},
 			new int[]{32,13,53,50,	-32,55,180,40,	-32,95,125,50,	-72,145,225,105,	148,20,60,75},
 			new int[]{32,13,53,50,	-32,55,125,40,	-32,95,125,50,	-72,145,225,105,	93,55,115,75},
@@ -796,8 +800,16 @@ public class Roo extends Player
 			new int[]{0,25,220,200},
 			new int[]{0,25,220,200},
 			new int[]{0,25,220,200}});
+		//SUPERTATSU SPIN
+		hitboxArchiver.add(new int[][]{new int[]{54,0,0,0,1},
+			new int[]{16,-60,53,50,	-24,-30,115,80,	-64,40,140,60,	-42,100,80,130},
+			new int[]{16,-60,53,50,	-24,-30,135,65,	0,25,260,75,	-48,100,70,100},
+			new int[]{0,-60,53,50,	-24,-40,155,45,	-56,5,130,45,	-32,50,80,150,	50,50,185,50},
+			new int[]{-8,-60,53,50,	-80,-30,165,65,	-16,35,125,60,	0,95,75,130},
+			new int[]{-8,-60,53,50,	-24,-40,105,50,	-56,-10,130,55,	-176,45,230,50,	20,95,60,120},
+			new int[]{16,-60,53,50,	-48,-30,170,65,	-144,35,210,60,	-16,95,80,120}});
 		//BELLA TAUNT
-		hitboxArchiver.add(new int[][]{new int[]{55,0,0,0,10},
+		hitboxArchiver.add(new int[][]{new int[]{58,0,0,0,10},
 			new int[]{8,33,53,50,	-112,-15,225,130,	-12,80,100,80,	22,160,115,95},
 			new int[]{24,33,53,50,	-72,-15,225,130,	-32,80,120,80,	-52,160,90,95}});
 		
@@ -809,6 +821,9 @@ public class Roo extends Player
 		movelist.add(new int[][]{{2,3,6,2,3,6,-1},{-1,-1,-1,-1,-1,-1,0},{0,10,10,15,10,10,10}});
 		movelist.add(new int[][]{{2,3,6,2,3,6,-1},{-1,-1,-1,-1,-1,-1,1},{0,10,10,15,10,10,10}});
 		movelist.add(new int[][]{{2,3,6,2,3,6,-1},{-1,-1,-1,-1,-1,-1,2},{0,10,10,15,10,10,10}});
+		movelist.add(new int[][]{{2,1,4,2,1,4,-1},{-1,-1,-1,-1,-1,-1,3},{0,10,10,15,10,10,10}});
+		movelist.add(new int[][]{{2,1,4,2,1,4,-1},{-1,-1,-1,-1,-1,-1,4},{0,10,10,15,10,10,10}});
+		movelist.add(new int[][]{{2,1,4,2,1,4,-1},{-1,-1,-1,-1,-1,-1,5},{0,10,10,15,10,10,10}});
 		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,0},{0,10,10,10}});	//{0,7,4,3}});
 		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,1},{0,10,10,10}});
 		movelist.add(new int[][]{{2,3,6,-1},{-1,-1,-1,2},{0,10,10,10}});
@@ -827,6 +842,7 @@ public class Roo extends Player
 		actions = new Action[]{actions[0], actions[1], actions[2], actions[3], actions[4], actions[5], actions[6], actions[7], actions[8], actions[9], actions[10],
 				new Taunt(this), new Taunt(this), new Hug(this), new Hug(this), new HugForward(this,false), new HugForward(this,true), new HugUpward(this), new HugDownward(this),
 				new SuperBeam(this,0), new SuperBeam(this,1), new SuperBeam(this,2),
+				new SuperTatsu(this,0), new SuperTatsu(this,1), new SuperTatsu(this,2),
 				new FireBall(this,0), new FireBall(this,1), new FireBall(this,2),
 				new Tatsu(this,0), new Tatsu(this,1), new Tatsu(this,2),
 				new DragonPunch(this,0), new DragonPunch(this,1), new DragonPunch(this,2),
@@ -845,7 +861,8 @@ public class Roo extends Player
 		//		g.drawString((int)sIndex+" "+hitboxArchiver.get(currState.getPosition())[0][0],(int)(xHosh*w/1280),(int)((yHosh-75)*h/720));
 				
 				int f = (int)sIndex;
-				s.read(g,i,sheet,spriteIndex,xHosh,yHosh,width,800,490,f,hitboxArchiver.get(currState.getPosition())[0][0],xOffset,yOffset,spriteParams,!isFacingRight,sAngle,sTint);
+				sTint.set(0,palettes.get(pIndex)[0]);
+				s.read(g,i,sheet,spriteIndex,xHosh,yHosh,width,f,hitboxArchiver.get(currState.getPosition())[0][0],xOffset,yOffset,spriteParams,!isFacingRight,sAngle,sTint);
 			}
 			catch(java.lang.IndexOutOfBoundsException e)
 			{
@@ -858,8 +875,8 @@ public class Roo extends Player
 	public void checkState()
 	{
 	//	HITBOX FRAME TEST
-	//	bounds.isGrounded = true; floatOverride = false; setAction(new DonkeyKick(this,0));
-	//	currState = RooState.DONKEYKICK; sIndex = 5; fCounter = ((int)sIndex-hitboxArchiver.get(currState.getPosition())[0][1])*hitboxArchiver.get(currState.getPosition())[0][4]; currAction.frames = 999;
+	//	bounds.isGrounded = true; floatOverride = true; setAction(new SuperTatsu(this,0));
+	//	currState = RooState.STATSU_SPIN; sIndex = 2; fCounter = ((int)sIndex-hitboxArchiver.get(currState.getPosition())[0][1])*hitboxArchiver.get(currState.getPosition())[0][4]; currAction.frames = 999;
 		
 		switch(currState.getState())
 		{
@@ -873,7 +890,8 @@ public class Roo extends Player
 			case "DP_RECOVER":
 			case "DONKEYKICK":
 			case "DONKEYKICK_RECOVER":
-			case "SUPERBEAM_LAUNCH":
+			case "SBEAM_LAUNCH":
+			case "STATSU_SPIN":
 			case "B_TAUNT":
 			case "OVERHEAD_MP":
 			case "GUTPUNCH_HP":
@@ -1468,8 +1486,8 @@ public class Roo extends Player
 					case 4:
 						if(!bounds.isGrounded)
 						{
-							addPleb(roo,0,bounds.xCoord+260,bounds.yCoord+60,50,50,2,Pleb.HIGH,2,24,25,4,-40,30,0.45,true,false,false,true,new double[][]{});
-							addPleb(roo,0,bounds.xCoord+100,bounds.yCoord+70,160,35,11,Pleb.HIGH,2,24,25,4,-40,30,0.45,true,false,false,true,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+260,bounds.yCoord+60,50,50,2,Pleb.HIGH,2,24,25,4,-45,30,0.45,true,false,false,true,new double[][]{});
+							addPleb(roo,0,bounds.xCoord+100,bounds.yCoord+70,160,35,11,Pleb.HIGH,2,24,25,4,-45,30,0.45,true,false,false,true,new double[][]{});
 						}
 						else if(isCrouching)
 							bounds.forceArchiver.add(new Force("hkStep",(isFacingRight)? 3:1,12,6));
@@ -1479,7 +1497,7 @@ public class Roo extends Player
 					case 7:
 						if(!bounds.isGrounded){}
 						else if(isCrouching)
-							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+115,152,35,5,Pleb.LOW,1,65,25,22,0,30,0.8,true,false,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,35,7,60}});
+							addPleb(roo,0,bounds.xCoord+130,bounds.yCoord+115,152,35,5,Pleb.LOW,1,65,25,22,0,30,0.8,true,false,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,35,7,45}});
 						else{}
 						break;	
 					
@@ -1511,9 +1529,9 @@ public class Roo extends Player
 					case 26:
 						if(!bounds.isGrounded)
 						{
-							addPleb(roo,1,bounds.xCoord+195,bounds.yCoord-25,70,50,12,Pleb.HIGH,2,32,25,20,0,30,0.45,true,false,false,true,new double[][]{new double[]{Pleb.WALLBOUNCE,0,10,3,0,0,12,1}});
-							addPleb(roo,1,bounds.xCoord+150,bounds.yCoord-10,60,60,2,Pleb.HIGH,2,32,25,20,0,30,0.45,true,false,false,true,new double[][]{new double[]{Pleb.WALLBOUNCE,0,10,3,0,0,12,1}});
-							addPleb(roo,1,bounds.xCoord+100,bounds.yCoord+15,60,60,2,Pleb.HIGH,2,32,25,20,0,30,0.45,true,false,false,true,new double[][]{new double[]{Pleb.WALLBOUNCE,0,10,3,0,0,12,1}});
+							addPleb(roo,1,bounds.xCoord+195,bounds.yCoord-25,70,50,12,Pleb.HIGH,2,32,25,20,0,30,0.45,true,false,false,true,new double[][]{new double[]{Pleb.WALLBOUNCE,0,10,3,0,0,12,4}});
+							addPleb(roo,1,bounds.xCoord+150,bounds.yCoord-10,60,60,2,Pleb.HIGH,2,32,25,20,0,30,0.45,true,false,false,true,new double[][]{new double[]{Pleb.WALLBOUNCE,0,10,3,0,0,12,4}});
+							addPleb(roo,1,bounds.xCoord+100,bounds.yCoord+15,60,60,2,Pleb.HIGH,2,32,25,20,0,30,0.45,true,false,false,true,new double[][]{new double[]{Pleb.WALLBOUNCE,0,10,3,0,0,12,4}});
 						}
 						else if(isCrouching){}
 						else{}
@@ -2536,7 +2554,7 @@ public class Roo extends Player
 						break;
 					
 					case 2:
-						currState = RooState.SUPERBEAM_LAUNCH;
+						currState = RooState.SBEAM_LAUNCH;
 						sIndex = 0;
 						
 						if(!bounds.isGrounded)
@@ -2546,6 +2564,13 @@ public class Roo extends Player
 							if(!sInputs[0] && sInputs[2])
 								sAngle = -45;
 						}
+						break;
+						
+					case 3:
+						int w = 100;
+						int x = (int)((bounds.width/2+120+w/2)*Math.cos(Math.toRadians(sAngle))+0.5)-(int)(57*Math.sin(Math.toRadians(sAngle))+0.5);
+						int y = (int)((bounds.width/2+120+w/2)*Math.sin(Math.toRadians(sAngle))+0.5)+(int)(57*Math.cos(Math.toRadians(sAngle))+0.5);
+						propArchiver.add(new Beemu(roo,(isFacingRight)? x:x-1,y,1,1,157));
 						break;
 						
 					case 171:
@@ -2563,26 +2588,6 @@ public class Roo extends Player
 						if(sInputs[2] && (sAngle <= 90 || sAngle > 270))
 							sAngle -= 0.5;
 					}
-					
-					if((f-3)%5 < 2)
-					{
-						for(int i = 0; i < 50; i++)
-						{
-							int w = 100;
-							int x = (int)((bounds.width/2+120+w/2+w/2*i)*Math.cos(Math.toRadians(sAngle))+0.5)-(int)(57*Math.sin(Math.toRadians(sAngle))+0.5);
-							int y = (int)((bounds.width/2+120+w/2+w/2*i)*Math.sin(Math.toRadians(sAngle))+0.5)+(int)(57*Math.cos(Math.toRadians(sAngle))+0.5);
-							switch((f-3)%5)
-							{
-								case 0:
-									addGuardTrigger(roo,f,bounds.xCoord+bounds.width/2+x-w,bounds.yCoord+bounds.height/2-y-w,w*2,w*2,6,roo.isFacingRight,true,true);
-									break;
-									
-								case 1:
-									addPleb(roo,f,bounds.xCoord+bounds.width/2+x-w/2,bounds.yCoord+bounds.height/2-y-w/2,w,w,5,Pleb.MID,99,10,1,100,0,0,1,true,true,true,true,new double[][]{new double[]{Pleb.PULL,0,bounds.yCoord+bounds.height/2-y-w/2,0,0.25,5},new double[]{Pleb.KNOCKDOWN,0,1,0,0,60}});
-									break;
-							}
-						}
-					}
 				}
 				
 				if(!bounds.isGrounded)
@@ -2590,16 +2595,118 @@ public class Roo extends Player
 				
 				for(Organ a: anatomy)
 				{
-					if(f <= 2)
+					if(f < 10)
 					{
 						a.hInvul = true;
 						a.pInvul = true;
 					}
 				}
 				throwInvul = true;
+			}
+		}
+	}
+	
+	public class SuperTatsu extends Action
+	{
+		Roo roo;
+		int strength;
+		
+		public SuperTatsu(Roo r, int s)
+		{
+			super(Action.SUPER,2,
+				new int[][]{new int[]{}, new int[]{}, new int[]{}},
+				new boolean[]{false,false,false},
+				new boolean[]{false,false,false},
+				new boolean[]{false,false,false},
+				new boolean[]{false,false,false},
+				new int[]{-1,-1,-1,-1,-1,-1},
+				new boolean[]{true,true,false});
+			roo = r;
+			strength = s;
+			scaling = 0.15;
+			cost[1] = 0;	//1000;
+		}
+		
+		public void perform(int f)
+		{
+			isPerformingAction = true;
+			isCrouching = false;
+			
+			if(f >= frames)
+			{
+				isPerformingAction = false;
+				floatOverride = false;
+				return;
+			}
+			else
+			{
+				switch(f)
+				{
+					case 0:
+						currState = PuppetState.FALL_NEUTRAL;
+						hashCounter = "";
+						frames = 180;
+									
+						superflash = 60;
+						jDirections = new int[3];
+						jCount = jumpLimit;
+						aDash = airDashLimit;
+						break;
+					
+					case 2:
+						currState = RooState.STATSU_SPIN;
+						sIndex = 0;
+						break;
+				}
 				
-			/*	if(f > 1 && f < frames)
-					camCall = new double[]{1,1000,bounds.yCoord+bounds.height/2,1280.0/2100,1280.0/2100};*/
+				if(f >= 2 && f < 180)
+				{
+				/*	if(((f-2)/6)%6 == 0)
+					{
+						Ninja n = new Ninja(roo,bounds.xCoord+(((f-2)%6 < 3)? bounds.width:-120),bounds.yCoord+bounds.height/2,120,50,360,1,0);
+						n.sAngle = -30*((f-2)%6);
+						propArchiver.add(n);
+					}*/
+					
+					switch((f-2)%6)
+					{
+						case 0:
+							addGuardTrigger(roo,f,bounds.xCoord+30,bounds.yCoord-15,270,235,3,roo.isFacingRight,true,true);
+							break;
+							
+						case 1:
+							addPleb(roo,f,bounds.xCoord+50,bounds.yCoord+5,200,195,2,Pleb.MID,99,5,1,0,0,0,1,true,false,false,true,new double[][]{new double[]{Pleb.PULL,roo.bounds.xCoord+roo.bounds.width,roo.bounds.yCoord,0.25,0.25,4},new double[]{Pleb.KNOCKDOWN,0,1,35,7,60}});
+							break;
+							
+						case 3:
+							addGuardTrigger(roo,f,bounds.xCoord-200,bounds.yCoord-15,270,235,3,roo.isFacingRight,true,true);
+							break;
+							
+						case 4:
+							addPleb(roo,f,bounds.xCoord-150,bounds.yCoord+5,200,195,2,Pleb.MID,99,5,1,0,0,0,1,true,false,false,true,new double[][]{new double[]{Pleb.PULL,roo.bounds.xCoord+roo.bounds.width,roo.bounds.yCoord,0.25,0.25,4},new double[]{Pleb.KNOCKDOWN,0,1,35,7,60}});
+							break;
+					}
+					
+					if(f > 10)
+					{
+						if(sInputs[1])
+							bounds.forceArchiver.add(new Force("xTatsu",3,5,1));
+						if(sInputs[3])
+							bounds.forceArchiver.add(new Force("xTatsu",1,5,1));
+					}
+					bounds.forceArchiver.add(new Force("yTatsu",2,5,1));
+					floatOverride = true;
+				}
+				
+				for(Organ a: anatomy)
+				{
+					if(f < 2)
+					{
+						a.hInvul = true;
+						a.pInvul = true;
+					}
+				}
+				throwInvul = true;
 			}
 		}
 	}
@@ -2698,6 +2805,7 @@ public class Roo extends Player
 			super(r,x,y,w1,h1,h2,h3,s);
 			roo = r;
 			hCount = 0;
+			sheet = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/ninja.gif"));
 			
 			switch(strength)
 			{
@@ -2723,24 +2831,31 @@ public class Roo extends Player
 					break;
 			}
 			
-			spriteParams = new int[]{940,638,640,480};
+			spriteParams = new int[]{295,275,800,600,320,240,140,120};
 			spriteArchiver.add(new int[]{0,0,0,0,2});
 		}
 		
 		public void move()
 		{
-			if(fCounter == 0)
+			if(fCounter == 0 && sAngle == 0)
 			{
-				addGuardTrigger(bounds.xCoord-155,bounds.yCoord-35,365,120,3,roo.isFacingRight,true);
+				addGuardTrigger(0,bounds.xCoord-155,bounds.yCoord-35,365,120,3,true);
 				addPleb(0,bounds.xCoord-155,bounds.yCoord-20,260,90,2,Pleb.MID,(strength < 2)? 1:2,40,40,(strength < 2)? 20:30,0,30,1,true,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,(strength < 2)? 1:0,1,(strength < 2)? 21:70,7,60}});
 			}
 			else if(fCounter > 1)
 			{
 				if(!isHit)
-					bounds.xCoord += (isFacingRight)? speed:-speed;
+				{
+					int x = (int)(speed*Math.cos(Math.toRadians(sAngle))+0.5);
+					int y = (int)(speed*Math.sin(Math.toRadians(sAngle))+0.5);
+					bounds.xCoord += (isFacingRight)? x:-x;
+					bounds.yCoord -= y;
+				}
 				if(fCounter >= 2)
 				{
-					addGuardTrigger(bounds.xCoord+25,bounds.yCoord-35,130,120,2,roo.isFacingRight,true);
+					addGuardTrigger(hits,(int)(bounds.xCoord+7.5+32.5*Math.cos(Math.toRadians(sAngle))+0.5),(int)(bounds.yCoord-35-32.5*Math.sin(Math.toRadians(sAngle))+0.5),120,120,2,true);
+					addGuardTrigger(hits,(int)(bounds.xCoord+7.5-32.5*Math.cos(Math.toRadians(sAngle))+0.5),(int)(bounds.yCoord-35+32.5*Math.sin(Math.toRadians(sAngle))+0.5),120,120,2,true);
+					addGuardTrigger(hits,bounds.xCoord+5,bounds.yCoord-35,120,120,2,true);
 					if(hCount != hits)
 					{
 						if(hits == 1)
@@ -2751,6 +2866,94 @@ public class Roo extends Player
 					}
 				}
 			}
+		}
+	}
+	
+	
+	public class Beemu extends Projectile
+	{
+		Roo roo;
+		int hLength;
+		
+		public Beemu(Roo r, int x, int y, int w1, int h1, int h2)
+		{
+			super(r,x,y,w1,h1,h2,h2,99);
+			roo = r;
+			
+			hDamage = 10;
+			sDamage = 5;
+			speed = 0;
+			hLength = 100;
+			
+	//		sheet = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/beemu.gif"));
+	//		spriteParams = new int[]{0,0,5000,5000,200,5000,100,2500};
+			spriteArchiver.add(new int[]{0,0,0,0,1});
+		}
+		
+		public void draw(Graphics2D g, ImageObserver i, SpriteReader s, double w, double h, boolean[] d)
+		{
+			int[][] b = new int[][]{new int[]{168,255,255}, new int[]{115,230,255}, new int[]{74,164,255}, new int[]{115,98,255}};
+			int[] l = new int[]{hLength*3/4, hLength*2/3, hLength/2, hLength/3};
+			for(int n = 0; n < 4; n++)
+			{
+				int[] x = new int[]{
+						(int)((bounds.xHosh+((roo.bounds.width/2+120)*Math.cos(Math.toRadians(sAngle))-(57-l[n])*Math.sin(Math.toRadians(sAngle)))*((isFacingRight)? 1:-1))*w/1280+0.5),
+						(int)((bounds.xHosh+((roo.bounds.width/2+120)*Math.cos(Math.toRadians(sAngle))-(57+l[n])*Math.sin(Math.toRadians(sAngle)))*((isFacingRight)? 1:-1))*w/1280+0.5),
+						(int)((bounds.xHosh+((roo.bounds.width/2+hLength*25+120)*Math.cos(Math.toRadians(sAngle))-(57+l[n])*Math.sin(Math.toRadians(sAngle)))*((isFacingRight)? 1:-1))*w/1280+0.5),
+						(int)((bounds.xHosh+((roo.bounds.width/2+hLength*25+120)*Math.cos(Math.toRadians(sAngle))-(57-l[n])*Math.sin(Math.toRadians(sAngle)))*((isFacingRight)? 1:-1))*w/1280+0.5)};
+				int[] y = new int[]{
+						(int)((bounds.yHosh-(57-l[n])*Math.cos(Math.toRadians(sAngle))-(roo.bounds.width/2+120)*Math.sin(Math.toRadians(sAngle)))*h/720+0.5),
+						(int)((bounds.yHosh-(57+l[n])*Math.cos(Math.toRadians(sAngle))-(roo.bounds.width/2+120)*Math.sin(Math.toRadians(sAngle)))*h/720+0.5),
+						(int)((bounds.yHosh-(57+l[n])*Math.cos(Math.toRadians(sAngle))-(roo.bounds.width/2+hLength*25+120)*Math.sin(Math.toRadians(sAngle)))*h/720+0.5),
+						(int)((bounds.yHosh-(57-l[n])*Math.cos(Math.toRadians(sAngle))-(roo.bounds.width/2+hLength*25+120)*Math.sin(Math.toRadians(sAngle)))*h/720+0.5)};
+				
+				int[] c = new int[]{
+						(int)(b[(fCounter/2+n)%4][0]+palettes.get(pIndex)[palettes.size()-1][0]-127.5),
+						(int)(b[(fCounter/2+n)%4][1]+palettes.get(pIndex)[palettes.size()-1][1]-127.5),
+						(int)(b[(fCounter/2+n)%4][2]+palettes.get(pIndex)[palettes.size()-1][2]-127.5)};
+				for(int o = 0; o < 3; o++)
+				{
+					if(c[o] > 255)
+						c[o] = 255;
+					else if(c[o] < 0)
+						c[o] = 0;
+				}
+				
+				g.setColor(new Color(c[0],c[1],c[2]));
+				g.fillPolygon(x,y,4);
+			}
+		}
+		
+		public void move()
+		{
+			sAngle = roo.sAngle;
+			bounds.xCoord = roo.bounds.xCoord+roo.bounds.width/2;
+			bounds.yCoord = roo.bounds.yCoord+roo.bounds.height/2;
+	//		spriteParams[0] = spriteParams[2]/2+(int)((spriteParams[2]/4-roo.bounds.width/2+220)*Math.cos(Math.toRadians(sAngle))+0.5)-(int)((w/2)*Math.sin(Math.toRadians(sAngle))+0.5);
+	//		spriteParams[1] = spriteParams[3]/2+(int)((hLength/2)*Math.cos(Math.toRadians(sAngle))+0.5)+(int)((spriteParams[2]/4-roo.bounds.width/2+220)*Math.sin(Math.toRadians(sAngle))+0.5);
+			
+			if((maxHp-health)%5 < 2)
+			{
+				for(int i = 0; i < 50; i++)
+				{
+					int x = (int)((roo.bounds.width/2+120+hLength/2*(i+1))*Math.cos(Math.toRadians(sAngle))+0.5)-(int)(57*Math.sin(Math.toRadians(sAngle))+0.5);
+					int y = (int)((roo.bounds.width/2+120+hLength/2*(i+1))*Math.sin(Math.toRadians(sAngle))+0.5)+(int)(57*Math.cos(Math.toRadians(sAngle))+0.5);
+					
+					switch((maxHp-health)%5)
+					{
+						case 0:
+							addGuardTrigger((maxHp-health)/5,bounds.xCoord+roo.bounds.width/2+x-hLength*3/2,bounds.yCoord-y-hLength,hLength*2,hLength*2,6,true);
+							break;
+							
+						case 1:
+							addPleb((maxHp-health)/5,bounds.xCoord+roo.bounds.width/2+x-hLength,bounds.yCoord-y-hLength/2,hLength,hLength,5,Pleb.MID,strength,hDamage,sDamage,75,0,0,1,true,true,true,new double[][]{new double[]{Pleb.PULL,0,roo.bounds.yCoord+roo.bounds.height/2-y-hLength/2,0,0.25,5},new double[]{Pleb.KNOCKDOWN,0,1,0,0,60}});
+							break;
+					}
+				}
+			}
+			
+			if(roo.hitStun > 0 || roo.isThrown)
+				health = 0;
 		}
 	}
 }

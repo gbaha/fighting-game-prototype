@@ -69,16 +69,12 @@ public class Stage
 		
 		//TEST
 		floors.add(new Floor("",0,0,2000,5000));
-		player1 = new Roo(1000-200-100,4750,true);
-		player2 = new Roo(1000+200,4750,false);
+		player1 = new Roo(1000-200-100,4750,0,true);
+		player2 = new Roo(1000+200,4750,1,false);
 		puppets.add(player1);
 		puppets.add(player2);
 		player1.target = player2;
 		player2.target = player1;
-		
-		
-		
-		player2.sTint.set(0,new double[]{100,100,255,255});
 		//END OF LINE
 		//-----------
 		//LINE ENDS HERE
@@ -99,13 +95,12 @@ public class Stage
 		props.clear();
 		plebs.clear();
 		
-		player1 = new Roo(1000-200-100,4750,true);
-		player2 = new Roo(1000+200,4750,false);
+		player1 = new Roo(1000-200-100,4750,0,true);
+		player2 = new Roo(1000+200,4750,1,false);
 		puppets.add(player1);
 		puppets.add(player2);
 		player1.target = player2;
 		player2.target = player1;
-		player2.sTint.set(0,new double[]{100,100,255,255});
 		
 		for(Puppet p: puppets)
 			p.id = puppets.indexOf(p);

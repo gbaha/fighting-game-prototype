@@ -89,6 +89,7 @@ public class Main
 				logic.setFocusTo(1000,4750);
 				stage.xFocus = -360;
 				stage.yFocus = -4350;
+				jas.sReader.reset();
 				stage.isResetting = false;
 			}
 			

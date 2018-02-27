@@ -29,9 +29,9 @@ public class Player extends Puppet
 		}
 	}
 	
-	public Player(int x, int y, int w, int h, int c, int k, /*int e,*/ int s, int a1, int a2, int j1, double j2, boolean r)
+	public Player(int x, int y, int w, int h, int c, int k, int p, /*int e,*/ int s, int a1, int a2, int j1, double j2, boolean r)
 	{
-		super(x,y,w,h,c,k,1000,600,5000,s,a1,a2,j1,j2,r,false);
+		super(x,y,w,h,c,k,p,1000,600,5000,s,a1,a2,j1,j2,r,false);
 //		currState = PuppetState.IDLE;
 //		prevState = PuppetState.IDLE;
 		meter = 1000;
@@ -505,6 +505,8 @@ public class Player extends Puppet
 		public void perform(int f)
 		{
 			isPerformingAction = true;
+			if(f == 0)
+				target = null;
 			if(target != null)
 				f = frames;
 			

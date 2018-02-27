@@ -1,16 +1,20 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MouseInfo; //TEST
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
 public class Hoshua extends JPanel
 {
+	private final Font FONT;
+	
 	Stage canvas;
 	SpriteReader sReader;
 	Gui gui;
@@ -21,6 +25,7 @@ public class Hoshua extends JPanel
 	public Hoshua(Stage c, Gui g, int x, int y, double w, double h, double f, int s, boolean p)
 	{
 		super(true);
+		FONT = this.getFont();
 		canvas = c;
 		sReader = new SpriteReader(w,h,1,1,2);
 		gui = g;
@@ -125,19 +130,67 @@ public class Hoshua extends JPanel
 				}
 			}
 			
+			for(Puppet p: players)
+			{
+				int[] x = {(int)((p.xHosh+p.width/2)*width/1280*xZoom),(int)((((p.xHosh+p.width/2)*xZoom)-40)*width/1280),(int)((((p.xHosh+p.width/2)*xZoom)+40)*width/1280)};
+				int[] y = {(int)height,(int)(height-40*height/720),(int)(height-40*height/720)};
+				g.setColor(Color.RED);
+				
+				double h = p.yHosh-20;
+				for(Organ o: p.anatomy)
+				{
+					if(h > o.yHosh-20)
+						h = p.yHosh-20; 
+				}
+				
+				if(h*height/720*yZoom > height)
+				{
+					BufferedImage plname = new BufferedImage(100,100,BufferedImage.TYPE_INT_ARGB);
+					Graphics2D pl = plname.createGraphics();
+					pl.setColor(Color.RED);
+					pl.setFont(new Font(FONT.getName(),Font.BOLD,75));
+					pl.drawString((p == canvas.player1)? "P1":"P2",7,93);
+					pl.dispose();
+					g.drawImage(plname,x[1],y[1]-(int)(50*height/720),x[2],y[1],0,0,100,100,this);
+					g.fillPolygon(x,y,3);
+				}
+			}
+			
 			if(!gamePaused)
 			{
 				double z = (players.get(0).bounds.xCoord < players.get(1).bounds.xCoord+players.get(1).bounds.width)? players.get(1).bounds.xCoord+players.get(1).bounds.width-players.get(0).bounds.xCoord:players.get(0).bounds.xCoord+players.get(0).bounds.width-players.get(1).bounds.xCoord;
-			
 				if(Math.abs(1280/(z+100)-xZoom) >= 0.02)	// && xZoom < 1280/(z+100))
 					xZoom += 0.02*((1280/(z+100) > xZoom)? 1:-1);
 				else
 					xZoom = 1280/(z+100);
+			//	xZoom = 0.6;
+				yZoom = xZoom;
 				
-				if(Math.abs(1280/(z+100)-yZoom) >= 0.02)	// && yZoom < 1280/(z+100))
-					yZoom += 0.02*((1280/(z+100) > yZoom)? 1:-1);
+			/*	boolean s = false;
+				for(Puppet p: players)
+				{
+					if(p.currAction != null)
+					{
+						if(p.currAction.type == Action.SUPER)
+						{
+							if(z < 5070-p.bounds.yCoord)
+							{
+								z = 5070-p.bounds.yCoord;
+								s = true;
+							}
+						}
+					}
+				}
+				if(s)
+				{
+					if(Math.abs(720/z-yZoom) >= 0.02)	// && yZoom < 1280/(z+100))
+						yZoom += 0.02*((720/z > yZoom)? 1:-1);
+					else
+						yZoom = 720/z;
+					xZoom = yZoom;
+				}
 				else
-					yZoom = 1280/(z+100);
+					yZoom = xZoom;*/
 				
 				if(xZoom > 1)
 					xZoom = 1;

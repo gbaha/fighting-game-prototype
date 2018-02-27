@@ -31,7 +31,7 @@ public class Logic
 		xFocus = 0;
 		yFocus = 0;
 		focusWidth = new int[]{50,250};
-		focusHeight = 4500;	//,4850};
+		focusHeight = 500;	//,4850};
 		lastHit = 0;
 		hitStop = 0;
 		slipStop = new int[]{0,-1,0,0};	// [timer, slipper, counter, slow magnitude]
@@ -113,12 +113,13 @@ public class Logic
 					if(players[p].bounds.xCoord+players[p].bounds.width >= 1280-xFocus-focusWidth[0]) //&& players[p].bounds.xCoord+players[p].bounds.width < stage.floors.get(0).xCoord+stage.floors.get(0).width)
 						xFocus = 1280-(players[p].bounds.xCoord+players[p].bounds.width)-focusWidth[0];
 				}
-				if(players[p].hitStun > players[lastHit].hitStun || (players[p].hitStun == players[lastHit].hitStun && players[p].bounds.yCoord < players[lastHit].bounds.yCoord))
+		//		if(players[p].hitStun > players[lastHit].hitStun || (players[p].hitStun == players[lastHit].hitStun && players[p].bounds.yCoord < players[lastHit].bounds.yCoord))
+				if(players[p].health == 0 || (players[p].health > 0 && players[p].bounds.yCoord < players[lastHit].bounds.yCoord))
 					lastHit = p;
 			}
 			
-			if(players[lastHit].bounds.yCoord < focusHeight)//+5000*(stage.yZoom-1))
-				yFocus = (int)(focusHeight-players[lastHit].bounds.yCoord+5000*(1-stage.yZoom)-4350);
+			if(players[lastHit].bounds.yCoord < 5000-focusHeight/stage.yZoom)
+				yFocus = (int)((5000-focusHeight/stage.yZoom-players[lastHit].bounds.yCoord)*stage.yZoom+5000*(1-stage.yZoom)-4350);
 			else
 				yFocus = (int)(5000*(1-stage.yZoom)-4350);
 			
@@ -132,36 +133,6 @@ public class Logic
 				xFocus = (int)((1280/stage.xZoom)/2-players[0].bounds.xCoord-(players[1].bounds.xCoord+players[1].bounds.width-players[0].bounds.xCoord)/2);
 			}
 		}
-		
-	/*	int c = 0;
-		stage.zOverride = false;
-		for(Puppet p: stage.puppets)
-		{
-			if(c < p.camCall[0])
-			{
-				if(Math.abs(p.camCall[3]-stage.xZoom) >= 0.03)
-					stage.xZoom += 0.03*((p.camCall[3] > stage.xZoom)? 1:-1);
-				else
-					stage.xZoom = p.camCall[3];
-				if(Math.abs(p.camCall[3]-stage.yZoom) >= 0.03)
-					stage.yZoom += 0.03*((p.camCall[3] > stage.yZoom)? 1:-1);
-				else
-					stage.yZoom = p.camCall[4];
-				
-				if(Math.abs(640-p.camCall[1]*stage.xZoom-xFocus) < 15)
-					xFocus = (int)(640-p.camCall[1]*stage.xZoom);
-				else 
-					xFocus += (int)((640-p.camCall[1]*stage.xZoom-xFocus)/5);
-				
-				int y = (p.camCall[2] < focusHeight)? (int)(focusHeight-p.camCall[2]+5000*(1-stage.yZoom)-4750):(int)(5000*(1-stage.yZoom)-4350);
-				if(Math.abs(y-yFocus) < 15)
-					yFocus = y;
-				else 
-					yFocus += (int)((y-yFocus)/5);
-				stage.zOverride = true;
-			}
-			p.camCall = new double[5];
-		}*/
 	}
 	
 	public void setFocusTo(int x, int y)
@@ -404,12 +375,12 @@ public class Logic
 							forces[hitboxes.indexOf(h)][1] += h.forceArchiver.get(f).magnitude*hDamp*sDamp;
 							if(sDamp == 1 || (superStop[2] == 0 && slipStop[2] == 0))
 							{
-								if((!h.forceArchiver.get(f).type.equals("xKnockback") && !h.forceArchiver.get(f).type.equals("xPursuit")) || h.isGrounded || hDamp < 1)
+								if((!h.forceArchiver.get(f).type.equals("xKnockback") /*&& !h.forceArchiver.get(f).type.equals("xPursuit")*/) || h.isGrounded || hDamp < 1)
 								{
 									if(h.forceArchiver.get(f).decay > 0)
 									{
 										h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
-										if((h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("xPursuit")) && h.forceArchiver.get(f).magnitude < 1 && !h.isGrounded)
+										if((h.forceArchiver.get(f).type.equals("xKnockback") /*|| h.forceArchiver.get(f).type.equals("xPursuit")*/) && h.forceArchiver.get(f).magnitude < 1 && !h.isGrounded)
 											h.forceArchiver.get(f).magnitude = 1;
 									}
 									else if(h.forceArchiver.get(f).decay < 0)
@@ -444,7 +415,7 @@ public class Logic
 									if(h.forceArchiver.get(f).decay > 0)
 									{
 										h.forceArchiver.get(f).magnitude -= h.forceArchiver.get(f).decay*hDamp;
-										if((h.forceArchiver.get(f).type.equals("xKnockback") || h.forceArchiver.get(f).type.equals("xPursuit")) && h.forceArchiver.get(f).magnitude < 1 && !h.isGrounded)
+										if((h.forceArchiver.get(f).type.equals("xKnockback") /*|| h.forceArchiver.get(f).type.equals("xPursuit")*/) && h.forceArchiver.get(f).magnitude < 1 && !h.isGrounded)
 											h.forceArchiver.get(f).magnitude = 1;
 									}
 									else if(h.forceArchiver.get(f).decay < 0)
