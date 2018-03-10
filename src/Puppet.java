@@ -33,14 +33,14 @@ abstract class Puppet implements Punchable
 	int health, stamina, meter, speed;
 	int spriteIndex, pIndex, preFrames, fCounter, blockStun, hitStun, hitStop, sCooldown;
 	int kdCounter, kdLimit, kdStun, bDirection, bounceLimit, bounceStun, launchPoint, slipFloat;
-	int airOptions, airDashLimit, jumpLimit, aDash, jCount;
-	double sIndex, sAngle, jForce, jump, juggleDamp, otgDamp, hitstunDamp, damageDamp;
+	int airOptions, airDashLimit, jumpLimit, aDash, jCount, extraAir;
+	double sIndex, sAngle, jForce, jump, jCooldown, juggleDamp, otgDamp, hitstunDamp, damageDamp;
 	boolean isFacingRight, isPerformingAction, isCrouching, canBlock, isGuardBroken, isCounterhit, isTaunted;
-	boolean throwInvul, isThrowing, isThrown, isTeching, isJuggled, isAirLocked, floatOverride;	//, isUnstoppable, isJumping;
+	boolean throwInvul, isThrowing, isThrown, isTeching, isJuggled, isRecovering, isAirLocked, floatOverride;	//, isUnstoppable, isJumping;
 	boolean isDashing, isHoming, isJumping, isSlipping;
 	boolean isBella;	// its joke
 	
-	int[] hitInfo, flinchPoints, ukemi, bounces, jDirections, sJump, armor, spriteParams;
+	int[] hitInfo, flinchPoints, ukemi, bounces, bounceInfo, jDirections, sJump, armor, spriteParams;
 	double[] camCall;
 	boolean[] isBlocking;
 	
@@ -104,6 +104,7 @@ abstract class Puppet implements Punchable
 		isThrown = false;
 		isTeching = false;
 		isJuggled = false;
+		isRecovering = false;
 		isCounterhit = false;
 		isTaunted = false;
 		floatOverride = false;
@@ -117,6 +118,7 @@ abstract class Puppet implements Punchable
 		flinchPoints = new int[]{0,0,0,0,0,0,0,0,0,0,0}; 	//marks points where sprite freezes during hitstun
 		ukemi = new int[2];	//[frames, state]
 		bounces = new int[2];
+		bounceInfo = new int[2];	//[bounce stun, bounce destination]
 		jDirections = new int[3];
 		sJump = new int[2];
 		armor = new int[2];	//[hits, duration]
@@ -130,7 +132,7 @@ abstract class Puppet implements Punchable
 		jForce = j2;
 		
 		health = maxHp;
-		stamina = maxSp;	//0;
+		stamina = maxSp;
 		meter = 0;
 		speed = maxSpd;
 		jump = jForce;
@@ -148,7 +150,8 @@ abstract class Puppet implements Punchable
 		juggleDamp = 0;
 		otgDamp = 0;
 		damageDamp = 0;
-		sCooldown = 0;		//999999;
+		sCooldown = 0;
+		jCooldown = 0;
 		
 		kdCounter = 0;
 		kdLimit = 2;	// if counter >= limit, cannot be knocked down in combo
@@ -163,6 +166,7 @@ abstract class Puppet implements Punchable
 		jumpLimit = j1;
 		aDash = 0;
 		jCount = 0;
+		extraAir = 0;
 		
 		bounds =  new Organ(x,y,w,h,speed);
 		bounds.isFloating = f2;
@@ -376,6 +380,9 @@ abstract class Puppet implements Punchable
 			fCounter = 0;
 			sAngle = 0;
 			bounds.botOffset = 0;
+			
+			if(bounceInfo[0] > 0)
+				isFacingRight = bounds.xCoord+bounds.width/2 <= bounceInfo[1];
 		}
 		
 		if(bounds.isGrounded && bounds.botOffset != 0)
@@ -398,6 +405,9 @@ abstract class Puppet implements Punchable
 			isPerformingAction = false;
 	//		preFrames = 3;
 			bounds.botOffset = 0;
+			
+			if(bounceInfo[0] > 0)
+				isFacingRight = bounds.xCoord+bounds.width/2 <= bounceInfo[1];
 		}
 	}
 	
@@ -696,8 +706,15 @@ abstract class Puppet implements Punchable
 	
 	public void jump()
 	{
-		if(jCount < jumpLimit && airOptions > aDash+jCount && !bounds.isFloating && jDirections[2] > 0 && preFrames == 0)
+		if(jCount < jumpLimit+extraAir && airOptions+extraAir > aDash+jCount && !bounds.isFloating && jDirections[2] > 0 && preFrames == 0)
 		{
+			boolean wbc = false;
+			if(bounceInfo[0] > 0)
+			{
+				isFacingRight = bounds.xCoord+bounds.width/2 <= bounceInfo[1];
+				wbc = true;
+			}
+			
 			switch(jDirections[0])
 			{
 				case 0:
@@ -728,16 +745,17 @@ abstract class Puppet implements Punchable
 					}
 				}
 				
-				double j = (aDash+jCount == 0 || djc)? jump:jump*9/10;
+				double j = (aDash+jCount == 0 || wbc || djc)? jump:jump*9/10;
 				if(sJump[0] > 0 && sJump[0] < 10 && jCount == 0)
 					j *= 1.3;
 				
 				bounds.forceArchiver.add(new Force("yJump",2,j,1));
 				jDirections[1] = 1;
 				jDirections[2] = -1;
+				bounceInfo = new int[2];
 				isJumping = false;
-				jCount += (sJump[0] > 0 && sJump[0] <= 10 && jCount == 0)? jumpLimit:1;
-				preFrames = 5;
+				jCount += (sJump[0] > 0 && sJump[0] < 10 && jCount == 0)? jumpLimit+extraAir:1;
+				preFrames = 3;
 				sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 			}
 		}
@@ -745,7 +763,7 @@ abstract class Puppet implements Punchable
 		if(jDirections[2] > 0)
 			jDirections[2]++;
 		
-		if(currAction != null && jDirections[2] <= 0)// && preFrames == 0)
+		if(currAction != null && jDirections[2] <= 0 && preFrames == 0)
 		{
 			bounds.isGrounded = false;
 			performAction();
@@ -826,6 +844,7 @@ abstract class Puppet implements Punchable
 			if(a)
 			{
 				health -= p.hDamage/2;
+				meter += 20;
 				sTint.add(new double[]{255,255,255,0,5});
 				hitSuccessful = false;
 			}
@@ -864,6 +883,7 @@ abstract class Puppet implements Punchable
 			damage = (int)(damage*(1-damageDamp)+0.5);
 			
 			health -= damage;
+			meter += 15;
 			if(health < 0)
 				health = 0;
 			
@@ -918,11 +938,45 @@ abstract class Puppet implements Punchable
 						hitStop = 9;
 						addSound("hit_light.wav",new float[]{-3.0f});
 						break;
+					case 3:
+						hitStun = 30;
+						hitStop = 60;
+						addSound("hit_light.wav",new float[]{-3.0f});
+						break;
 					case 99:
 						hitStun = 22;
 						hitStop = 0;
 						addSound("hit_light.wav",new float[]{-3.0f});
 						break;
+				}
+				
+				boolean m = (p.action == null);
+				if(!m)
+					m = (p.action.type != Action.SUPER);
+				if(m)
+				{
+					switch(p.strength)
+					{
+						case 0:
+							p.puppet.meter += 35;
+							break;
+							
+						case 1:
+							p.puppet.meter += 45;
+							break;
+							
+						case 2:
+							p.puppet.meter += 65;
+							break;
+							
+						case 3:
+							p.puppet.meter += 100;
+							break;
+						
+						case 99:
+							p.puppet.meter += 35;
+							break;
+					}
 				}
 			}
 			if(isCounterhit)
@@ -949,7 +1003,7 @@ abstract class Puppet implements Punchable
 									bounds.height = height;
 									sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
 								}
-								p.puppet.hitInfo[2] += (int)t[5];
+							//	p.puppet.hitInfo[2] += (int)t[5];
 							}
 							break;
 							
@@ -989,7 +1043,7 @@ abstract class Puppet implements Punchable
 			yOffset = 0;
 			sAngle = 0;
 			
-			p.puppet.hitInfo[2] = hitStun;	// Must be after properties for launch to work
+		//	p.puppet.hitInfo[2] = hitStun;	// Must be after properties for launch to work
 			p.puppet.stamina = p.puppet.maxSp;
 		}
 		else if(!isThrown && p.type != Pleb.GRAB)
@@ -1009,15 +1063,20 @@ abstract class Puppet implements Punchable
 					blockStun = 10;
 					hitStop = 9;
 					break;
+				case 3:
+					blockStun = 10;
+					hitStop = 60;
+					break;
 				case 99:
 					blockStun = 10;
 					hitStop = 5;
 					break;
 			}
+			meter += (int)(20*(1+(double)((maxSp-stamina)/100)/(maxSp/100)));
 			isFacingRight = !p.puppet.isFacingRight;
 			
 			p.puppet.hitInfo[0] = 1;
-			p.puppet.hitInfo[2] = blockStun;
+		//	p.puppet.hitInfo[2] = blockStun;
 			if(p.puppet.currAction != null)
 				p.puppet.currAction.target = this;
 		//	p.puppet.hitInfo[1]++;
@@ -1079,7 +1138,6 @@ abstract class Puppet implements Punchable
 		{
 			isPerformingAction = false;
 			floatOverride = false;
-			currAction = null;
 			jDirections = new int[3];
 			
 			if(kdStun > 0)
@@ -1110,6 +1168,7 @@ abstract class Puppet implements Punchable
 				if(currAction.type == Action.GRAB)
 					isTeching = true;
 			}
+			currAction = null;
 		}
 		else if(kdStun > 0)
 		{
@@ -1145,7 +1204,9 @@ abstract class Puppet implements Punchable
 			plebArchiver.clear();
 			
 			ukemi[0] = 0;
-			if(ukemi[1] > 2)
+			if(ukemi[1] < 2)
+				ukemi[1] = 2;
+			else if(ukemi[1] > 2)
 				bounds.forceArchiver.add(new Force("xUkemi",(isFacingRight)? 1:3,20,1));
 			bounds.forceArchiver.add(new Force("yUkemi",2,40,2));
 			currState = (ukemi[1] < 3)? PuppetState.UKEMI_STAND:PuppetState.UKEMI_ROLL;	//(!isCrouching)? PuppetState.IDLE:PuppetState.CROUCH;
@@ -1237,17 +1298,39 @@ abstract class Puppet implements Punchable
 							{
 								currState = PuppetState.WALL_BOUNCE;
 								bounds.forceArchiver.add(new Force("xBounce",(bDirection == 1)? 1:3,t[6],-30));
-								bounds.forceArchiver.add(new Force("yBounce",2,50,4));
+								bounds.forceArchiver.add(new Force("yBounce",2,(bounds.isGrounded)? 50:42,4));
 							}
 							else
 							{
 								bounds.forceArchiver.add(new Force("wallsplat",0,3,-30));
 								ukemi[0] = 30;
 							}
+							
+							hitStop = 10;
 							hitStun = 30;
 							bounceStun = 30;
 							bounces[(bDirection == 1)? 1:0]++;
 							isJuggled = true;
+							
+							if(target != null)
+							{
+								if(target instanceof Puppet)
+								{
+									Puppet n = (Puppet)target;
+									if(n.target != null)
+									{
+										if(n.target instanceof Puppet)
+										{
+											if((Puppet)n.target == this)
+											{
+											//	n.hitInfo[2] = 30;
+												n.bounceInfo = new int[]{bounceStun, (int)(bounds.xCoord+bounds.width/2+t[6]*((bDirection == 1)? -30:30)+0.5)};
+												n.extraAir++;
+											}
+										}
+									}
+								}
+							}
 							t[7] = 0;
 						}
 					}
@@ -1430,14 +1513,26 @@ abstract class Puppet implements Punchable
 			}
 		}
 		
+		if(jCooldown > 0)
+			jCooldown--;
+		else if(juggleDamp > 0)
+			juggleDamp -= 0.16;
+		else if(juggleDamp < 0)
+			juggleDamp = 0;
+		
+		if(bounceInfo[0] == 0)
+			bounceInfo[1] = 0;
+		else
+			bounceInfo[0]--;
+			
 		if(bounceStun > 0)
 		{
 			if(ukemi[1] <= 1)
 			{
 				if((bDirection == -1 && bounces[0] <= bounceLimit) || (bDirection == 1 && bounces[1] <= bounceLimit))
 				{
-					for(Organ a: anatomy)
-						a.hInvul = true;
+				/*	for(Organ a: anatomy)
+						a.hInvul = true;*/
 					bounds.isGhost = true;
 				}
 				else
@@ -1466,11 +1561,26 @@ abstract class Puppet implements Punchable
 		else if(kdCounter == 0 && bounceStun == 0 && bounds.isGrounded)
 			ukemi[1] = 0;
 		if(ukemi[1] > 0)
-			throwInvul = true;
+		{
+			for(Organ a: anatomy)
+				a.hInvul = true;
+			if(ukemi[1] < 3)
+				throwInvul = true;
+			else
+				bounds.isGhost = true;
+		}
 		
 		if(slipFloat > 0)
 			slipFloat--;
 		
+		if(target != null)
+		{
+			if(target instanceof Puppet)
+			{
+				Puppet t = (Puppet)target;
+				hitInfo[2] = t.hitStun+t.blockStun+t.kdStun;
+			}
+		}
 		if(hitInfo[2] == 0)
 		{
 			hitInfo[1] = 0;
@@ -1489,6 +1599,19 @@ abstract class Puppet implements Punchable
 		}
 		else
 			sCooldown--;
+		
+		if(health < 0)
+			health = 0;
+		if(health > maxHp)
+			health = maxHp;
+		if(stamina < 0)
+			stamina = 0;
+		if(stamina > maxSp)
+			stamina = maxSp;
+		if(meter < 0)
+			meter = 0;
+		if(meter > maxMp)
+			meter = maxMp;
 		
 		if(sAngle < 0)
 			sAngle += 360;
@@ -1523,8 +1646,6 @@ abstract class Puppet implements Punchable
 				prevState = currState;
 			}*/
 			//===
-			
-		//	sIndex = 0;	//TEST
 			
 			int i = (int)sIndex+1-((hitboxArchiver.get(h)[0][3] == 0)? hitboxArchiver.get(h)[0][1]:0);
 		/*	if(hitboxArchiver.get(h)[0][3] == 0) //&& sIndex >= hitboxArchiver.get(h)[0][2])
@@ -1638,6 +1759,7 @@ abstract class Puppet implements Punchable
 				kdStun = 0;
 				otgDamp = 0;
 				juggleDamp += 0.08;
+				jCooldown = 30;
 			}
 			else if(otgDamp > 0)
 			{
@@ -1738,6 +1860,7 @@ abstract class Puppet implements Punchable
 					target.xOffset = 0;
 					target.yOffset = 0;
 					target.sAngle = 0;
+					target.meter += 100;
 					target.isThrown = false;
 					
 					currState = PuppetState.HUG_BREAK;
@@ -1746,6 +1869,7 @@ abstract class Puppet implements Punchable
 					xOffset = 0;
 					yOffset = 0;
 					sAngle = 0;
+					meter += 100;
 					isTeching = true;
 				}
 				else
@@ -1776,17 +1900,6 @@ abstract class Puppet implements Punchable
 		
 		public void perform(int f)
 		{
-		/*	if(airOptions > aDash+jCount && jCount < jumpLimit && !isBlocking[0] && !isBlocking[1])
-			{
-				if(bounds.isGrounded || (!bounds.isGrounded && jDirections[2] == 0 && preFrames == 0))
-				{
-					jDirections[0] = direction;
-					if(jDirections[2] == 0)
-						jDirections[2] = 1;
-					jump();
-				}
-			}*/
-			
 			isPerformingAction = true;
 			if(f >= frames)
 			{
@@ -1796,10 +1909,10 @@ abstract class Puppet implements Punchable
 			}
 			else if(f == 0)
 			{
-				if(airOptions > aDash+jCount && jCount < jumpLimit && !isBlocking[0] && !isBlocking[1] && (bounds.isGrounded || (!bounds.isGrounded && jDirections[2] == 0 && preFrames == 0)))
+				if(airOptions+extraAir > aDash+jCount && jCount < jumpLimit+extraAir && !isBlocking[0] && !isBlocking[1] && (bounds.isGrounded || (!bounds.isGrounded && jDirections[2] == 0 && preFrames == 0)))
 				{
 			//		if(direction != 0)
-						jDirections[0] = direction;
+						jDirections[0] = (isFacingRight)? direction:-direction;
 					if(jDirections[2] == 0)
 						jDirections[2] = 1;
 					jump();

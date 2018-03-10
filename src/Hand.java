@@ -69,6 +69,8 @@ public class Hand implements KeyListener	//, MouseListener
 				player.isCrouching = false;
 	//		player.isDashing = false;
 			player.isBlocking = new boolean[]{false,false};
+			player.isRecovering = (buttonHeld[0] || buttonHeld[1] || buttonHeld[2] || buttonHeld[3] || buttonHeld[4] || buttonHeld[5]);
+			player.isPushing[0] = (buttonHeld[1] && buttonHeld[4] && player.blockStun > 0);
 			player.sInputs = stickArchiver;
 			
 	/*		for(Force f: player.bounds.forceArchiver)
@@ -109,7 +111,7 @@ public class Hand implements KeyListener	//, MouseListener
 					
 					if(j)
 					{
-						if(/*player.jDirections[2] == 0 &&*/ player.airOptions > player.aDash+player.jCount && player.jCount < player.jumpLimit && !player.isBlocking[0] && !player.isBlocking[1])
+						if(/*player.jDirections[2] == 0 &&*/ player.airOptions+player.extraAir > player.aDash+player.jCount && player.jCount < player.jumpLimit+player.extraAir && !player.isBlocking[0] && !player.isBlocking[1])
 						{
 							if(player.bounds.isGrounded || (!player.bounds.isGrounded && player.jDirections[2] == 0 && player.preFrames == 0))
 							{
@@ -432,6 +434,8 @@ public class Hand implements KeyListener	//, MouseListener
 								boolean[] p = new boolean[]{(player.bounds.isGrounded && !player.currAction.cLock),player.currAction.cLock,!player.bounds.isGrounded};
 								if(((m[3][o] < player.normals.length && player.currAction.getClass() == player.normals[m[3][o]].getClass()) || (m[3][o] >= player.normals.length && player.currAction.getClass() == player.actions[m[3][o]].getClass())) && p[m[3][o+1]] && player.hitInfo[0] >= player.actions[player.movelist.indexOf(m)].cancelType)
 									n = true;
+								
+								if(player.movelist.indexOf(m) == 7 || player.movelist.indexOf(m) == 8)System.out.println(p[m[3][o+1]]+" "+player.hitInfo[0]+" >= "+player.actions[player.movelist.indexOf(m)].cancelType+" "+n);
 							}
 						}
 					}

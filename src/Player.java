@@ -7,7 +7,7 @@ public class Player extends Puppet
 {
 	ArrayList<int[][]> movelist;	//[stick inputs, button inputs, input delay, cancels from?[action, type(standing, crouching, air), starting frame], move(int method?)]
 	Action[] actions;
-	boolean[] sInputs;
+	boolean[] isPushing, sInputs;
 	
 	public enum PlayerState implements State
 	{
@@ -35,8 +35,11 @@ public class Player extends Puppet
 //		currState = PuppetState.IDLE;
 //		prevState = PuppetState.IDLE;
 		meter = 1000;
+		isPushing = new boolean[]{false,false};
 		
 		movelist = new ArrayList<int[][]>();	//PLACE MOVELIST ITEMS IN ORDER OF PRIORITY!!!!
+		movelist.add(new int[][]{{8},{-1},{0},{2,1}});
+		movelist.add(new int[][]{{9},{-1},{0},{2,1}});
 		movelist.add(new int[][]{{7},{-1},{0},{-1}});
 		movelist.add(new int[][]{{8},{-1},{0},{-1}});
 		movelist.add(new int[][]{{9},{-1},{0},{-1}});
@@ -44,19 +47,16 @@ public class Player extends Puppet
 		movelist.add(new int[][]{{9,5,6},{-2,-2,-2},{0,12,12}});
 		movelist.add(new int[][]{{4,5,4},{-2,-2,-2},{0,12,12}});
 		movelist.add(new int[][]{{7,5,4},{-2,-2,-2},{0,12,12}});
-		movelist.add(new int[][]{{8},{-1},{0},{2,1}});
-		movelist.add(new int[][]{{9},{-1},{0},{2,1}});
-		movelist.add(new int[][]{{-1,-1},{1,4},{0,1}});
-		movelist.add(new int[][]{{-1,-1},{4,1},{0,1}});
 		movelist.add(new int[][]{{-1,-1},{2,5},{0,1}});
 		movelist.add(new int[][]{{-1,-1},{5,2},{0,1}});
+		movelist.add(new int[][]{{-1,-1},{1,4},{0,1}});
+		movelist.add(new int[][]{{-1,-1},{4,1},{0,1}});
 		movelist.add(new int[][]{{-1,-1},{0,3},{0,1}});
 		movelist.add(new int[][]{{-1,-1},{3,0},{0,1}});
 		
-		actions = new Action[]{new Jump(-1), new Jump(0), new Jump(1),
+		actions = new Action[]{new HomingJump(), new HomingJump(), new Jump(-1), new Jump(0), new Jump(1),
 				new FrontDash(), new FrontDash(), new BackDash(), new BackDash(),
-				new HomingJump(), new HomingJump(), new Parry(), new Parry(),
-				new Taunt(this), new Taunt(this), new Hug(10), new Hug(10)};
+				new Taunt(this), new Taunt(this), new Parry(), new Parry(), new Hug(10), new Hug(10)};
 		sInputs = new boolean[4];
 	}
 	
@@ -81,6 +81,7 @@ public class Player extends Puppet
 		floatOverride = false;
 		aDash = 0;
 		jCount = 0;
+		extraAir = 0;
 		meter = 1000;
 		sInputs = new boolean[4];
 	}
@@ -151,14 +152,14 @@ public class Player extends Puppet
 	{
 		if(currAction == null)
 		{
-			if((a != actions[3] && a != actions[5]) || aDash < airDashLimit)
+			if((a != actions[3] && a != actions[5]) || aDash < airDashLimit+extraAir)
 			{
 				currAction = a;
 				a.target = null;
 				a.button = -1;
 				
-				if(!bounds.isGrounded)
-					jDirections[1] = 0;
+			/*	if(!bounds.isGrounded)
+					jDirections[1] = 0;*/
 				isHoming = false;
 			}
 		}
@@ -189,24 +190,37 @@ public class Player extends Puppet
 				jDirections[1] = 0;
 			isHoming = false;
 		}
+		
 		if(slipFloat == -1)
 			slipFloat = 5;
 	}
 	
+	public void guard()
+	{
+		super.guard();
+		if(isPushing[0] && !isPushing[1])
+		{
+			plebsOut.add(new Pleb(this,bounds,null,bounds.xCoord-25,bounds.yCoord-25,bounds.width+100,bounds.height+50,2,Pleb.PUSH,true,true));
+			isPushing[1] = isPushing[0];
+			
+			for(Organ a: anatomy)
+				a.hInvul = true;
+			throwInvul = true;
+		}
+		else if(!isPushing[0])
+			isPushing[1] = isPushing[0];
+	}
+	
 	public void flinch()
 	{
-		int u = -1;
-		if(currAction != null)
-			u = currAction.button;
-		
 		if(ukemi[0] > 0 && bounceStun > 0)
 		{
-			if(ukemi[1] == 0 && u == -1 && ((isFacingRight && !sInputs[3]) || (!isFacingRight && !sInputs[1])))
+			if(ukemi[1] == 0 && isRecovering && ((isFacingRight && !sInputs[3]) || (!isFacingRight && !sInputs[1])))
 			{
 				ukemi[0]++;
 				ukemi[1]++;
 			}
-			else if(ukemi[1] == 1 && (u != -1 || (isFacingRight && sInputs[3]) || (!isFacingRight && sInputs[1])))
+			else if(ukemi[1] == 1 && (isRecovering || (isFacingRight && sInputs[3]) || (!isFacingRight && sInputs[1])))
 			{
 				hitStun = 0;
 				ukemi[1] += (sInputs[2])? 1:((sInputs[0])? 3:2);
@@ -224,18 +238,14 @@ public class Player extends Puppet
 	
 	public void knockdown()
 	{
-		int u = -1;
-		if(currAction != null)
-			u = currAction.button;
-		
 		if(ukemi[0] > 0)
 		{
-			if(ukemi[1] == 0 && u == -1 && !sInputs[2])
+			if(ukemi[1] == 0 && isRecovering && !sInputs[2])
 			{
 				ukemi[0]++;
 				ukemi[1]++;
 			}
-			else if(ukemi[1] == 1 && (u != -1 || sInputs[2]))
+			else if(ukemi[1] == 1 && (isRecovering || sInputs[2]))
 			{
 				hitStun = 0;
 				kdStun = 0;
@@ -258,6 +268,7 @@ public class Player extends Puppet
 			jDirections[0] = 0;
 			aDash = 0;
 			jCount = 0;
+			extraAir = 0;
 		}
 		else
 		{
@@ -285,6 +296,9 @@ public class Player extends Puppet
 					j.magnitude = 0;
 			}
 		}//if(otgDamp > 0)System.out.println(bounds.isGrounded+" "+isJuggled+" "+f);
+		
+		if(blockStun == 0)
+			isPushing = new boolean[]{false,false};
 		
 		super.update();
 		bounds.update();
@@ -323,7 +337,16 @@ public class Player extends Puppet
 			}
 			else if(f == 0)
 			{
-				if(!isCrouching && aDash < airDashLimit && airOptions > aDash+jCount)
+				if(bounceInfo[0] > 0)
+				{
+					isFacingRight = bounds.xCoord+bounds.width/2 <= bounceInfo[1];
+					currAction = new BackDash();
+					bounceInfo = new int[2];
+					fCounter--;
+					return;
+				}
+				
+				if(!isCrouching && aDash < airDashLimit+extraAir && airOptions+extraAir > aDash+jCount)
 				{
 					int d = (isFacingRight)? 3:1;
 					currState = PlayerState.DASH_FORWARD;
@@ -386,7 +409,16 @@ public class Player extends Puppet
 			}
 			else if(f == 0)
 			{
-				if(!isCrouching && aDash < airDashLimit && airOptions > aDash+jCount)
+				if(bounceInfo[0] > 0)
+				{
+					isFacingRight = bounds.xCoord+bounds.width/2 <= bounceInfo[1];
+					currAction = new FrontDash();
+					bounceInfo = new int[2];
+					fCounter--;
+					return;
+				}
+				
+				if(!isCrouching && aDash < airDashLimit+extraAir && airOptions+extraAir > aDash+jCount)
 				{
 					int d = (isFacingRight)? 1:3;
 					currState = PlayerState.DASH_BACKWARD;
@@ -454,6 +486,7 @@ public class Player extends Puppet
 				{
 					if(target.launchPoint > 0)
 					{
+						isFacingRight = xCoord+width/2 <= target.getBounds().xCoord+target.getBounds().width/2;
 						if(f < 12)
 							currState = PlayerState.JUMP_HOMING1;
 						else
@@ -505,6 +538,7 @@ public class Player extends Puppet
 		public void perform(int f)
 		{
 			isPerformingAction = true;
+			isCrouching = false;
 			if(f == 0)
 				target = null;
 			if(target != null)
@@ -677,11 +711,17 @@ public class Player extends Puppet
 							if(player.target instanceof Puppet)
 							{
 								Puppet t = (Puppet)player.target;
-								if(t.health > 0)
+								if(t.target != null)
 								{
-									t.propertyArchiver.add(new double[]{Pleb.TAUNT,600,0,0});
-									if(t.kdStun > 0 && t.bounds.isGrounded)
-										t.stamina -= 150;
+									if(t.target instanceof Puppet)
+									{
+										if((Puppet)t.target == player && t.health > 0)
+										{
+											t.propertyArchiver.add(new double[]{Pleb.TAUNT,600,0,0});
+											if(t.kdStun > 0 && t.bounds.isGrounded)
+												t.stamina -= 150;
+										}
+									}
 								}
 							}
 						}

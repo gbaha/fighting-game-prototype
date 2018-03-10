@@ -23,6 +23,7 @@ public class Pleb extends Hitbox
 	public static final int LOW = 1;
 	public static final int HIGH = 2;
 	public static final int GRAB = 3;
+	public static final int PUSH = 4;
 	
 	public static final int KNOCKDOWN = 0;	//[air only?, kd counter, upward force magnitude, upward force decay, down time]
 	public static final int LAUNCH = 1;		//[interruptible?, xforce magnitude, xforce decay, yforce magnitude, yforce decay, hitstun]

@@ -71,7 +71,7 @@ public class Director
 					break;
 					
 				case 60:
-					jas.gui.displaySplash("GET HIS ASS!",Gui.CENTER,640,300,100,30,20);
+					jas.gui.displaySplash("FIGHT",Gui.CENTER,640,300,100,30,20);
 					sounds.add("roundstart2"+(char)(Math.random()*2+97)+".wav");
 					break;
 			}

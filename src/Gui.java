@@ -56,17 +56,22 @@ public class Gui extends JPanel
 	public void drawFront(Graphics2D g, ImageObserver i, Stage c, double w, double h)
 	{
 		//METER
-	/*	g.setColor(Color.LIGHT_GRAY);
+		g.setColor(Color.LIGHT_GRAY);
 		g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),200));
-		g.fillRect((int)((35*w/1280)+0.5),(int)((650*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
-		g.fillRect((int)((745*w/1280)+0.5),(int)((650*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.fillRect((int)((35*w/1280)+0.5),(int)((665*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.fillRect((int)((745*w/1280)+0.5),(int)((665*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
 		g.setColor(Color.CYAN);
-		g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50));
-		g.fillRect((int)(((35+500*((1000.0-(c.player1.meter-c.player1.meter/1000.0))/1000.0))*w/1280)+0.5),(int)((650*h/720)+0.5),(int)((500*((c.player1.meter-c.player1.meter/1000.0)/1000.0)*w/1280)+0.5),(int)((35*h/720)+0.5));
-		g.fillRect((int)((745*w/1280)+0.5),(int)((650*h/720)+0.5),(int)((-500*((-c.player2.meter+c.player2.meter/1000.0)/1000.0)*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50*(c.player1.meter/1000)));
+		g.fillRect((int)((35*w/1280)+0.5),(int)((665*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50*(c.player2.meter/1000)));
+		g.fillRect((int)((745*w/1280)+0.5),(int)((665*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
 		g.setColor(Color.BLUE);
-		g.drawString(c.player1.meter/1000+"",(int)((40*w/1280)+0.5),(int)((675*h/720)+0.5));
-		g.drawString(c.player2.meter/1000+"",(int)((1230*w/1280)+0.5),(int)((675*h/720)+0.5));*/
+		g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),50));
+		g.fillRect((int)(((535-500*((c.player1.meter%1000)/1000.0))*w/1280)+0.5),(int)((665*h/720)+0.5),(int)((500*((c.player1.meter%1000)/1000.0)*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.fillRect((int)((745*w/1280)+0.5),(int)((665*h/720)+0.5),(int)((500*((c.player2.meter%1000)/1000.0)*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.setColor(Color.BLUE);
+		g.drawString(c.player1.meter/1000+"",(int)((40*w/1280)+0.5),(int)((690*h/720)+0.5));
+		g.drawString(c.player2.meter/1000+"",(int)((1230*w/1280)+0.5),(int)((690*h/720)+0.5));
 		
 		//HIT COUNTER
 		if(c.player1.hitStun > 0 || c.player1.isThrown)
@@ -151,32 +156,32 @@ public class Gui extends JPanel
 	{
 		//HEALTH
 		g.setColor(Color.LIGHT_GRAY);
-		g.fillRect((int)((35*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
-		g.fillRect((int)((745*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.fillRect((int)((35*w/1280)+0.5),(int)((20*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.fillRect((int)((745*w/1280)+0.5),(int)((20*h/720)+0.5),(int)((500*w/1280)+0.5),(int)((35*h/720)+0.5));
 		g.setColor(Color.RED);
-		g.fillRect((int)(((35+500*(c.player1.maxHp-hDamage[0])/c.player1.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((500*(hDamage[0]/c.player1.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5));
-		g.fillRect((int)((745*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((500*(hDamage[1]/c.player2.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.fillRect((int)(((35+500*(c.player1.maxHp-hDamage[0])/c.player1.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((500*(hDamage[0]/c.player1.maxHp)*w/1280)+0.5),(int)((20*h/720)+0.5));
+		g.fillRect((int)((745*w/1280)+0.5),(int)((20*h/720)+0.5),(int)((500*(hDamage[1]/c.player2.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5));
 		g.setColor(Color.GREEN);
-		g.fillRect((int)(((35+500*(double)(c.player1.maxHp-c.player1.health)/c.player1.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((500*((double)c.player1.health/c.player1.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5));
-		g.fillRect((int)((745*w/1280)+0.5),(int)((35*h/720)+0.5),(int)((500*((double)c.player2.health/c.player2.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.fillRect((int)(((35+500*(double)(c.player1.maxHp-c.player1.health)/c.player1.maxHp)*w/1280)+0.5),(int)((20*h/720)+0.5),(int)((500*((double)c.player1.health/c.player1.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5));
+		g.fillRect((int)((745*w/1280)+0.5),(int)((20*h/720)+0.5),(int)((500*((double)c.player2.health/c.player2.maxHp)*w/1280)+0.5),(int)((35*h/720)+0.5));
 		
 		//STAMINA
 		for(int s = 0; s < 6; s++)
 		{
 			g.setColor(Color.LIGHT_GRAY);
-			g.fillRect((int)(((495-s*45)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)((40*w/1280)+0.5),(int)((20*h/720)+0.5));
-			g.fillRect((int)(((745+s*45)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)((40*w/1280)+0.5),(int)((20*h/720)+0.5));
+			g.fillRect((int)(((495-s*45)*w/1280)+0.5),(int)((60*h/720)+0.5),(int)((40*w/1280)+0.5),(int)((20*h/720)+0.5));
+			g.fillRect((int)(((745+s*45)*w/1280)+0.5),(int)((60*h/720)+0.5),(int)((40*w/1280)+0.5),(int)((20*h/720)+0.5));
 			
 			g.setColor(Color.ORANGE);
 			if(c.player1.stamina >= (s+1)*100)
-				g.fillRect((int)(((495-s*45)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)((40*w/1280)+0.5),(int)((20*h/720)+0.5));
+				g.fillRect((int)(((495-s*45)*w/1280)+0.5),(int)((60*h/720)+0.5),(int)((40*w/1280)+0.5),(int)((20*h/720)+0.5));
 			else if(c.player1.stamina > s*100)
-				g.fillRect((int)(((495-s*45+((100-(c.player1.stamina-s*100.0))/100)*40)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)((40*((c.player1.stamina-s*100.0)/100)*w/1280)+0.5),(int)((20*h/720)+0.5));
+				g.fillRect((int)(((495-s*45+((100-(c.player1.stamina-s*100.0))/100)*40)*w/1280)+0.5),(int)((60*h/720)+0.5),(int)((40*((c.player1.stamina-s*100.0)/100)*w/1280)+0.5),(int)((20*h/720)+0.5));
 			
 			if(c.player2.stamina >= (s+1)*100)
-				g.fillRect((int)(((745+s*45)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)((40*w/1280)+0.5),(int)((20*h/720)+0.5));
+				g.fillRect((int)(((745+s*45)*w/1280)+0.5),(int)((60*h/720)+0.5),(int)((40*w/1280)+0.5),(int)((20*h/720)+0.5));
 			else if(c.player2.stamina > s*100)
-				g.fillRect((int)(((745+s*45)*w/1280)+0.5),(int)((75*h/720)+0.5),(int)((40*((c.player2.stamina-s*100.0)/100)*w/1280)+0.5),(int)((20*h/720)+0.5));
+				g.fillRect((int)(((745+s*45)*w/1280)+0.5),(int)((60*h/720)+0.5),(int)((40*((c.player2.stamina-s*100.0)/100)*w/1280)+0.5),(int)((20*h/720)+0.5));
 		}
 		
 		//WINS
@@ -196,7 +201,7 @@ public class Gui extends JPanel
 			}
 			if(c.wins[0][s+1] == 0)
 				g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),200));
-			g.fillRect((int)(((510-s*45)*w/1280)+0.5),(int)((100*h/720)+0.5),(int)((10*w/1280)+0.5),(int)((20*h/720)+0.5));
+			g.fillRect((int)(((510-s*45)*w/1280)+0.5),(int)((85*h/720)+0.5),(int)((10*w/1280)+0.5),(int)((20*h/720)+0.5));
 			
 			switch(c.wins[1][s+1])
 			{
@@ -212,7 +217,7 @@ public class Gui extends JPanel
 			}
 			if(c.wins[1][s+1] == 0)
 				g.setColor(new Color(g.getColor().getRed(),g.getColor().getGreen(),g.getColor().getBlue(),200));
-			g.fillRect((int)(((760+s*45)*w/1280)+0.5),(int)((100*h/720)+0.5),(int)((10*w/1280)+0.5),(int)((20*h/720)+0.5));
+			g.fillRect((int)(((760+s*45)*w/1280)+0.5),(int)((85*h/720)+0.5),(int)((10*w/1280)+0.5),(int)((20*h/720)+0.5));
 		}
 		
 		//TIMER
@@ -222,7 +227,7 @@ public class Gui extends JPanel
 		tg.setFont(new Font(FONT.getName(),Font.BOLD,75));
 		tg.drawString((c.timer[0]/10)+""+(c.timer[0]%10),7,70);
 		tg.dispose();
-		g.drawImage(timer,(int)((590*w/1280)+0.5),(int)((15*h/720)+0.5),(int)((690*w/1280)+0.5),(int)((115*h/720)+0.5),0,0,100,100,i);
+		g.drawImage(timer,(int)((590*w/1280)+0.5),(int)((5*h/720)+0.5),(int)((690*w/1280)+0.5),(int)((115*h/720)+0.5),0,0,100,100,i);
 	}
 	
 	public void drawInputs(Graphics2D g, Hand h1, double w, double h2, boolean d)

@@ -159,7 +159,7 @@ public class Logic
 		{
 			int fLimit = p.bounds.forceArchiver.size();
 			if((superStop[2] == 0 && slipStop[2] == 0) || superStop[1] == p.id || slipStop[1] == p.id)
-			{	
+			{
 				if(!p.bounds.isFloating && !p.floatOverride)
 				{
 					p.bounds.forceArchiver.add(new Force("gravity",0,gravity,gravity));
@@ -1821,6 +1821,8 @@ public class Logic
 													if(p2.currAction == null && p2.hitStun == 0)
 														p2.canBlock = true;
 												}
+												else if(p1.type == Pleb.PUSH)
+													p2.bounds.forceArchiver.add(new Force("pushblock",(p1.puppet.isFacingRight)? 3:1,12,2));
 												else
 												{
 													
@@ -2133,11 +2135,18 @@ public class Logic
 						
 						if(stage.puppets.get(p).jDirections[1] == 1 && !stage.puppets.get(p).bounds.isGrounded)
 						{
+							boolean j = true;
 							for(Force f: stage.puppets.get(p).bounds.forceArchiver)
 							{
-								if(f.type.equals("yJump") && f.magnitude*9/10 < gravity)
-									stage.puppets.get(p).jDirections[1] = -1;
+								if(f.type.equals("yJump"))
+								{
+									if(f.magnitude*9/10 < gravity)
+										stage.puppets.get(p).jDirections[1] = -1;
+									j = false;
+								}
 							}
+							if(j)
+								stage.puppets.get(p).jDirections[1] = -1;
 						}
 						else if(stage.puppets.get(p).jDirections[1] == -1 && stage.puppets.get(p).preFrames == 0)	// && stage.puppets.get(p).bounds.isGrounded)
 							stage.puppets.get(p).jDirections[1] = 0;
@@ -2167,8 +2176,8 @@ public class Logic
 				{
 					if((superStop[2] == 0 && slipStop[2] == 0) || superStop[1] == p.id || slipStop[1] == p.id)
 					{
-						if(p.target != null && p.currAction == null && (p.bounds.isGrounded || p.jDirections[2] > 0 || p.slipFloat > 0) && !p.isThrowing && !p.isThrown && p.health > 0)
-							p.isFacingRight = p.xCoord+p.width/2 <= p.target.getBounds().xCoord+p.target.getBounds().width/2;
+						if(p.target != null && p.currAction == null && (p.bounds.isGrounded || p.slipFloat > 0 || (p.jDirections[2] > 0 && p.bounceInfo[0] == 0)) && !p.isThrowing && !p.isThrown && p.health > 0)
+							p.isFacingRight = p.bounds.xCoord+p.bounds.width/2 <= p.target.getBounds().xCoord+p.target.getBounds().width/2;
 					}
 				}
 			}
