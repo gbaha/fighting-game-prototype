@@ -23,7 +23,7 @@ public class Hand implements KeyListener	//, MouseListener
 		stickBindings = new int[4];
 		buttonBindings = new int[12];
 		stickArchiver = new boolean[4];
-		buttonArchiver = new boolean[13];
+		buttonArchiver = new boolean[14];
 		buttonHeld = new boolean[8];
 		
 		xMouse = 0;
@@ -45,7 +45,7 @@ public class Hand implements KeyListener	//, MouseListener
 		stickBindings = s;
 		buttonBindings = b;
 		stickArchiver = new boolean[4];
-		buttonArchiver = new boolean[13];
+		buttonArchiver = new boolean[14];
 		buttonHeld = new boolean[8];
 		
 		xMouse = MouseInfo.getPointerInfo().getLocation().x-x;

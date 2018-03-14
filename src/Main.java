@@ -13,6 +13,7 @@ public class Main
 	Logic logic;
 	Hoshua jas;
 	Klamoth klam;
+	Logger logger;
 	int xCoord, yCoord, width, height;
 	double fps;
 	boolean gamePaused, debugging;
@@ -33,8 +34,8 @@ public class Main
 		
 		stage = new Stage(Stage.TRAINING,2);
 //		geebs = new Beaman(stage);
-		p1 = new Hand(xCoord,yCoord,width,height,new int[]{87,68,83,65},new int[]{73,79,80,74,75,76,91,59,32,49,50,51,52});
-		p2 = new Hand(xCoord,yCoord,width,height,new int[]{38,39,40,37},new int[]{90,88,67,86,66,78,999,999,999,8,999,999,999});
+		p1 = new Hand(xCoord,yCoord,width,height,new int[]{87,68,83,65},new int[]{73,79,80,74,75,76,91,59,32,49,50,51,52,53});
+		p2 = new Hand(xCoord,yCoord,width,height,new int[]{38,39,40,37},new int[]{90,88,67,86,66,78,999,999,999,8,999,999,999,999});
 		gui = new Gui(p1,p2,gamePaused);
 		
 		if(stage.player1 != null)
@@ -46,77 +47,95 @@ public class Main
 		jas = new Hoshua(stage,gui,xCoord,yCoord+window.getInsets().top,w,h,fps,6,gamePaused);
 		director = new Director(stage,jas);
 		klam = new Klamoth();
+		logger = new Logger();
 	}
 	
 	public void run()
 	{
-		logic.setFocusTo(1000,4750);
-		stage.xFocus = -360;
-		
-		while(0 < 1)	//TEST -change to while game is running
+		try
 		{
-			double start = System.currentTimeMillis();
-			xCoord = window.getLocation().x;
-			yCoord = window.getLocation().y;
+			logic.setFocusTo(1000,4750);
+			stage.xFocus = -360;
 			
-			double fpsLimit = 60;	//test
-			if(p1.buttonArchiver[8])
-				fpsLimit = 3;
-			if(p1.buttonArchiver[9])
+			while(0 < 1)	//TEST -change to while game is running
 			{
-				stage.type = (stage.type == Stage.TRAINING)? Stage.VERSUS:Stage.TRAINING;
-				stage.settings = (stage.type == Stage.TRAINING)? new boolean[]{true,true,true}:new boolean[]{false,false,false};
-				stage.reset(director,p1,p2);
-				p1.buttonArchiver[9] = false;
+				double start = System.currentTimeMillis();
+				xCoord = window.getLocation().x;
+				yCoord = window.getLocation().y;
+				
+				double fpsLimit = 60;	//test
+				if(p1.buttonArchiver[8])
+					fpsLimit = 3;
+				if(p1.buttonArchiver[9])
+				{
+					stage.type = (stage.type == Stage.TRAINING)? Stage.VERSUS:Stage.TRAINING;
+					stage.settings = (stage.type == Stage.TRAINING)? new boolean[]{true,true,true}:new boolean[]{false,false,false};
+					stage.reset(director,p1,p2);
+					p1.buttonArchiver[9] = false;
+				}
+				if(p1.buttonArchiver[10])
+				{
+					stage.settings[0] = !stage.settings[0];
+					p1.buttonArchiver[10] = false;
+				}
+				if(p1.buttonArchiver[11])
+				{
+					stage.settings[1] = !stage.settings[1];
+					p1.buttonArchiver[11] = false;
+				}
+				if(p1.buttonArchiver[12])
+				{
+					stage.settings[2] = !stage.settings[2];
+					p1.buttonArchiver[12] = false;
+				}
+				if(stage.isResetting)
+				{
+					logic.setFocusTo(1000,4750);
+					stage.xFocus = -360;
+					stage.yFocus = -4350;
+					jas.sReader.reset();
+					stage.isResetting = false;
+				}
+				
+				stage.update(director,p1,p2,gui.hDamage);
+				director.direct();
+				klam.buildQueue(stage,director);
+				gui.update(width,height,gamePaused);
+				logic.update(director,xCoord,yCoord,gamePaused/*,width,height*/);
+				gamePaused = logic.gamePaused;
+				
+				if(p1.buttonArchiver[13])
+				{
+					logger.logTest(stage,logic,p1,p2,klam);
+					p1.buttonArchiver[13] = false;
+				}
+				
+			//	geebs.defyLogic();
+				int stop = (logic.superStop[0] > 0)? logic.superStop[0]:logic.slipStop[0];
+				jas.update(xCoord,yCoord+window.getInsets().top,width,height,stop,fps,gamePaused);
+				klam.play();
+				
+				double end = System.currentTimeMillis();
+				fps = 1000.0/(end-start);
+				try
+				{
+					while(fps > fpsLimit)	//60)
+					{
+						Thread.sleep(1);
+						end = System.currentTimeMillis();
+						fps = 1000.0/(end-start);
+					}
+				}
+				catch(java.lang.InterruptedException e){}
 			}
-			if(p1.buttonArchiver[10])
-			{
-				stage.settings[0] = !stage.settings[0];
-				p1.buttonArchiver[10] = false;
-			}
-			if(p1.buttonArchiver[11])
-			{
-				stage.settings[1] = !stage.settings[1];
-				p1.buttonArchiver[11] = false;
-			}
-			if(p1.buttonArchiver[12])
-			{
-				stage.settings[2] = !stage.settings[2];
-				p1.buttonArchiver[12] = false;
-			}
-			if(stage.isResetting)
-			{
-				logic.setFocusTo(1000,4750);
-				stage.xFocus = -360;
-				stage.yFocus = -4350;
-				jas.sReader.reset();
-				stage.isResetting = false;
-			}
-			
-			stage.update(director,p1,p2,gui.hDamage);
-			director.direct();
-			klam.buildQueue(stage,director);
-			gui.update(width,height,gamePaused);
-			logic.update(director,xCoord,yCoord,gamePaused/*,width,height*/);
-			gamePaused = logic.gamePaused;
-			
-		//	geebs.defyLogic();
-			int stop = (logic.superStop[0] > 0)? logic.superStop[0]:logic.slipStop[0];
-			jas.update(xCoord,yCoord+window.getInsets().top,width,height,stop,fps,gamePaused);
-			klam.play();
-			
-			double end = System.currentTimeMillis();
-			fps = 1000.0/(end-start);
+		}
+		catch(Exception b)
+		{
 			try
 			{
-				while(fps > fpsLimit)	//60)
-				{
-					Thread.sleep(1);
-					end = System.currentTimeMillis();
-					fps = 1000.0/(end-start);
-				}
+				logger.log(stage,logic,p1,p2,klam,b);
 			}
-			catch(java.lang.InterruptedException e){}
+			catch(java.io.IOException e){}
 		}
 	}
 	

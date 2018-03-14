@@ -12,7 +12,7 @@ public class Pleb extends Hitbox
 	Puppet puppet;
 	Organ bounds;
 	Action action;
-	String hash;	//action, type;
+	String hash;
 	int duration, type, strength, hDamage, sDamage, xKnockback, yKnockback, juggleHeight, xDist, yDist;
 	double hitstunDamp;	//decayRate, piercingRate;
 	boolean isAttached, isProjectile, pBreaker;

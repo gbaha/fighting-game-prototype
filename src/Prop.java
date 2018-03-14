@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -13,9 +14,10 @@ abstract class Prop implements Punchable	//, Audible
 	Puppet puppet;
 	Organ bounds;
 	State currState;
+	Image sheet;
 	int id, xCoord, yCoord, xHosh, yHosh, xOffset, yOffset, width, height;
-	int maxHp, health, hits, fCounter;
-	double fIndex;
+	int maxHp, health, hits, fCounter, spriteIndex;
+	double fIndex, sAngle;
 	boolean isFacingRight, isHit;
 	int[] spriteParams;
 	
@@ -57,7 +59,9 @@ abstract class Prop implements Punchable	//, Audible
 		health = maxHp;
 		hits = h3;
 		fCounter = 0;
+		spriteIndex = -1;
 		fIndex = 0;
+		sAngle = 0;
 		isFacingRight = true;
 		isHit = false;
 		

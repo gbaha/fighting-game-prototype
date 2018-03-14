@@ -7,10 +7,8 @@ import java.util.ArrayList;
 
 abstract class Projectile extends Prop
 {
-	Image sheet;
 	String hashCounter;
-	int strength, hDamage, sDamage, speed, spriteIndex;
-	double sAngle;
+	int strength, hDamage, sDamage, speed;
 	
 	public Projectile(Puppet p, int x, int y, int w1, int h1, int h2, int h3, int s)
 	{
@@ -19,8 +17,6 @@ abstract class Projectile extends Prop
 		hashCounter = "";
 		
 		strength = s;
-		spriteIndex = -1;
-		sAngle = 0;
 		isFacingRight = puppet.isFacingRight;
 		bounds.isFloating = true;
 	}

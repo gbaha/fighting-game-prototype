@@ -34,9 +34,9 @@ abstract class Puppet implements Punchable
 	int spriteIndex, pIndex, preFrames, fCounter, blockStun, hitStun, hitStop, sCooldown;
 	int kdCounter, kdLimit, kdStun, bDirection, bounceLimit, bounceStun, launchPoint, slipFloat;
 	int airOptions, airDashLimit, jumpLimit, aDash, jCount, extraAir;
-	double sIndex, sAngle, jForce, jump, jCooldown, juggleDamp, otgDamp, hitstunDamp, damageDamp;
+	double sIndex, sAngle, jForce, jump, jCooldown, juggleDamp, otgDamp, hitstunDamp, damageDamp, gMagnitude;
 	boolean isFacingRight, isPerformingAction, isCrouching, canBlock, isGuardBroken, isCounterhit, isTaunted;
-	boolean throwInvul, isThrowing, isThrown, isTeching, isJuggled, isRecovering, isAirLocked, floatOverride;	//, isUnstoppable, isJumping;
+	boolean throwInvul, isThrowing, isThrown, isTeching, isJuggled, isRecovering, isAirLocked, floatOverride;	//, isUnstoppable;
 	boolean isDashing, isHoming, isJumping, isSlipping;
 	boolean isBella;	// its joke
 	
@@ -152,6 +152,7 @@ abstract class Puppet implements Punchable
 		damageDamp = 0;
 		sCooldown = 0;
 		jCooldown = 0;
+		gMagnitude = 1;
 		
 		kdCounter = 0;
 		kdLimit = 2;	// if counter >= limit, cannot be knocked down in combo
@@ -1106,6 +1107,8 @@ abstract class Puppet implements Punchable
 			currState = PuppetState.FLINCH_AERIAL0;
 			bounds.isGrounded = false;
 		}
+		p.puppet.gMagnitude = 1;
+		gMagnitude = 1;
 		
 		if(p.action != null)
 		{
@@ -1519,6 +1522,11 @@ abstract class Puppet implements Punchable
 			juggleDamp -= 0.16;
 		else if(juggleDamp < 0)
 			juggleDamp = 0;
+		
+		if(blockStun > 0 || jDirections[1] != 0 || bounds.isGrounded || bounds.isFloating || floatOverride)
+			gMagnitude = 1;
+		else
+			gMagnitude += (gMagnitude > 1.025)? 0.025:0.001;
 		
 		if(bounceInfo[0] == 0)
 			bounceInfo[1] = 0;

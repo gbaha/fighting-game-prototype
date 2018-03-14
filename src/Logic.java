@@ -1,4 +1,3 @@
-import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -162,7 +161,8 @@ public class Logic
 			{
 				if(!p.bounds.isFloating && !p.floatOverride)
 				{
-					p.bounds.forceArchiver.add(new Force("gravity",0,gravity,gravity));
+					double g = (p.gMagnitude > 1.025)? p.gMagnitude:1;
+					p.bounds.forceArchiver.add(new Force("gravity",0,gravity*g,gravity*g));
 					if(p.bounds.wasFloating)
 						p.bounds.forceArchiver.add(new Force("postFloat",2,gravity,gravity/10));
 				}

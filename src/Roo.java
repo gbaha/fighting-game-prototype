@@ -1528,9 +1528,9 @@ public class Roo extends Player
 					case 9:
 						if(!bounds.isGrounded)
 						{
-							addPleb(roo,1,bounds.xCoord+195,bounds.yCoord-25,70,50,12,Pleb.HIGH,2,32,25,20,0,30,0.45,true,false,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,60,7,45},new double[]{Pleb.WALLBOUNCE,0,10,3,0,0,12,4}});
-							addPleb(roo,1,bounds.xCoord+150,bounds.yCoord-10,60,60,2,Pleb.HIGH,2,32,25,20,0,30,0.45,true,false,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,60,7,45},new double[]{Pleb.WALLBOUNCE,0,10,3,0,0,12,4}});
-							addPleb(roo,1,bounds.xCoord+100,bounds.yCoord+15,60,60,2,Pleb.HIGH,2,32,25,20,0,30,0.45,true,false,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,60,7,45},new double[]{Pleb.WALLBOUNCE,0,10,3,0,0,12,4}});
+							addPleb(roo,1,bounds.xCoord+195,bounds.yCoord-25,70,50,12,Pleb.MID,2,32,25,20,0,30,0.45,true,false,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,60,7,45},new double[]{Pleb.WALLBOUNCE,0,10,3,0,0,12,4}});
+							addPleb(roo,1,bounds.xCoord+150,bounds.yCoord-10,60,60,2,Pleb.MID,2,32,25,20,0,30,0.45,true,false,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,60,7,45},new double[]{Pleb.WALLBOUNCE,0,10,3,0,0,12,4}});
+							addPleb(roo,1,bounds.xCoord+100,bounds.yCoord+15,60,60,2,Pleb.MID,2,32,25,20,0,30,0.45,true,false,false,true,new double[][]{new double[]{Pleb.KNOCKDOWN,0,1,60,7,45},new double[]{Pleb.WALLBOUNCE,0,10,3,0,0,12,4}});
 						}
 						else if(isCrouching){}
 						else{}
@@ -1870,7 +1870,7 @@ public class Roo extends Player
 				if(f > 10 && sInputs[0] && ((isFacingRight && !sInputs[3]) || (!isFacingRight && !sInputs[1])))
 				{
 					Puppet t = target;
-					setAction(actions[7]);
+					setAction(actions[0]);
 					currAction.target = t;
 					fCounter = -1;
 					sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
@@ -2403,6 +2403,7 @@ public class Roo extends Player
 						{
 							currState = RooState.DP_RECOVER;
 							sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+							hitInfo[0] = 0;
 							
 							if(target == null)
 								addSound("freehandouts.wav",new float[]{0.0f});
@@ -2419,6 +2420,7 @@ public class Roo extends Player
 						{
 							currState = RooState.DP_RECOVER;
 							sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+							hitInfo[0] = 0;
 							
 							if(target == null)
 								addSound("freehandouts.wav",new float[]{0.0f});
@@ -2693,7 +2695,7 @@ public class Roo extends Player
 							break;
 							
 						case 1:
-							addPleb(roo,f,bounds.xCoord+50,bounds.yCoord+5,200,195,2,Pleb.MID,99,5,1,0,0,0,1,true,false,false,true,new double[][]{new double[]{Pleb.PULL,roo.bounds.xCoord+roo.bounds.width,roo.bounds.yCoord,0.25,0.25,4},new double[]{Pleb.KNOCKDOWN,0,1,35,7,45}});
+							addPleb(roo,f,bounds.xCoord+50,bounds.yCoord+5,200,195,2,Pleb.MID,99,5,1,0,0,0,1,true,false,false,true,new double[][]{new double[]{Pleb.PULL,roo.bounds.xCoord+roo.bounds.width,roo.bounds.yCoord+roo.bounds.height/2,0.25,0.25,4},new double[]{Pleb.KNOCKDOWN,0,1,35,7,45}});
 							break;
 							
 						case 3:
@@ -2701,7 +2703,7 @@ public class Roo extends Player
 							break;
 							
 						case 4:
-							addPleb(roo,f,bounds.xCoord-150,bounds.yCoord+5,200,195,2,Pleb.MID,99,5,1,0,0,0,1,true,false,false,true,new double[][]{new double[]{Pleb.PULL,roo.bounds.xCoord+roo.bounds.width,roo.bounds.yCoord,0.25,0.25,4},new double[]{Pleb.KNOCKDOWN,0,1,35,7,45}});
+							addPleb(roo,f,bounds.xCoord-150,bounds.yCoord+5,200,195,2,Pleb.MID,99,5,1,0,0,0,1,true,false,false,true,new double[][]{new double[]{Pleb.PULL,roo.bounds.xCoord+roo.bounds.width,roo.bounds.yCoord+roo.bounds.height/2,0.25,0.25,4},new double[]{Pleb.KNOCKDOWN,0,1,35,7,45}});
 							break;
 					}
 					
@@ -2827,6 +2829,7 @@ public class Roo extends Player
 					case 90:
 						currState = RooState.DP_RECOVER;
 						sIndex = hitboxArchiver.get(currState.getPosition())[0][1];
+						hitInfo[0] = 0;
 						break;
 				}
 				
